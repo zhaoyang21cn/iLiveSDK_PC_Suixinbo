@@ -1,78 +1,9 @@
-﻿生成启动时间为 2017/1/16 星期一 下午 05:30:12。
-     1>项目“C:\Users\Administrator\Desktop\iLiveSDK\sample\suixinbo_Qt\suixinbo_Qt.vcxproj”在节点 2 上(build 个目标)。
-     1>InitializeBuildStatus:
-         正在创建“Debug\suixinbo_Qt.unsuccessfulbuild”，因为已指定“AlwaysCreate”。
-       CustomBuild:
-         Moc'ing Register.h...
-         Moc'ing NetworkHelper.h...
-         Moc'ing RoomListItem.h...
-         Moc'ing VideoRender.h...
-         Moc'ing MainWindow.h...
-         Moc'ing Live.h...
-         Uic'ing MainWindow.ui...
-         Uic'ing Live.ui...
-         Uic'ing Register.ui...
-         Uic'ing RoomListItem.ui...
-         Rcc'ing res.qrc...
-       ClCompile:
-         D:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /IC:\Users\Administrator\Desktop\iLiveSDK\sample\..\include /IC:\Users\Administrator\Desktop\iLiveSDK\sample\LiveSDK /I.\GeneratedFiles /I. /ID:\Qt\Qt5.0.0\5.0.0\msvc2010\include /I.\GeneratedFiles\Debug /ID:\Qt\Qt5.0.0\5.0.0\msvc2010\include\QtCore /ID:\Qt\Qt5.0.0\5.0.0\msvc2010\include\QtGui /ID:\Qt\Qt5.0.0\5.0.0\msvc2010\include\QtWidgets /Zi /nologo /W1 /WX- /Od /Oy- /D UNICODE /D WIN32 /D QT_DLL /D QT_CORE_LIB /D QT_GUI_LIB /D QT_WIDGETS_LIB /Gm- /EHsc /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Yc"StdAfx.h" /Fp"Debug\suixinbo_Qt.pch" /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt stdafx.cpp
-         stdafx.cpp
-         D:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /IC:\Users\Administrator\Desktop\iLiveSDK\sample\..\include /IC:\Users\Administrator\Desktop\iLiveSDK\sample\LiveSDK /I.\GeneratedFiles /I. /ID:\Qt\Qt5.0.0\5.0.0\msvc2010\include /I.\GeneratedFiles\Debug /ID:\Qt\Qt5.0.0\5.0.0\msvc2010\include\QtCore /ID:\Qt\Qt5.0.0\5.0.0\msvc2010\include\QtGui /ID:\Qt\Qt5.0.0\5.0.0\msvc2010\include\QtWidgets /Zi /nologo /W1 /WX- /Od /Oy- /D UNICODE /D WIN32 /D QT_DLL /D QT_CORE_LIB /D QT_GUI_LIB /D QT_WIDGETS_LIB /Gm- /EHsc /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Yu"StdAfx.h" /Fp"Debug\suixinbo_Qt.pch" /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt Event.cpp GeneratedFiles\Debug\moc_Live.cpp GeneratedFiles\Debug\moc_MainWindow.cpp GeneratedFiles\Debug\moc_NetworkHelper.cpp GeneratedFiles\Debug\moc_Register.cpp GeneratedFiles\Debug\moc_RoomListItem.cpp GeneratedFiles\Debug\moc_VideoRender.cpp Live.cpp main.cpp MainWindow.cpp MessageCallBack.cpp NetworkHelper.cpp PicDownHelper.cpp Register.cpp RoomListItem.cpp SxbServerHelper.cpp Util.cpp VideoRender.cpp
-         Event.cpp
-         moc_Live.cpp
-         moc_MainWindow.cpp
-         moc_NetworkHelper.cpp
-         moc_Register.cpp
-         moc_RoomListItem.cpp
-         moc_VideoRender.cpp
-         Live.cpp
-         main.cpp
-         MainWindow.cpp
-         MessageCallBack.cpp
-         NetworkHelper.cpp
-         PicDownHelper.cpp
-         Register.cpp
-         RoomListItem.cpp
-         SxbServerHelper.cpp
-         Util.cpp
-         VideoRender.cpp
-         正在生成代码...
-         D:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /IC:\Users\Administrator\Desktop\iLiveSDK\sample\..\include /IC:\Users\Administrator\Desktop\iLiveSDK\sample\LiveSDK /I.\GeneratedFiles /I. /ID:\Qt\Qt5.0.0\5.0.0\msvc2010\include /I.\GeneratedFiles\Debug /ID:\Qt\Qt5.0.0\5.0.0\msvc2010\include\QtCore /ID:\Qt\Qt5.0.0\5.0.0\msvc2010\include\QtGui /ID:\Qt\Qt5.0.0\5.0.0\msvc2010\include\QtWidgets /Zi /nologo /W1 /WX- /Od /Oy- /D UNICODE /D WIN32 /D QT_DLL /D QT_CORE_LIB /D QT_GUI_LIB /D QT_WIDGETS_LIB /Gm- /EHsc /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt GeneratedFiles\qrc_res.cpp
-         qrc_res.cpp
-       ResourceCompile:
-         C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\rc.exe /l"0x0409" /nologo /fo"Debug\res.res" res.rc 
-       Link:
-         D:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Administrator\Desktop\iLiveSDK\sample\bin\Debug\\suixinbo_Qt.exe" /NOLOGO /LIBPATH:C:\Users\Administrator\Desktop\iLiveSDK\sample\..\libs\Debug /LIBPATH:D:\Qt\Qt5.0.0\5.0.0\msvc2010\lib qtmaind.lib Qt5Cored.lib Qt5Guid.lib Qt5Widgetsd.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /ManifestFile:"Debug\suixinbo_Qt.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"C:\Users\Administrator\Desktop\iLiveSDK\sample\bin\Debug\suixinbo_Qt.pdb" /SUBSYSTEM:WINDOWS /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Administrator\Desktop\iLiveSDK\sample\bin\Debug\suixinbo_Qt.lib" /MACHINE:X86 Debug\res.res
-         Debug\Event.obj
-         Debug\moc_Live.obj
-         Debug\moc_MainWindow.obj
-         Debug\moc_NetworkHelper.obj
-         Debug\moc_Register.obj
-         Debug\moc_RoomListItem.obj
-         Debug\moc_VideoRender.obj
-         Debug\qrc_res.obj
-         Debug\Live.obj
-         Debug\main.obj
-         Debug\MainWindow.obj
-         Debug\MessageCallBack.obj
-         Debug\NetworkHelper.obj
-         Debug\PicDownHelper.obj
-         Debug\Register.obj
-         Debug\RoomListItem.obj
-         Debug\stdafx.obj
-         Debug\SxbServerHelper.obj
-         Debug\Util.obj
-         Debug\VideoRender.obj
-         C:\Users\Administrator\Desktop\iLiveSDK\sample\bin\Debug\LiveSDK.lib
-            正在创建库 C:\Users\Administrator\Desktop\iLiveSDK\sample\bin\Debug\suixinbo_Qt.lib 和对象 C:\Users\Administrator\Desktop\iLiveSDK\sample\bin\Debug\suixinbo_Qt.exp
-         suixinbo_Qt.vcxproj -> C:\Users\Administrator\Desktop\iLiveSDK\sample\bin\Debug\suixinbo_Qt.exe
-       Manifest:
-         C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\mt.exe /nologo /verbose /outputresource:"C:\Users\Administrator\Desktop\iLiveSDK\sample\bin\Debug\\suixinbo_Qt.exe;#1" /manifest Debug\suixinbo_Qt.exe.intermediate.manifest
-       FinalizeBuildStatus:
-         正在删除文件“Debug\suixinbo_Qt.unsuccessfulbuild”。
-         正在对“Debug\suixinbo_Qt.lastbuildstate”执行 Touch 任务。
-     1>已完成生成项目“C:\Users\Administrator\Desktop\iLiveSDK\sample\suixinbo_Qt\suixinbo_Qt.vcxproj”(build 个目标)的操作。
+﻿Build started 2017/1/16 16:34:55.
+     1>Project "D:\rdm\projects\33684\iLiveSDK_pub\sample\suixinbo_Qt\suixinbo_Qt.vcxproj" on node 2 (clean target(s)).
+     1>_PrepareForClean:
+         Deleting file "Debug\suixinbo_Qt.lastbuildstate".
+     1>Done Building Project "D:\rdm\projects\33684\iLiveSDK_pub\sample\suixinbo_Qt\suixinbo_Qt.vcxproj" (clean target(s)).
 
-生成成功。
+Build succeeded.
 
-已用时间 00:00:04.20
+Time Elapsed 00:00:00.02

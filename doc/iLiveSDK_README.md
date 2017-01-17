@@ -3,14 +3,14 @@
 
 # iLiveSDK集成和使用
 ## 项目配置
-1. 将iLiveSDK文件夹复制到解决方案文件(.sln文件)所在的目录;
-2. 添加include目录:
+- 将iLiveSDK文件夹复制到解决方案文件(.sln文件)所在的目录;
+- 添加include目录:
 	在项目的附加包含目录中添加include目录, $(SolutionDir)iLiveSDK\include,如下图,<br/>
 ![](http://mc.qcloudimg.com/static/img/3ab82b780f87b8749813f028a904ea0e/image.png)
-3. 添加库目录:
+- 添加库目录:
 	在项目的附加库目录中添加lib文件所在目录,$(SolutionDir)iLiveSDK\libs\$(Configuration),如下图,<br/>
 ![](http://mc.qcloudimg.com/static/img/0fbd938dbbf189c40e195cb60689baf4/image.png)
-4. 包含头文件:
+- 包含头文件:
 	在项目中包含头文件(通常是预编译头中),并使用相关命名空间，加载动态库的lib文件,diamante如下，
 
 ```C++
@@ -21,10 +21,10 @@
 	using namespace ilivesdk;
 ```
 
-5. 拷贝dll文件到exe所在目录:
+- 拷贝dll文件到exe所在目录:
 	将libs\Debug目录下的所有dll文件复制到项目的Debug版本运行目录下，libs\Release目录下的所有dll文件复制到项目的Release版本运行目录下;
 
-6. 验证是否配置成功:
+- 验证是否配置成功:
 	调用iLiveSDK::getInstance()->getVersion(),输出返回值，查看当前iLiveSDK的版本号;
 
 ## 基本接口调用示例

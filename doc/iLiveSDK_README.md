@@ -109,3 +109,5 @@
 	iLiveSDK::getInstance()->joinRoom( roomOption, OniLiveJoinRoomSuc, OniLiveJoinRoomErr, NULL );
 ```
 
+### API文档:
+	[API文档下载](https://github.com/zhaoyang21cn/iLiveSDK_PC_Demos/raw/master/doc/ILiveSDK.chm)

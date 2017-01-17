@@ -19,7 +19,8 @@
 	using namespace tencent::av;
 	using namespace ilivesdk;
 ```
-5. 拷贝dll文件到exe所在目录：
+
+5. 拷贝dll文件到exe所在目录:
  将libs\Debug目录下的所有dll文件复制到项目的Debug版本运行目录下，libs\Release目录下的所有dll文件复制到项目的Release版本运行目录下;
 6. 验证是否配置成功,调用iLiveSDK::getInstance()->getVersion(),输出返回值，查看当前iLiveSDK的版本号;
 

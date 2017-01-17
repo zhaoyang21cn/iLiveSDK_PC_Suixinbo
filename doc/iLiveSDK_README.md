@@ -28,8 +28,20 @@
 	调用iLiveSDK::getInstance()->getVersion(),输出返回值，查看当前iLiveSDK的版本号;
 
 ## 基本接口调用示例
+### 设置基本回调函数
+```c++
+	void :OnLocalVideo( VideoFrame* video_frame, void* custom_data )
+	{
+	}
+	void OnRemoteVideo( VideoFrame* video_frame, void* custom_data )
+	{
+	}	
+	iLiveSDK::getInstance()->SetMessageCallBack(&messageCallBack); //收到IM消息的回调;
+	iLiveSDK::getInstance()->setLocalVideoCallBack(OnLocalVideo, NULL); //设置本地视频的回调函数;
+	iLiveSDK::getInstance()->setRemoteVideoCallBack(OnRemoteVideo, NULL); //设置远程视频的回调函数;
+```
 ### 初始化
-```C++
+```c++
 	int nRet = iLiveSDK::getInstance()->initSdk(appid, AccountType);
 	if (nRet != ilivesdk::NO_ERR)
 	{
@@ -37,7 +49,7 @@
 	}
 ```
 ### 登录
-```C++
+```c++
 	void OniLiveLoginSuccess( void* data )
 	{
 		//登录成功
@@ -48,4 +60,15 @@
 	}
 	iLiveSDK::getInstance()->LiveLogin(userId, userSig, OniLiveLoginSuccess, OniLiveLoginError, NULL);
 ```
+### 创建房间(主播)
+```c++
 
+```
+### 加入房间(观众)
+```c++
+
+```
+### 渲染视图
+```c++
+
+```

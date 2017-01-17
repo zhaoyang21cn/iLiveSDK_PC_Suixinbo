@@ -21,10 +21,10 @@
 	using namespace ilivesdk;
 ```
 
-- 拷贝dll文件到exe所在目录:
+- 拷贝dll文件到exe所在目录:<br/>
 	将libs\Debug目录下的所有dll文件复制到项目的Debug版本运行目录下，libs\Release目录下的所有dll文件复制到项目的Release版本运行目录下;
 
-- 验证是否配置成功:
+- 验证是否配置成功:<br/>
 	调用iLiveSDK::getInstance()->getVersion(),输出返回值，查看当前iLiveSDK的版本号;
 
 ## 基本接口调用示例

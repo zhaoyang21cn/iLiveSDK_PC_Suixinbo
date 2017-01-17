@@ -9,12 +9,16 @@
 ## 随心播编译
 
 ### QT环境安装
-  PC版本的随心播使用的是QT做界面库开发的，所以需要先安装Qt 5.0.0,方可编译运行；
-- 下载Qt5.0.0及vs2010中的Qt开发插件:<br/>
-可以去Qt的官网下载，也可以直接[点击这里](#)下载;
-- 安装Qt5.0.0:<br/>
-- 安装vs2010的Qt开发插件:<br/>
+PC版本的随心播使用的是QT做界面库开发的，所以需要先安装Qt 5.0.0,方可编译运行；可以去Qt的官网下载，也可以[点击这里下载](http://dldir1.qq.com/hudongzhibo/git/Qt/Qt_5.0.0.zip);下载解压后，文件目录如下，<br/>
+![](QtDir)<br/>
+先安装Qt5.0.0，再安装vs2010的Qt开发插件;安装完成后，重启VS2010，即可在vs的菜单栏中看到Qt菜单,如下图,<br/>
+![](QtMenu)<br/>
+此时,在Qt-->Qt Option菜单中可以查看本机已经安装的Qt版本，如下图![](Qtversion)<br/>
+如果没有任何可用版本，点击add添加前面安装的Qt目录即可;至此，Qt安装完成;
 
 ### 随心播项目编译
-- 打开项目:<br/>
-- 随心播编译:<bt/>
+使用vs2010打开suixinbo\sample目录下的suixinbo.sln,将suixinbo_Qt设为启动项目;Ctrl+F5编译执行随心播;如果出现以下错误,<br/>
+![](noVersion)<br/>
+解决方法如下,<br>
+suixinbo_Qt项目上右键-->Qt Project Settings-->Version-->选择本机上安装的Qt5.0.0版本,如下图,<bt/>
+![](version)

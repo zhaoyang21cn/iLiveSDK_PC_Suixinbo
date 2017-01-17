@@ -11,7 +11,7 @@
 	在项目的附加库目录中添加lib文件所在目录,$(SolutionDir)iLiveSDK\libs\$(Configuration),如下图,<br/>
 ![](http://mc.qcloudimg.com/static/img/0fbd938dbbf189c40e195cb60689baf4/image.png)
 - 包含头文件:<br/>
-	在项目中包含头文件(通常是预编译头中),并使用相关命名空间，加载动态库的lib文件,diamante如下，
+	在项目中包含头文件(通常是预编译头中),并使用相关命名空间，加载动态库的lib文件,代码如下，
 
 ```C++
 	#include <ilivesdk/ilivesdk.h>

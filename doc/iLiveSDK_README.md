@@ -1,1 +1,28 @@
-###  持续更新中...
+﻿
+简介：iLiveSDK(全称:Interactive Live SDK)整合了互动直播SDK(AVSDK)、即时通讯SDK(IMSDK)两大模块，致力于提供一套完整的音视频即时通讯解决方案，打造跨平台一对多，多对多的酷炫直播场景。iLiveSDK旨在无限可能的降低用户接入成本，从用户角度考虑问题，全方位考虑用户接入体验，并提供接入服务专业定向支持，为用户应用上线保驾护航，本文档目的在于帮助用户快速接入使用iLiveSDK，达到主播端画面本地渲染，观众端可进入房间观看主播端画面的效果。
+
+# iLiveSDK集成和使用
+## 项目配置
+1. 将iLiveSDK文件夹复制到解决方案文件(.sln文件)所在的目录;
+2. 添加include目录:
+	在项目的附加包含目录中添加include目录, $(SolutionDir)iLiveSDK\include,如下图,
+ ![](include)
+3. 添加库目录:
+ 在项目的附加库目录中添加lib文件所在目录,$(SolutionDir)iLiveSDK\libs\$(Configuration),如下图,
+ ![](libs)
+4. 包含头文件:
+ 在项目中包含头文件(通常是预编译头中),并使用相关命名空间，加载动态库的lib文件,diamante如下，
+```C++
+#include <ilivesdk/ilivesdk.h>
+#pragma comment(lib, "ilivesdk.lib")
+using namespace imcore;
+using namespace tencent::av;
+using namespace ilivesdk;
+```
+5. 拷贝dll文件到exe所在目录：
+ 将libs\Debug目录下的所有dll文件复制到项目的Debug版本运行目录下，libs\Release目录下的所有dll文件复制到项目的Release版本运行目录下;
+6. 编译运行程序
+## 验证配置是否成功
+调用iLiveSDK::getInstance()->getVersion(),输出返回值，查看当前iLiveSDK的版本号;
+
+

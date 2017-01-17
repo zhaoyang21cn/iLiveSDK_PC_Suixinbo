@@ -4,13 +4,13 @@
 # iLiveSDK集成和使用
 ## 项目配置
 - 将iLiveSDK文件夹复制到解决方案文件(.sln文件)所在的目录;
-- 添加include目录:
+- 添加include目录:<br/>
 	在项目的附加包含目录中添加include目录, $(SolutionDir)iLiveSDK\include,如下图,<br/>
 ![](http://mc.qcloudimg.com/static/img/3ab82b780f87b8749813f028a904ea0e/image.png)
-- 添加库目录:
+- 添加库目录:<br/>
 	在项目的附加库目录中添加lib文件所在目录,$(SolutionDir)iLiveSDK\libs\$(Configuration),如下图,<br/>
 ![](http://mc.qcloudimg.com/static/img/0fbd938dbbf189c40e195cb60689baf4/image.png)
-- 包含头文件:
+- 包含头文件:<br/>
 	在项目中包含头文件(通常是预编译头中),并使用相关命名空间，加载动态库的lib文件,diamante如下，
 
 ```C++
@@ -109,5 +109,5 @@
 	iLiveSDK::getInstance()->joinRoom( roomOption, OniLiveJoinRoomSuc, OniLiveJoinRoomErr, NULL );
 ```
 
-### API文档:
-	[API文档下载](https://github.com/zhaoyang21cn/iLiveSDK_PC_Demos/raw/master/doc/ILiveSDK.chm)
+### [API文档](https://github.com/zhaoyang21cn/iLiveSDK_PC_Demos/blob/master/doc/ILiveSDK.chm)
+

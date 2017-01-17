@@ -32,10 +32,12 @@
 ```c++
 	void :OnLocalVideo( VideoFrame* video_frame, void* custom_data )
 	{
+		//video_frame是本地画面每一帧的数据,用户需要显示本地画面时，在此回调函数中做渲染，渲染代码可参考随心播;
 	}
 	void OnRemoteVideo( VideoFrame* video_frame, void* custom_data )
 	{
-	}	
+		//video_frame是远程画面每一帧的数据,用户需要显示远程画面时，在此回调函数中做渲染，渲染代码可参考随心播;
+	}
 	iLiveSDK::getInstance()->SetMessageCallBack(&messageCallBack); //收到IM消息的回调;
 	iLiveSDK::getInstance()->setLocalVideoCallBack(OnLocalVideo, NULL); //设置本地视频的回调函数;
 	iLiveSDK::getInstance()->setRemoteVideoCallBack(OnRemoteVideo, NULL); //设置远程视频的回调函数;

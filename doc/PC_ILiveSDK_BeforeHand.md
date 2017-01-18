@@ -18,7 +18,30 @@ suixinbo_run.zip为已经编译好的可执行包，解压后，直接双击suix
 * ![](img3)
 
 ## 四 集成到开发者自己的代码工程里
+- 将iLiveSDK文件夹复制到解决方案文件(.sln文件)所在的目录;
+- 添加include目录:<br/>
+	在项目的附加包含目录中添加include目录, $(SolutionDir)iLiveSDK\include,如下图,<br/>
+![](http://mc.qcloudimg.com/static/img/3ab82b780f87b8749813f028a904ea0e/image.png)
+- 添加库目录:<br/>
+	在项目的附加库目录中添加lib文件所在目录,$(SolutionDir)iLiveSDK\libs\$(Configuration),如下图,<br/>
+![](http://mc.qcloudimg.com/static/img/0fbd938dbbf189c40e195cb60689baf4/image.png)
+- 包含头文件:<br/>
+	在项目中包含头文件(通常是预编译头中),并使用相关命名空间，加载动态库的lib文件,代码如下，
 
+```C++
+	#include <ilivesdk/ilivesdk.h>
+	#pragma comment(lib, "ilivesdk.lib")
+	using namespace imcore;
+	using namespace tencent::av;
+	using namespace ilivesdk;
+```
+
+- 拷贝dll文件到exe所在目录:<br/>
+	将libs\Debug目录下的所有dll文件复制到项目的Debug版本运行目录下，libs\Release目录下的所有dll文件复制到项目的Release版本运行目录下;
+
+- 验证是否配置成功:<br/>
+	调用iLiveSDK::getInstance()->getVersion(),输出返回值，查看当前iLiveSDK的版本号;
+  
 ## 五 库类介绍
 
 

@@ -13,8 +13,10 @@
 
 ## 三 运行
 suixinbo_run.zip为已经编译好的可执行包，解压后，直接双击suixinbo_Qt.exe即可运行;如果用户需要自己编译，需要按照上面第二步所示先安装vs2010及Qt环境;
-* ![直播列表](https://mc.qcloudimg.com/static/img/170ae5e7bbaf52943c975a8ad79b2fdd/2.png)
-* ![直播房间](https://mc.qcloudimg.com/static/img/170071f70b13d09af4acd323df351420/3.png)
+* 直播房间列表<br/>
+![直播列表](https://mc.qcloudimg.com/static/img/170ae5e7bbaf52943c975a8ad79b2fdd/2.png)
+* 直播界面<br/>
+![直播房间](https://mc.qcloudimg.com/static/img/170071f70b13d09af4acd323df351420/3.png)
 
 ## 四 集成到开发者自己的代码工程里
 - 将iLiveSDK文件夹复制到解决方案文件(.sln文件)所在的目录;

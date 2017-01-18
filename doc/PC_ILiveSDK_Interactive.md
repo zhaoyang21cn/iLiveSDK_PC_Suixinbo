@@ -110,7 +110,7 @@ void OnNewMessage(const std::vector<TIMMessage> &msgs)
 ### 3.2 主播断开连麦观众:
 
 ### 3.3 接口
-iLiveSDK未对上麦进行封装，用户可以参考随心播的sendC2CCustomCmd()和sendGroupCustomCmd()函数，发送自定义消息作为邀请上麦和接受邀请的信令;观众上麦和下麦，需要切换用户角色和修改用户权限;
+iLiveSDK未对上/下麦进行封装，用户可以参考随心播的sendC2CCustomCmd()和sendGroupCustomCmd()函数，发送自定义消息作为邀请上麦和接受邀请的信令;观众上麦和下麦，需要切换用户角色和修改用户权限;
 
 - 切换角色
 

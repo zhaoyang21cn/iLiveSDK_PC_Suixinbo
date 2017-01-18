@@ -16,9 +16,9 @@
 
 * 示例：
 ```c++
-	int nRet = iLiveSDK::getInstance()->initSdk(appid, AccountType);
-	if (nRet != ilivesdk::NO_ERR)
-	{
-		//初始化失败
-	}
+int nRet = iLiveSDK::getInstance()->initSdk(appid, AccountType);
+if (nRet != ilivesdk::NO_ERR)
+{
+	//初始化失败
+}
 ```

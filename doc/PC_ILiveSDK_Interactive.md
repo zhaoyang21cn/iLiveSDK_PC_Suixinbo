@@ -65,3 +65,47 @@ textElem.set_content( text );
 message.AddElem(&textElem);
 iLiveSDK::getInstance()->sendGroupMessage(  message, OnSendGroupMsgSuc, OnSendGroupMsgErr, NULL );
 ```
+## 2 解析消息
+- 初始化时，设置接收消息的回调函数:
+```c++
+class MessageCallBack : public imcore::TIMMessageCallBack
+{
+public:
+	virtual void OnNewMessage(const std::vector<TIMMessage> &msgs)
+  {
+    //在这里解析收到的消息
+  }
+};
+MessageCallBack m_messageCallBack;
+iLiveSDK::getInstance()->SetMessageCallBack(&m_messageCallBack);
+```
+- 解析收到消息:
+```c++
+void OnNewMessage(const std::vector<TIMMessage> &msgs)
+{
+  int nCount = msg.GetElemCount();
+  for (int i = 0; i < nCount; ++i)
+  {
+    imcore::TIMElem* pElem = msg.GetElem(i);
+    switch( pElem->type() )
+    {
+      case kElemText://文本消息
+      {
+        std::string textMsg = pElem->GetTextElem()->content();
+      }
+      case kElemCustom://自定义消息
+      {
+        std::string Date = pElem->GetCustomElem()->data();
+      }
+      //其他消息类型...
+    }
+  }
+}
+```
+
+## 3 上麦
+
+### 3.1 主播邀请上麦:
+### 3.2 主播断开连麦观众:
+
+

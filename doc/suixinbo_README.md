@@ -9,9 +9,9 @@
 ## 随心播编译
 
 ### 编译环境
-VS版本: vs2010
-Qt版本: 5.0.0
-OS版本：windows 7
+VS版本: vs2010<br/>
+Qt版本: 5.0.0<br/>
+OS版本：windows 7<br/>
 
 ### QT环境安装
 PC版本的随心播使用的是QT做界面库开发的，所以需要先安装Qt 5.0.0,方可编译运行；可以去Qt的官网下载，也可以[点击这里下载](http://dldir1.qq.com/hudongzhibo/git/Qt/Qt_5.0.0.zip);下载解压后，文件目录如下，<br/>

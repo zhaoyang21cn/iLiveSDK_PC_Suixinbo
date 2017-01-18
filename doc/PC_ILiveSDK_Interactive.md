@@ -106,9 +106,11 @@ void OnNewMessage(const std::vector<TIMMessage> &msgs)
 ## 3 上麦
 
 ### 3.1 主播邀请上麦流程:
-![]()<br/>
+![邀请上麦](https://mc.qcloudimg.com/static/img/fba65e3aea7b724de6a378589ce5ea55/image.png)<br/>
+
 ### 3.2 主播断开连麦观众流程:
-![]()<br/>
+![断开连麦](https://mc.qcloudimg.com/static/img/c0f507d28e9fb94d21aa6d441ba49623/image.png)<br/>
+
 ### 3.3 接口
 iLiveSDK未对上/下麦进行封装，用户可以参考随心播的sendC2CCustomCmd()和sendGroupCustomCmd()函数，发送自定义消息作为邀请上麦和接受邀请的信令;观众上麦和下麦，需要切换用户角色和修改用户权限;
 

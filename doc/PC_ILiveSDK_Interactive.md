@@ -122,11 +122,43 @@ iLiveSDK未对上麦进行封装，用户可以参考随心播的sendC2CCustomCm
 |string|szControlRole|角色字符串(由用户App的控制台配置)|
 |SuccessCalllback|suc|成功的回调函数|
 |ErrorCallback|err|失败的回调函数|
-|void** |data | 用户自定义数据的指针，在成功和失败的回调函数中原封不动地返回|
+|void* |data | 用户自定义数据的指针，在成功和失败的回调函数中原封不动地返回|
 
 示例:
 ```c++
+void OnChangeRoleSuc( void* data )
+{
+	//切换角色成功
+}
+void OnChangeRoleErr( int code, const std::string& desc, void* data )
+{
+	//切换角色失败
+}
+iLiveSDK::getInstance()->changeRole(Role, OnChangeRoleSuc, OnChangeRoleErr, NULL);
 ```
 
 - 修改权限
+|接口名|接口描述|
+|---|---|
+|iLiveChangeAuthority|修改权限|
 
+|参数类型|参数名|说明|
+|---|---|---|
+|uint64|authBits|通话能力权限位|
+|string|authBuffer|通话能力权限位的加密串|
+|SuccessCalllback|suc|成功的回调函数|
+|ErrorCallback|err|失败的回调函数|
+|void* |data | 用户自定义数据的指针，在成功和失败的回调函数中原封不动地返回|
+
+示例:
+```c++
+void Live::OnChangeAuthoritySuc( void* data )
+{
+	//修改权限成功
+}
+void Live::OnChangeAuthorityErr( int code, const std::string& desc, void* data )
+{
+	//修改权限失败
+}
+iLiveSDK::getInstance()->changeAuthority(authBits, authBuffer, OnChangeAuthoritySuc, OnChangeAuthorityErr, NULL);
+```

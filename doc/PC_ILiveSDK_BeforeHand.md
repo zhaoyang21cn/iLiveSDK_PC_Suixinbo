@@ -12,15 +12,11 @@
 如果没有任何可用版本，点击add添加前面安装的Qt目录即可;至此，Qt安装完成;
 
 ## 三 运行
-suixinbo_run.zip为已经编译好的可执行包，解压后，直接双击suixinbo_Qt.exe即可运行;如果用户需要自己编译，需要按照上面第二步所示先安装vs2010及Qt环境;编译中若出现以下错误,<br/>
-![](http://mc.qcloudimg.com/static/img/c26848a45381ec52be2f119651dfedd0/image.png)<br/>
-解决方法如下,<br>
-suixinbo_Qt项目上右键-->Qt Project Settings-->Version-->选择本机上安装的Qt5.0.0版本,如下图,<br/>
-![](http://mc.qcloudimg.com/static/img/b4a713a90cf513f0173c5bc556a1a09c/image.png)<br/>
+suixinbo_run.zip为已经编译好的可执行包，解压后，直接双击suixinbo_Qt.exe即可运行;如果用户需要自己编译，需要按照上面第二步所示先安装vs2010及Qt环境;
 
 * <div align=center>
-<img src="https://mc.qcloudimg.com/static/img/1be6185cdb0f61756c85e230a9fc0514/2.png"/>
-</div>
+  <img src="https://mc.qcloudimg.com/static/img/1be6185cdb0f61756c85e230a9fc0514/2.png"/>
+  </div>
 * ![](https://mc.qcloudimg.com/static/img/ccf7ca496a22ec0aed9d4446f30ba85f/1.png)
 
 ## 四 集成到开发者自己的代码工程里

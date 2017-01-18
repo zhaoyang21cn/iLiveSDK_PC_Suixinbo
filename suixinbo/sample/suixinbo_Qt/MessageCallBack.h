@@ -6,6 +6,8 @@
 #define ILVLIVE_IMCMD_CUSTOM_LOW_LIMIT 0x800
 #define ILVLIVE_IMCMD_CUSTOM_UP_LIMIT 0x900
 
+#define LiveNoti "LiveNotification" //自定义信令标记
+
 enum E_CustomCmd
 {
 	AVIMCMD_None,               // 无事件：0
@@ -23,6 +25,9 @@ enum E_CustomCmd
 	AVIMCMD_Multi_Interact_Join,        // 多人互动方收到AVIMCMD_Multi_Host_Invite多人邀请后，同意，C2C消息 ： 2051
 	AVIMCMD_Multi_Interact_Refuse,      // 多人互动方收到AVIMCMD_Multi_Invite多人邀请后，拒绝，C2C消息 ： 2052
 };
+
+void sendC2CCustomCmd( QString dstUser, E_CustomCmd userAction, QString actionParam, SuccessCalllback suc = NULL, ErrorCallback err = NULL, void* data = NULL );
+void sendGroupCustomCmd( E_CustomCmd userAction, QString actionParam, SuccessCalllback suc = NULL, ErrorCallback err = NULL, void* data = NULL );
 
 class MessageCallBack : public imcore::TIMMessageCallBack
 {

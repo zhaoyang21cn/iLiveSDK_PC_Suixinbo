@@ -101,15 +101,5 @@ void RoomListItem::OniLiveJoinRoomErr( int code, const std::string& desc, void* 
 
 void RoomListItem::sendWatcherJoinRoom()
 {
-	QVariantMap varmap;
-	varmap.insert( "userAction", (int)AVIMCMD_EnterLive );
-	varmap.insert( "actionParam", g_pMainWindow->getUserId() );
-	QJsonDocument doc;
-	doc.setObject( QJsonObject::fromVariantMap(varmap) );
-
-	TIMMessage message;
-	imcore::TIMCustomElem cusElem;
-	cusElem.set_data( QString( doc.toJson() ).toStdString() );
-	message.AddElem(&cusElem);
-	LiveSDK::getInstance()->sendGroupMessage( message, NULL, NULL, NULL );
+	sendGroupCustomCmd( AVIMCMD_EnterLive, g_pMainWindow->getUserId() );
 }

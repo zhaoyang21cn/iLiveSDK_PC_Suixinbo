@@ -250,8 +250,12 @@ void Live::dealMessage( const TIMMessage& msg )
 			}
 		case kElemCustom:
 			{
-				std::string szDate = pElem->GetCustomElem()->data();
-				parseCusMessage(szSender, szDate);
+				std::string szExt = pElem->GetCustomElem()->ext();
+				//if (szExt==LiveNoti) //当前版本暂不启用此信令标记,待三个平台一起启用
+				{
+					std::string szDate = pElem->GetCustomElem()->data();
+					parseCusMessage(szSender, szDate);
+				}
 				break;
 			}
 		case kElemImage:
@@ -724,18 +728,7 @@ void Live::OnBtnStopPushStream()
 
 void Live::OnBtnPraise()
 {
-	QVariantMap varmap;
-	varmap.insert( "userAction", (int)AVIMCMD_Praise );
-	varmap.insert( "actionParam", g_pMainWindow->getUserId() );
-	QJsonDocument doc;
-	doc.setObject( QJsonObject::fromVariantMap(varmap) );
-
-	TIMMessage message;
-	imcore::TIMCustomElem cusElem;
-	cusElem.set_data( QString( doc.toJson() ).toStdString() );
-	message.AddElem(&cusElem);
-	LiveSDK::getInstance()->sendGroupMessage( message, NULL, NULL, NULL );
-
+	sendGroupCustomCmd( AVIMCMD_Praise, g_pMainWindow->getUserId() );
 	addMsgLab( g_pMainWindow->getUserId()+FromBits("点赞") );
 }
 
@@ -906,34 +899,12 @@ void Live::updateMemberList()
 
 void Live::sendInviteInteract()
 {
-	QVariantMap varmap;
-	varmap.insert("userAction", (int)AVIMCMD_Multi_Host_Invite);
-	varmap.insert("actionParam","");
-	QJsonDocument doc;
-	doc.setObject( QJsonObject::fromVariantMap(varmap) );
-
-	TIMMessage message;
-	imcore::TIMCustomElem cusElem;
-	//cusElem.set_ext("LiveNotification");
-	cusElem.set_data( QString( doc.toJson() ).toStdString() );
-	message.AddElem(&cusElem);
-	std::string szInviteId = m_roomMemberList[m_nCurSelectedMember].szID.toStdString();
-	LiveSDK::getInstance()->sendC2CMessage( szInviteId, message, OnSendInviteInteractSuc, OnSendInviteInteractErr, this );
+	sendC2CCustomCmd( m_roomMemberList[m_nCurSelectedMember].szID, AVIMCMD_Multi_Host_Invite, "", OnSendInviteInteractSuc, OnSendInviteInteractErr, this );
 }
 
 void Live::sendCancelInteract()
 {
-	QVariantMap varmap;
-	varmap.insert( "userAction", (int)AVIMCMD_Multi_CancelInteract );
-	varmap.insert( "actionParam", m_roomMemberList[m_nCurSelectedMember].szID );
-	QJsonDocument doc;
-	doc.setObject( QJsonObject::fromVariantMap(varmap) );
-
-	TIMMessage message;
-	imcore::TIMCustomElem cusElem;
-	cusElem.set_data( QString( doc.toJson() ).toStdString() );
-	message.AddElem(&cusElem);
-	LiveSDK::getInstance()->sendGroupMessage( message, NULL, NULL, NULL );
+	sendGroupCustomCmd( AVIMCMD_Multi_CancelInteract, m_roomMemberList[m_nCurSelectedMember].szID );
 }
 
 void Live::OnSendInviteInteractSuc(void* data)
@@ -955,17 +926,7 @@ void Live::acceptInteract()
 void Live::refuseInteract()
 {
 	//通知主播拒绝连麦
-	QVariantMap varmap;
-	varmap.insert("userAction", (int)AVIMCMD_Multi_Interact_Refuse);
-	varmap.insert("actionParam", g_pMainWindow->getUserId());
-	QJsonDocument doc;
-	doc.setObject( QJsonObject::fromVariantMap(varmap) );
-
-	TIMMessage message;
-	imcore::TIMCustomElem cusElem;
-	cusElem.set_data( QString( doc.toJson() ).toStdString() );
-	message.AddElem(&cusElem);
-	LiveSDK::getInstance()->sendC2CMessage( g_pMainWindow->getCurRoomInfo().szId.toStdString(), message, NULL, NULL, NULL );
+	sendC2CCustomCmd( g_pMainWindow->getCurRoomInfo().szId, AVIMCMD_Multi_Interact_Refuse, g_pMainWindow->getUserId() );
 }
 
 void Live::OnAcceptInteract()
@@ -978,17 +939,7 @@ void Live::OnAcceptInteract()
 	sxbHeartBeat();
 	sxbRoomIdList();
 	//接受连麦后，通知主播
-	QVariantMap varmap;
-	varmap.insert("userAction", (int)AVIMCMD_Multi_Interact_Join);
-	varmap.insert("actionParam", g_pMainWindow->getUserId());
-	QJsonDocument doc;
-	doc.setObject( QJsonObject::fromVariantMap(varmap) );
-
-	TIMMessage message;
-	imcore::TIMCustomElem cusElem;
-	cusElem.set_data( QString( doc.toJson() ).toStdString() );
-	message.AddElem(&cusElem);
-	LiveSDK::getInstance()->sendC2CMessage( g_pMainWindow->getCurRoomInfo().szId.toStdString(), message, NULL, NULL, NULL );
+	sendC2CCustomCmd( g_pMainWindow->getCurRoomInfo().szId, AVIMCMD_Multi_Interact_Join, g_pMainWindow->getUserId() );
 }
 
 void Live::exitInteract()
@@ -1020,17 +971,7 @@ void Live::OnExitInteract()
 
 void Live::sendQuitRoom()
 {
-	QVariantMap varmap;
-	varmap.insert( "userAction", (int)AVIMCMD_ExitLive );
-	varmap.insert( "actionParam", g_pMainWindow->getUserId() );
-	QJsonDocument doc;
-	doc.setObject( QJsonObject::fromVariantMap(varmap) );
-
-	TIMMessage message;
-	imcore::TIMCustomElem cusElem;
-	cusElem.set_data( QString( doc.toJson() ).toStdString() );
-	message.AddElem(&cusElem);
-	LiveSDK::getInstance()->sendGroupMessage( message, NULL, NULL, NULL );
+	sendGroupCustomCmd( AVIMCMD_ExitLive, g_pMainWindow->getUserId() );
 }
 
 void Live::sxbCreatorQuitRoom()

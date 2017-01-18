@@ -42,6 +42,5 @@ suixinbo_run.zip为已经编译好的可执行包，解压后，直接双击suix
 - 验证是否配置成功:<br/>
 	调用iLiveSDK::getInstance()->getVersion(),输出返回值，查看当前iLiveSDK的版本号;
   
-## 五 库类介绍
-
-
+	
+	

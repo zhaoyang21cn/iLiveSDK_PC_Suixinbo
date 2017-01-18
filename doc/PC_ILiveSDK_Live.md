@@ -7,17 +7,17 @@
 
 * 示例:
 ```c++
-	void :OnLocalVideo( VideoFrame* video_frame, void* custom_data )
-	{
-		//video_frame是本地画面每一帧的数据,用户需要显示本地画面时，在此回调函数中做渲染，渲染代码可参考随心播;
-	}
-	void OnRemoteVideo( VideoFrame* video_frame, void* custom_data )
-	{
-		//video_frame是远程画面每一帧的数据,用户需要显示远程画面时，在此回调函数中做渲染，渲染代码可参考随心播;
-	}
-	iLiveSDK::getInstance()->SetMessageCallBack(&messageCallBack); //收到IM消息的回调;
-	iLiveSDK::getInstance()->setLocalVideoCallBack(OnLocalVideo, NULL); //设置本地视频的回调函数;
-	iLiveSDK::getInstance()->setRemoteVideoCallBack(OnRemoteVideo, NULL); //设置远程视频的回调函数;
+void :OnLocalVideo( VideoFrame* video_frame, void* custom_data )
+{
+	//video_frame是本地画面每一帧的数据,用户需要显示本地画面时，在此回调函数中做渲染，渲染代码可参考随心播;
+}
+void OnRemoteVideo( VideoFrame* video_frame, void* custom_data )
+{
+	//video_frame是远程画面每一帧的数据,用户需要显示远程画面时，在此回调函数中做渲染，渲染代码可参考随心播;
+}
+iLiveSDK::getInstance()->SetMessageCallBack(&messageCallBack); //收到IM消息的回调;
+iLiveSDK::getInstance()->setLocalVideoCallBack(OnLocalVideo, NULL); //设置本地视频的回调函数;
+iLiveSDK::getInstance()->setRemoteVideoCallBack(OnRemoteVideo, NULL); //设置远程视频的回调函数;
 ```
 
 # 2 初始化iLiveSDK
@@ -121,25 +121,25 @@ iLiveSDK::getInstance()->createRoom( roomOption, OniLiveCreateRoomSuc, OniLiveCr
 
 * 示例：
 ```c++
-	void OniLiveJoinRoomSuc( void* data )
-	{
-		//加入房间成功
-	}
-	void OniLiveJoinRoomErr( int code, const std::string& desc, void* data )
-	{
-		//加入房间失败
-	}
-	
-	iLiveRoomOption roomOption;
-	roomOption.roomId = roomnum;//要加入的房间ID	
-	roomOption.auth_buffer = "";
-	roomOption.control_role = "";
-	roomOption.audio_category = AUDIO_CATEGORY_MEDIA_PLAY_AND_RECORD;//直播场景
-	roomOption.video_recv_mode = VIDEO_RECV_MODE_SEMI_AUTO_RECV_CAMERA_VIDEO; //半自动模式
-	roomOption.m_autoRecvListener = OnSemiAutoRecvCameraVideo;
-	roomOption.m_memberStatusListener = OnMemStatusChange;
-	roomOption.m_roomDisconnectListener = OnRoomDisconnect;
-	roomOption.data = NULL;
-	iLiveSDK::getInstance()->joinRoom( roomOption, OniLiveJoinRoomSuc, OniLiveJoinRoomErr, NULL );
+void OniLiveJoinRoomSuc( void* data )
+{
+	//加入房间成功
+}
+void OniLiveJoinRoomErr( int code, const std::string& desc, void* data )
+{
+	//加入房间失败
+}
+
+iLiveRoomOption roomOption;
+roomOption.roomId = roomnum;//要加入的房间ID	
+roomOption.auth_buffer = "";
+roomOption.control_role = "";
+roomOption.audio_category = AUDIO_CATEGORY_MEDIA_PLAY_AND_RECORD;//直播场景
+roomOption.video_recv_mode = VIDEO_RECV_MODE_SEMI_AUTO_RECV_CAMERA_VIDEO; //半自动模式
+roomOption.m_autoRecvListener = OnSemiAutoRecvCameraVideo;
+roomOption.m_memberStatusListener = OnMemStatusChange;
+roomOption.m_roomDisconnectListener = OnRoomDisconnect;
+roomOption.data = NULL;
+iLiveSDK::getInstance()->joinRoom( roomOption, OniLiveJoinRoomSuc, OniLiveJoinRoomErr, NULL );
 ```
 

@@ -2,3 +2,12 @@
 点击下载[PC Demo](https://github.com/zhaoyang21cn/iLiveSDK_PC_Demos)的代码。代码里包含一个示例：<br/>
 1. 随心播代码在suixinbo目录下。演示了包括界面和后台交互的完整的直播流程。
 
+## 二 安装Qt环境
+
+## 三 运行
+
+## 四 集成到开发者自己的代码工程里
+
+## 五 库类介绍
+
+

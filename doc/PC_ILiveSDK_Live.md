@@ -7,14 +7,14 @@
 
 |接口名|接口描述|
 |---|---|
-|iinitSdk |iLiveSDK内部初始化，告知AppId.|
+|initSdk|iLiveSDK内部初始化，告知appId.|
 
 |参数类型|参数名|说明|
 |---|---|---|
 |int|appId|传入业务方appid|
 |int|accountType|传入业务方 accountType|
 
-*示例：
+* 示例：
 ```c++
 	int nRet = iLiveSDK::getInstance()->initSdk(appid, AccountType);
 	if (nRet != ilivesdk::NO_ERR)

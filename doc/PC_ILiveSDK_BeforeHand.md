@@ -16,7 +16,12 @@ suixinbo_run.zip为已经编译好的可执行包，解压后，直接双击suix
 ![](http://mc.qcloudimg.com/static/img/c26848a45381ec52be2f119651dfedd0/image.png)<br/>
 解决方法如下,<br>
 suixinbo_Qt项目上右键-->Qt Project Settings-->Version-->选择本机上安装的Qt5.0.0版本,如下图,<br/>
-![](http://mc.qcloudimg.com/static/img/b4a713a90cf513f0173c5bc556a1a09c/image.png)
+![](http://mc.qcloudimg.com/static/img/b4a713a90cf513f0173c5bc556a1a09c/image.png)<br/>
+
+* <div align=center>
+<img src="https://mc.qcloudimg.com/static/img/1be6185cdb0f61756c85e230a9fc0514/2.png"/>
+</div>
+* ![](https://mc.qcloudimg.com/static/img/ccf7ca496a22ec0aed9d4446f30ba85f/1.png)
 
 ## 四 集成到开发者自己的代码工程里
 

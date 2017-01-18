@@ -113,6 +113,7 @@ void OnNewMessage(const std::vector<TIMMessage> &msgs)
 iLiveSDK未对上麦进行封装，用户可以参考随心播的sendC2CCustomCmd()和sendGroupCustomCmd()函数，发送自定义消息作为邀请上麦和接受邀请的信令;观众上麦和下麦，需要切换用户角色和修改用户权限;
 
 - 切换角色
+
 |接口名|接口描述|
 |---|---|
 |changeRole|更改角色|
@@ -138,6 +139,7 @@ iLiveSDK::getInstance()->changeRole(Role, OnChangeRoleSuc, OnChangeRoleErr, NULL
 ```
 
 - 修改权限
+
 |接口名|接口描述|
 |---|---|
 |iLiveChangeAuthority|修改权限|

@@ -19,7 +19,7 @@ suixinbo_run.zip为已经编译好的可执行包，解压后，直接双击suix
 ![直播房间](https://mc.qcloudimg.com/static/img/170071f70b13d09af4acd323df351420/3.png)
 
 ## 四 集成到开发者自己的代码工程里
-- 将iLiveSDK文件夹复制到解决方案文件(.sln文件)所在的目录;
+- 将上面步骤一下载的PC Demo中的iLiveSDK文件夹复制到解决方案文件(.sln文件)所在的目录;
 - 添加include目录:<br/>
 	在项目的附加包含目录中添加include目录, $(SolutionDir)iLiveSDK\include,如下图,<br/>
 ![](http://mc.qcloudimg.com/static/img/3ab82b780f87b8749813f028a904ea0e/image.png)

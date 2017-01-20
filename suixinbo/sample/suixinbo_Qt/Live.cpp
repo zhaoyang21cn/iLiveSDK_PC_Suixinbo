@@ -686,12 +686,12 @@ void Live::OnBtnSendGroupMsg()
 void Live::OnBtnStartRecord()
 {
 	bool bClickedOK;
-	QString inputName = QInputDialog::getText( this, FromBits("录制文件名"),FromBits("请输入录制文件名"), QLineEdit::Normal, "", &bClickedOK );
+	m_inputRecordName = QInputDialog::getText( this, FromBits("录制文件名"),FromBits("请输入录制文件名"), QLineEdit::Normal, "", &bClickedOK );
 	if (!bClickedOK)//用户点击了取消按钮
 	{
 		return;
 	}
-	if ( inputName.isEmpty() )
+	if ( m_inputRecordName.isEmpty() )
 	{
 		ShowErrorTips( FromBits("录制文件名不能为空"), this );
 		return;
@@ -700,7 +700,7 @@ void Live::OnBtnStartRecord()
 	QString fileName = "sxb_";
 	fileName += g_pMainWindow->getUserId();
 	fileName += "_";
-	fileName += inputName;
+	fileName += m_inputRecordName;
 	
 	m_recordOpt.filename = fileName.toStdString();
 	m_recordOpt.record_data_type = (ilivesdk::E_RecordDataType)m_ui.cbRecordDataType->itemData( m_ui.cbRecordDataType->currentIndex() ).value<int>();
@@ -1017,6 +1017,18 @@ void Live::sxbRoomIdList()
 	SxbServerHelper::request(varmap, "live", "roomidlist", OnSxbRoomIdList, this);
 }
 
+void Live::sxbReportrecord()
+{
+	QVariantMap varmap;
+	varmap.insert( "token", g_pMainWindow->getToken() );
+	varmap.insert( "roomnum", g_pMainWindow->getCurRoomInfo().info.roomnum );
+	varmap.insert( "uid", g_pMainWindow->getCurRoomInfo().szId );//主播名
+	varmap.insert( "name", m_inputRecordName );//用户输入的录制名
+	varmap.insert( "type", 0 );//预留字段，暂填0
+	varmap.insert( "cover", "" );//TODO PC随心播暂不支持直播封面上传,所以暂时上传为空，后续加上
+	SxbServerHelper::request(varmap, "live", "reportrecord", OnSxbReportrecord, this);
+}
+
 void Live::OnSxbCreatorQuitRoom( int errorCode, QString errorInfo, QVariantMap datamap, void* pCusData )
 {
 	Live* pLive = reinterpret_cast<Live*>(pCusData);
@@ -1090,6 +1102,17 @@ void Live::OnSxbRoomIdList( int errorCode, QString errorInfo, QVariantMap datama
 		}
 		pLive->updateMemberList();
 	}	
+}
+
+void Live::OnSxbReportrecord( int errorCode, QString errorInfo, QVariantMap datamap, void* pCusData )
+{
+	Live* pLive = reinterpret_cast<Live*>(pCusData);
+
+	if (errorCode!=E_SxbOK)
+	{
+		iLiveLog_e( "Suixinbo report record video failed: %d %s", errorCode, errorInfo.toStdString().c_str() );
+		return ;
+	}
 }
 
 void Live::iLiveQuitRoom()
@@ -1254,7 +1277,9 @@ void Live::OnStartRecordVideoErr( int code, const std::string& desc, void* data 
 
 void Live::OnStopRecordSuc( std::list<std::string>& value, void* data )
 {
+	Live* pLive = reinterpret_cast<Live*>(data);
 	postCusEvent( g_pMainWindow, new Event(E_CEStopRecordVideo, 0, "") );
+	pLive->sxbReportrecord();
 }
 
 void Live::OnStopRecordVideoErr( int code, const std::string& desc, void* data )

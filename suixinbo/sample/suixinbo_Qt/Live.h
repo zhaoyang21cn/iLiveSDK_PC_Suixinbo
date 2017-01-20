@@ -107,10 +107,12 @@ private:
 	void sxbWatcherOrJoinerQuitRoom();
 	void sxbHeartBeat();
 	void sxbRoomIdList();
+	void sxbReportrecord();
 	static void OnSxbCreatorQuitRoom(int errorCode, QString errorInfo, QVariantMap datamap, void* pCusData);
 	static void OnSxbWatcherOrJoinerQuitRoom(int errorCode, QString errorInfo, QVariantMap datamap, void* pCusData);
 	static void OnSxbHeartBeat(int errorCode, QString errorInfo, QVariantMap datamap, void* pCusData);
 	static void OnSxbRoomIdList(int errorCode, QString errorInfo, QVariantMap datamap, void* pCusData);
+	static void OnSxbReportrecord(int errorCode, QString errorInfo, QVariantMap datamap, void* pCusData);
 
 	void iLiveQuitRoom();
 	void iLiveChangeAuthority(uint64 authBits, const std::string& authBuffer);
@@ -164,6 +166,7 @@ private:
 	QMenu*			m_pMenuInviteInteract;
 	QMenu*			m_pMenuCancelInteract;
 
+	QString					m_inputRecordName;
 	iLiveRecordOption		m_recordOpt;
 	iLivePushOption			m_pushOpt;
 	uint64					m_channelId;

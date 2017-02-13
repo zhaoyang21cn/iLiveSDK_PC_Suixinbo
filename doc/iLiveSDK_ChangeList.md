@@ -9,8 +9,8 @@
 * 更新avsdk1.8.5;
 * 增加美白、美颜、屏幕分享过程中动态修改分享区域大小接口;
 * 接口变动:
-	(1) iLiveRoomOption.h: iLiveRoomDisconnectListener 函数指针添加errorinfo字段;
-	(2) iLiveRoomOption.h: iLiveRoomOption结构体添加字段screen_recv_mode;
-	(3) iLiveRoomMgr.h: requestViewList、cancelViewList、cancelAllView 接口返回值由int改为void;
-	(4)	iLiveRoomMgr.h: 增加changeScreenShareSize接口;
-	(5)	iLiveRoomMgr.h: openScreenShare接口参数改为引用方式;
+	(1) iLiveRoomOption.h: iLiveRoomDisconnectListener 函数指针添加errorinfo字段;<br/>
+	(2) iLiveRoomOption.h: iLiveRoomOption结构体添加字段screen_recv_mode;<br/>
+	(3) iLiveRoomMgr.h: requestViewList、cancelViewList、cancelAllView 接口返回值由int改为void;<br/>
+	(4)	iLiveRoomMgr.h: 增加changeScreenShareSize接口;<br/>
+	(5)	iLiveRoomMgr.h: openScreenShare接口参数改为引用方式;<br/>

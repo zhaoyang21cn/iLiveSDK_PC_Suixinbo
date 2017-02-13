@@ -22,6 +22,9 @@ using tencent::av::DetectedDeviceInfo;
 using tencent::av::AVSupportVideoPreview;
 using tencent::av::AVSupportVideoPreTreatment;
 using tencent::av::VideoFrame;
+using tencent::av::AVAudioCtrl;
+using tencent::av::AVVideoCtrl;
+using tencent::av::AVLocalScreenVideoDevice;
 
 namespace ilivesdk
 {
@@ -50,13 +53,16 @@ namespace ilivesdk
 		class AVRoomMultiDelegate : public AVRoomMulti::Delegate
 		{
 		public:
-			virtual void	OnEnterRoomComplete(int32 ret_code); //返回AVContext::EnterRoom()的异步操作结果的函数
-			virtual void	OnExitRoomComplete(); //退出房间完成回调
-			virtual void	OnRoomDisconnect(int32 reason); //SDK主动退出房间提示
-			virtual void	OnEndpointsUpdateInfo(AVRoomMulti::EndpointEventId event_id, std::vector<std::string> identifier_list); //房间成员状态变化通知的函数
+			virtual void	OnEnterRoomComplete(int32 result, const std::string& error_info) override; //返回AVContext::EnterRoom()的异步操作结果的函数
+			virtual void	OnExitRoomComplete() override; //退出房间完成回调
+			virtual void	OnRoomDisconnect(int32 reason, const std::string& error_info) override; //SDK主动退出房间提示
+			virtual void	OnEndpointsUpdateInfo(AVRoomMulti::EndpointEventId event_id, std::vector<std::string> identifier_list) override; //房间成员状态变化通知的函数
 			virtual void	OnPrivilegeDiffNotify(int32 privilege); //房间成员无某个通话能力权限却去使用相关通话能力而导致的异常通知的函数
-			virtual void	OnSemiAutoRecvCameraVideo(std::vector<std::string> identifier_list);//半自动模式接收摄像头视频的事件通知
-			virtual void	OnCameraSettingNotify(int32 width, int32 height, int32 fps);//摄像头分辨率和帧率修改通知
+			virtual void	OnSemiAutoRecvCameraVideo(std::vector<std::string> identifier_list) override;//半自动模式接收摄像头视频的事件通知
+			virtual void	OnSemiAutoRecvScreenVideo(std::vector<std::string> identifier_list) override;//半自动模式接收屏幕分享的事件通知
+			virtual void	OnSemiAutoRecvMediaFileVideo(std::vector<std::string> identifier_list) override;//半自动模式接收播片的事件通知
+			virtual void	OnCameraSettingNotify(int32 width, int32 height, int32 fps) override;//摄像头分辨率和帧率修改通知
+			virtual void	OnSwitchRoomComplete(int32 result, const std::string& error_info) override;//返回switchRoom()的异步操作结果的函数
 		};
 		
 		class SendC2CMessageCB : public TIMCallBack
@@ -180,13 +186,12 @@ namespace ilivesdk
 		@param [in] suc 成功的回调函数；
 		@param [in] err 失败的回调函数；
 		@param [in] data 用户自定义的数据的指针，在成功和失败的回调函数中原封不动地返回;
-		@return 操作结果,NO_ERR表示成功;AV_ERR_BUSY表示上一次操作(包括RequestViewList、cancelViewList和CancelAllView)还在进行中；AV_ERR_FAILED表示操作失败，可能是因为所请求的成员当前已经没有对应视频源的视频、所请求成员已经退出房间等。
 		@note 1、identifiers和views必须一一对应;
 			  2、requestViewList操作必须等待异步回调函数执行结束后，才能进行新的requestViewList操作；
 			  3、requestViewList、cancelViewList和cancelAllView不能并发执行，即同一时刻只能进行一种操作；
 			  4、在请求画面前最好先检查该成员是否有对应的视频源；
 		*/
-		int						requestViewList( const std::vector<std::string>& identifiers, const std::vector<View>& views, SuccessCalllback suc, ErrorCallback err, void* data );
+		void					requestViewList( const std::vector<std::string>& identifiers, const std::vector<View>& views, SuccessCalllback suc, ErrorCallback err, void* data );
 		/**
 		@brief  取消指定用户的画面。
 		@param [in] identifiers 取消画面的用户列表。
@@ -194,19 +199,17 @@ namespace ilivesdk
 		@param [in] suc 成功的回调函数；
 		@param [in] err 失败的回调函数；
 		@param [in] data 用户自定义的数据的指针，在成功和失败的回调函数中原封不动地返回;
-		@return 操作结果,NO_ERR表示成功;AV_ERR_BUSY表示上一次操作(包括RequestViewList、cancelViewList和CancelAllView)还在进行中；AV_ERR_FAILED表示操作失败，可能是因为所请求的成员当前已经没有对应视频源的视频、所请求成员已经退出房间等。
 		@note identifiers和views必须一一对应;requestViewList、cancelViewList和cancelAllView不能并发执行，即同一时刻只能进行一种操作;
 		*/
-		int						cancelViewList( const std::vector<std::string>& identifiers, const std::vector<View>& views, SuccessCalllback suc, ErrorCallback err, void* data );
+		void					cancelViewList( const std::vector<std::string>& identifiers, const std::vector<View>& views, SuccessCalllback suc, ErrorCallback err, void* data );
 		/**
 		@brief 取消所有请求的视频画面。
 		@param [in] suc 成功的回调函数；
 		@param [in] err 失败的回调函数；
 		@param [in] data 用户自定义的数据的指针，在成功和失败的回调函数中原封不动地返回;
-		@return 操作结果,NO_ERR表示成功;AV_ERR_BUSY表示上一次操作(包括RequestViewList、cancelViewList和CancelAllView)还在进行中；AV_ERR_FAILED表示操作失败，可能是因为所请求的成员当前已经没有对应视频源的视频、所请求成员已经退出房间等。
 		@note requestViewList、cancelViewList和cancelAllView不能并发执行，即同一时刻只能进行一种操作；
 		*/
-		int						cancelAllView( SuccessCalllback suc, ErrorCallback err, void* data );
+		void					cancelAllView( SuccessCalllback suc, ErrorCallback err, void* data );
 
 		/**
 		@brief  更改通话能力权限。
@@ -227,6 +230,20 @@ namespace ilivesdk
 		@param [in] data 用户自定义的数据的指针，在成功和失败的回调函数中原封不动地返回;
 		*/
 		void					changeRole( const std::string& szControlRole, SuccessCalllback suc, ErrorCallback err, void* data );
+
+		/**
+		@brief 设置美颜程度。
+		@param [in] grade 美颜程度参数。grade取值范围在0-9之间，0表示美颜关闭
+		@return 返回值为NO_ERR时表示成功，否则表示失败。
+		*/
+		int						SetSkinSmoothGrade(int grade);
+		
+		/**
+		@brief 设置美白程度。
+		@param [in] grade 美白程度参数。grade取值范围在0-9之间，0表示美白关闭
+		@return 返回值为NO_ERR时表示成功，否则表示失败。
+		*/
+		int						SetSkinWhitenessGrade(int grade);
 
 		/**
 		@brief 获取本计算机可用的摄像头列表。
@@ -290,10 +307,19 @@ namespace ilivesdk
 		@param [in] left/top/right/bottom 所要捕获屏幕画面的区域的左上角坐标(left, top)和右下角坐标(right, bottom)，它们是以屏幕的左上角坐标为原点的。
 		@param [in] fps 捕获帧率，取值范围[MIN_SCREEN_VIDEO_CAPTURE_FPS-MAX_SCREEN_VIDEO_CAPTURE_FPS]，具体参考MIN_SCREEN_VIDEO_CAPTURE_FPS和MAX_SCREEN_VIDEO_CAPTURE_FPS两个宏的定义。
 		@return 操作结果，NO_ERR表示无错误。
+		@remark 传入的参数会经过sdk内部细微的调整，并通过引用方式传回给调用者，实际的分享区域以传回的值为准;
 		*/
-		int						openScreenShare( const uint32 left, const uint32 top, const uint32 right, const uint32 bottom, const uint32 fps );
+		int						openScreenShare( uint32& left, uint32& top, uint32& right, uint32& bottom, uint32& fps );
+		/**
+		@brief 屏幕分享过程中,动态修改屏幕分享的区域。
+		@param [in] left/top/right/bottom 所要捕获屏幕画面的区域的左上角坐标(left, top)和右下角坐标(right, bottom)，它们是以屏幕的左上角坐标为原点的。
+		@return 操作结果，NO_ERR表示无错误。
+		@remark 传入的参数会经过sdk内部细微的调整，并通过引用方式传回给调用者，实际的分享区域以传回的值为准;
+		*/
+		int						changeScreenShareSize( uint32& left, uint32& top, uint32& right, uint32& bottom );
 		/**
 		@brief 关闭屏幕共享。
+		@return 操作结果，NO_ERR表示无错误。
 		*/
 		int						closeScreenShare();
 
@@ -368,7 +394,7 @@ namespace ilivesdk
 
 		int						SetupAVRoom();
 
-		int						CommentViewList(bool isCancelView);
+		void					CommentViewList(bool isCancelView);
 		void					UpdateViewList(std::vector<std::string>& identifierList, std::vector<View>& viewList);
 
 		void					OnEnterAVRoomSuc();
@@ -391,12 +417,12 @@ namespace ilivesdk
 		static void				OnVideoDeviceOperationCallback(AVDeviceMgr *pVidMgr, AVDevice::DeviceOperation oper, const std::string &deviceId, int retCode, void *pCustomData);
 		static void				OnVideoDeviceChangeCallback(AVDeviceMgr *pVidMgr, void *pCustomData);
 
-		static void				OnRequestViewListCompleteCallback(std::vector<std::string> identifierList, std::vector<View> viewList, int32 result, void *pCustomData);
-		static void				OnCancelViewListCompleteCallback(std::vector<std::string> identifierList, std::vector<View> viewList, int32 result, void *pCustomData);
-		static void				OnCancelAllViewCompleteCallback(int32 ret_code, void* custom_data);
+		static void				OnRequestViewListCompleteCallback(std::vector<std::string> identifierList, std::vector<View> viewList, int32 result, const std::string& error_info, void *pCustomData);
+		static void				OnCancelViewListCompleteCallback(std::vector<std::string> identifierList, std::vector<View> viewList, int32 result, const std::string& error_info, void *pCustomData);
+		static void				OnCancelAllViewCompleteCallback(int32 result, const std::string& error_info, void* custom_data);
 
-		static void				OnChangeAuthCompleteCallback(int32 ret_code, void* custom_data);
-		static void				OnChangeRoleCompleteCallback(int32 ret_code, void* custom_data);
+		static void				OnChangeAuthCompleteCallback(int32 result, const std::string& error_info, void* custom_data);
+		static void				OnChangeRoleCompleteCallback(int32 result, const std::string& error_info, void* custom_data);
 	
 	private:
 		//IM
@@ -438,6 +464,9 @@ namespace ilivesdk
 		AVRoomMulti*				m_pRoom;
 		AVDeviceMgr*				m_pAudMgr;
 		AVDeviceMgr*				m_pVidMgr;
+		AVAudioCtrl*				m_pAudCtrl;
+		AVVideoCtrl*				m_pVidCtrl;
+		AVLocalScreenVideoDevice*	m_pLocalScreenVideoDevice;
 
 		AVSupportVideoPreTreatment::PreTreatmentFun	m_pPreTreatmentFun;
 		void*										m_pPreTreatmentFunData;

@@ -16,9 +16,9 @@
 #define AV_EXPORT
 #endif
 
-#define DISALLOW_EVIL_DESTRUCTIONS(TypeName)    \
-    protected:  \
-        virtual ~TypeName() {}
+#define DISALLOW_COPY_AND_ASSIGN(TypeName) \
+    TypeName(const TypeName&); \
+    void operator=(const TypeName&)
 
 #ifdef WIN32
 

@@ -25,7 +25,8 @@
 #elif defined(_WIN32)
 
 #define OS_WIN 1
-
+#include <WinSock2.h>
+#include <windows.h>
 #else
 
 #error Please add support for your platform in build_config.h

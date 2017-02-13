@@ -81,7 +81,7 @@ void RoomListItem::iLiveJoinRoom()
 	roomOption.m_memberStatusListener = Live::OnMemStatusChange;
 	roomOption.m_roomDisconnectListener = Live::OnRoomDisconnect;
 	roomOption.data = g_pMainWindow->getLiveView();
-	LiveSDK::getInstance()->joinRoom( roomOption, OniLiveJoinRoomSuc, OniLiveJoinRoomErr, this );
+	iLiveSDKWrap::getInstance()->joinRoom( roomOption, OniLiveJoinRoomSuc, OniLiveJoinRoomErr, this );
 }
 
 void RoomListItem::OniLiveJoinRoomSuc( void* data )

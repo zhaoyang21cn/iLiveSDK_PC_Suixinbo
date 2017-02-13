@@ -9,8 +9,7 @@
 #include <QtNetwork/QNetworkRequest>
 #include <QtNetwork/QNetworkAccessManager>
 
-#include <LiveSDK.h>
-
+#include "iLiveSDKWrap.h"
 #include "Util.h"
 #include "Event.h"
 #include "PicDownHelper.h"
@@ -25,7 +24,6 @@
 
 using namespace tencent::av;
 using namespace ilivesdk;
-using namespace livesdk;
 
 #define SafeDelete(p) {delete p; p = 0;}
 #define SafeDeleteArr(pArr) {delete[] pArr; pArr = 0;}

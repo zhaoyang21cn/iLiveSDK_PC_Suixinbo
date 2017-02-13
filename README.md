@@ -10,7 +10,7 @@ iLiveSDK 提供了账号登录，音视频互动，文本互动等基础功能�
 [随心播](https://github.com/zhaoyang21cn/iLiveSDK_PC_Demos/blob/master/doc/suixinbo_README.md)
 
 ## API文档
-[API文档下载(1.0.0)](https://github.com/zhaoyang21cn/iLiveSDK_PC_Demos/blob/master/doc/ILiveSDK.chm)
+[API文档下载](https://github.com/zhaoyang21cn/iLiveSDK_PC_Demos/blob/master/doc/ILiveSDK.chm)
 
 ## 错误码
 [错误码表](https://github.com/zhaoyang21cn/ILiveSDK_Android_Demos/blob/master/doc/ILiveSDK/error.md)

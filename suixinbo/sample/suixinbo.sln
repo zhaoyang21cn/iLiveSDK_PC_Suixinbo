@@ -1,8 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LiveSDK", "LiveSDK\LiveSDK.vcxproj", "{CEE7B456-C655-4ED4-A770-724031197AA9}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "suixinbo_Qt", "suixinbo_Qt\suixinbo_Qt.vcxproj", "{92330B8C-7CA3-43A4-9D36-17AD3B1A7A04}"
 EndProject
 Global
@@ -11,10 +9,6 @@ Global
 		Release|Win32 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{CEE7B456-C655-4ED4-A770-724031197AA9}.Debug|Win32.ActiveCfg = Debug|Win32
-		{CEE7B456-C655-4ED4-A770-724031197AA9}.Debug|Win32.Build.0 = Debug|Win32
-		{CEE7B456-C655-4ED4-A770-724031197AA9}.Release|Win32.ActiveCfg = Release|Win32
-		{CEE7B456-C655-4ED4-A770-724031197AA9}.Release|Win32.Build.0 = Release|Win32
 		{92330B8C-7CA3-43A4-9D36-17AD3B1A7A04}.Debug|Win32.ActiveCfg = Debug|Win32
 		{92330B8C-7CA3-43A4-9D36-17AD3B1A7A04}.Debug|Win32.Build.0 = Debug|Win32
 		{92330B8C-7CA3-43A4-9D36-17AD3B1A7A04}.Release|Win32.ActiveCfg = Release|Win32

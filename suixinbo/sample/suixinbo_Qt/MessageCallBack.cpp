@@ -14,7 +14,7 @@ void sendC2CCustomCmd( QString dstUser, E_CustomCmd userAction, QString actionPa
 	cusElem.set_ext(LiveNoti);
 	cusElem.set_data( QString( doc.toJson() ).toStdString() );
 	message.AddElem(&cusElem);
-	LiveSDK::getInstance()->sendC2CMessage( dstUser.toStdString(), message, suc, err, data );
+	iLiveSDKWrap::getInstance()->sendC2CMessage( dstUser.toStdString(), message, suc, err, data );
 }
 
 void sendGroupCustomCmd( E_CustomCmd userAction, QString actionParam, SuccessCalllback suc /*= NULL*/, ErrorCallback err /*= NULL*/, void* data /*= NULL */ )
@@ -30,7 +30,7 @@ void sendGroupCustomCmd( E_CustomCmd userAction, QString actionParam, SuccessCal
 	cusElem.set_ext(LiveNoti);
 	cusElem.set_data( QString( doc.toJson() ).toStdString() );
 	message.AddElem(&cusElem);
-	LiveSDK::getInstance()->sendGroupMessage( message, suc, err, data );
+	iLiveSDKWrap::getInstance()->sendGroupMessage( message, suc, err, data );
 }
 
 QQueue<TIMMessage> MessageCallBack::ms_messageQueue;

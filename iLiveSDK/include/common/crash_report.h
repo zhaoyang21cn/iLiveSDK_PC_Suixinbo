@@ -1,5 +1,4 @@
-﻿#ifndef CRASH_REPORT_H_
-#define CRASH_REPORT_H_
+﻿#pragma once
 
 #include "av_common.h"
 
@@ -13,24 +12,21 @@ namespace tencent {
 
 */
 class AV_EXPORT CrashReport {
-  DISALLOW_EVIL_DESTRUCTIONS(CrashReport)
- public:
-  /**
-  @brief 打开/关闭crash上报。
+public:
+    /**
+    @brief 打开/关闭crash上报。
 
-  @details 打开/关闭crash上报。
+    @details 打开/关闭crash上报。
 
-  @param [in] is_enable 是否打开。
-  
-  @param [in] show_ui crash的时候，是否显示界面提示以让用户确定是否上报crash。
+    @param [in] is_enable 是否打开。
 
-  @return 无。
+    @param [in] show_ui crash的时候，是否显示界面提示以让用户确定是否上报crash。
 
-  @remark 可以在任意时刻调用该接口。
-  */
-  static void EnableCrashReport(bool is_enable, bool show_ui = false);
+    @return 无。
+
+    @remark 可以在任意时刻调用该接口。
+    */
+    static void EnableCrashReport(bool is_enable, bool show_ui = false);
 };
 
 } // namespace tencent
-
-#endif // #define CRASH_REPORT_H_

@@ -44,7 +44,7 @@ public:
 
 	static void OnMemStatusChange(AVRoomMulti::EndpointEventId event_id, std::vector<std::string> identifier_list, void* data);
 	static void OnSemiAutoRecvCameraVideo(std::vector<std::string> identifier_list, void* data);
-	static void OnRoomDisconnect(int reason, void* data);
+	static void OnRoomDisconnect(int32 reason, std::string errorinfo, void* data);
 
 	static void OnLocalVideo(VideoFrame* video_frame, void* custom_data);
 	static void OnRemoteVideo(VideoFrame* video_frame, void* custom_data);
@@ -57,6 +57,7 @@ private slots:
 	void OnBtnOpenPlayer();
 	void OnBtnClosePlayer();
 	void OnBtnOpenScreenShare();
+	void OnBtnUpdateScreenShare();
 	void OnBtnCloseScreenShare();
 	void OnBtnSendGroupMsg();
 	void OnBtnStartRecord();
@@ -64,6 +65,10 @@ private slots:
 	void OnBtnStartPushStream();
 	void OnBtnStopPushStream();
 	void OnBtnPraise();
+	void OnVsSkinSmoothChanged(int value);
+	void OnSbSkinSmoothChanged(int value);
+	void OnVsSkinWhiteChanged(int value);
+	void OnSbSkinWhiteChanged(int value);
 	void OnTimer();
 	void OnRequestViewsTimer();
 	void OnDelayUpdateTimer();
@@ -77,7 +82,7 @@ protected:
 	void closeEvent(QCloseEvent* event) override;
 
 private:
-	void getCameraList();
+	void updateCameraList();
 	VideoRender* getVideoRender(std::string szIdentifier);
 	void freeCameraVideoRenders(std::vector<std::string> arrNeedFreeRenders);
 	void freeAllCameraVideoRender();
@@ -88,6 +93,9 @@ private:
 	void addRequestViews(const std::vector<std::string>& identifiers, const std::vector<View>& views);
 
 	void updateMemberList();
+
+	void updateScreenShareParam( int x0, int y0, int x1, int y1, int fps );
+	void updateScreenShareParam( int x0, int y0, int x1, int y1 );
 
 	void sendInviteInteract();//主播向普通观众发出连线邀请
 	void sendCancelInteract();//主播向连线中的观众发出断线命令
@@ -117,6 +125,8 @@ private:
 	void iLiveQuitRoom();
 	void iLiveChangeAuthority(uint64 authBits, const std::string& authBuffer);
 	void iLiveChangeRole(const std::string& szControlRole);
+	int iLiveSetSkinSmoothGrade(int grade);
+	int iLiveSetSkinWhitenessGrade(int grade);
 	static void OnQuitRoomSuc(void* data);
 	static void OnQuitRoomErr(int code, const std::string& desc, void* data);
 	static void OnChangeAuthoritySuc(void* data);

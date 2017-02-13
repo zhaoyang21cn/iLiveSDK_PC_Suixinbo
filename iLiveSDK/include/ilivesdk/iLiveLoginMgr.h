@@ -2,9 +2,11 @@
 #define iLiveLoginMgr_h_
 
 #include <imsdk/tim_comm.h>
+#include <avsdk/av_callback.h>
 #include <ilivesdk/iLiveCommon.h>
 using imcore::TIMCallBack;
 using imcore::TIMUser;
+using tencent::av::AVCallback;
 
 namespace ilivesdk
 {
@@ -25,6 +27,12 @@ namespace ilivesdk
 		public:
 			virtual void	OnSuccess();
 			virtual void	OnError(int code, const std::string &desc);
+		};
+
+		class StartAVContextCallBack : public AVCallback
+		{
+		public:
+			virtual void OnComplete(int32 result, const std::string& error_info) override;
 		};
 
 	public:
@@ -66,12 +74,12 @@ namespace ilivesdk
 		void					OnIMLoginErr(int code, const std::string& desc);
 		void					OnIMLogoutSuc();
 		void					OnIMLogoutErr(int code, const std::string& desc);
-
-		static void				OnStartContextCompleteCallback(int result, void *pCustomData);
+		void					OnStartContextCompleteCallback(int result, const std::string& error_info);
 		
 	private:
 		IMLoginCallBack				m_timLoginCallback;
 		IMLogoutCallBack			m_timLogoutCallBack;
+		StartAVContextCallBack		m_startAVContextCallBack;
 
 		SuccessCalllback			m_pLoginSuccessCB;
 		ErrorCallback				m_pLoginErrorCB;

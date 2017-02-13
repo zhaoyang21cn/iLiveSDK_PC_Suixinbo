@@ -1,36 +1,47 @@
 ﻿#pragma once
 
 #include "basictypes.h"
+#include "build_config.h"
 
 namespace tencent {
 namespace av {
 
 /// SDK的引用计数接口定义
 class AVRefCount {
- public:
-  virtual ~AVRefCount() {}
+public:
+    virtual ~AVRefCount() {}
 
-  virtual int32 AddRef() {
-    return ++m_refCount;
-  }
-
-  virtual bool Release() {
-    --m_refCount;
-
-    if (0 == m_refCount) {
-      delete this;
-      return true;
+    inline int32 RefCount() const {
+        return _refCount;
     }
 
-    return false;
-  }
+#ifdef _MSC_VER
+    virtual int32 AddRef() const {
+        return InterlockedIncrement(reinterpret_cast<volatile LONG*>(&_refCount));
+    }
 
- protected:
-  AVRefCount() {
-    m_refCount = 1;
-  }
+    virtual bool Release() const {
+        if (InterlockedDecrement(reinterpret_cast<volatile LONG*>(&_refCount)) == 0) {
+            const_cast<AVRefCount*>(this)->DeleteObject();
+            return true;
+        }
+        return false;
+    }
+#else
+    virtual int32 AddRef() const;
+    virtual bool Release() const;
+#endif
 
-  int32 m_refCount;
+    virtual void DeleteObject() {
+        delete this;
+    }
+
+protected:
+    AVRefCount() {
+        _refCount = 1;
+    }
+
+    mutable int32 _refCount;
 };
 
 } // namespace av

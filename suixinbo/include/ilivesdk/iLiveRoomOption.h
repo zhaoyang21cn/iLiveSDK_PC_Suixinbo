@@ -5,9 +5,10 @@
 #include <avsdk/av_common.h>
 #include <avsdk/av_room_multi.h>
 
-using tencent::av::AudioCategory;
 using tencent::av::AVRoomMulti;
+using tencent::av::AudioCategory;
 using tencent::av::VideoRecvMode;
+using tencent::av::ScreenRecvMode;
 
 namespace ilivesdk
 {
@@ -15,9 +16,10 @@ namespace ilivesdk
 	@brief SDK主动退出房间监听函数指针。
 	@details SDK内部会因为30s心跳包超时等原因主动退出房间，APP需要监听此退出房间事件并对该事件进行相应处理。
 	@param [in] reason 退出原因, 参考av_error.h。
+	@param [in] errorinfo 退出原因描述。
 	@param [in] data 用户自定数据类型，回调函数中原封不动传回给业务侧。
 	*/
-	typedef void (*iLiveRoomDisconnectListener)(int32 reason, void* data);
+	typedef void (*iLiveRoomDisconnectListener)(int32 reason, std::string errorinfo, void* data);
 	/**
 	@brief 房间内成员变化监听函数指针。
 	@details 当房间成员发生状态变化(如是否发音频、是否发视频等)时，会通过该函数指针通知业务侧。
@@ -45,6 +47,9 @@ namespace ilivesdk
 		*/
 		iLiveRoomOption()
 			:roomId(0)
+			,audio_category(tencent::av::AUDIO_CATEGORY_MEDIA_PLAY_AND_RECORD)//互动直播场景
+			,video_recv_mode(tencent::av::VIDEO_RECV_MODE_SEMI_AUTO_RECV_CAMERA_VIDEO)//半自动模式
+			,screen_recv_mode(tencent::av::SCREEN_RECV_MODE_SEMI_AUTO_RECV_SCREEN_VIDEO)//半自动模式
 			,m_roomDisconnectListener(NULL)
 			,m_memberStatusListener(NULL)
 			,m_autoRecvListener(NULL)
@@ -52,11 +57,12 @@ namespace ilivesdk
 		{
 		}
 
-		uint32			roomId;			///< 房间ID,由业务侧创建并维护的房间ID
-		std::string		auth_buffer;	///< 通话能力权限位的加密串
-		std::string		control_role;	///< 角色名，web端音视频参数配置工具所设置的角色名
-		AudioCategory	audio_category;	///< 音视场景策略,详细信息见AudioCategory的定义.
-		VideoRecvMode	video_recv_mode;///< 视频接收模式
+		uint32			roomId;				///< 房间ID,由业务侧创建并维护的房间ID
+		std::string		auth_buffer;		///< 通话能力权限位的加密串
+		std::string		control_role;		///< 角色名，web端音视频参数配置工具所设置的角色名
+		AudioCategory	audio_category;		///< 音视场景策略,详细信息见AudioCategory的定义.
+		VideoRecvMode	video_recv_mode;	///< 视频接收模式
+		ScreenRecvMode	screen_recv_mode;	///< 屏幕分享接收模式
 
 		iLiveRoomDisconnectListener				m_roomDisconnectListener; ///< SDK主动退出房间提示,参见iLiveRoomDisconnectListener定义。
 		iLiveMemStatusListener					m_memberStatusListener;	  ///< 房间成员状态变化通知，参见iLiveMemStatusListener定义。

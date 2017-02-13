@@ -113,6 +113,9 @@
     <ClCompile Include="GeneratedFiles\Release\moc_NetworkHelper.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
+    <ClCompile Include="iLiveSDKWrap.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -143,6 +146,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="PicDownHelper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="iLiveSDKWrap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

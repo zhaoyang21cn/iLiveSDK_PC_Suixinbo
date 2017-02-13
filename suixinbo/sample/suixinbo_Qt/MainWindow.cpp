@@ -97,12 +97,12 @@ void MainWindow::OnForceOffline()
 void MainWindow::initSDK()
 {
 	SetiLiveLogLevel(E_LogWarn);
-	LiveSDK::getInstance()->SetMessageCallBack(&m_messageCallBack);
-	LiveSDK::getInstance()->SetForceOfflineCallback(&m_forceOfflineCallBack);
-	LiveSDK::getInstance()->setLocalVideoCallBack(Live::OnLocalVideo, m_pLive);
-	LiveSDK::getInstance()->setRemoteVideoCallBack(Live::OnRemoteVideo, m_pLive);
+	iLiveSDKWrap::getInstance()->SetMessageCallBack(&m_messageCallBack);
+	iLiveSDKWrap::getInstance()->SetForceOfflineCallback(&m_forceOfflineCallBack);
+	iLiveSDKWrap::getInstance()->setLocalVideoCallBack(Live::OnLocalVideo, m_pLive);
+	iLiveSDKWrap::getInstance()->setRemoteVideoCallBack(Live::OnRemoteVideo, m_pLive);
 
-	int nRet = LiveSDK::getInstance()->initSdk(m_nAppId, m_nAccountType);
+	int nRet = iLiveSDKWrap::getInstance()->initSdk(m_nAppId, m_nAccountType);
 	if (nRet != ilivesdk::NO_ERR)
 	{
 		ShowErrorTips( "init sdk failed.",this );
@@ -524,12 +524,12 @@ void MainWindow::OnPicDown( int errorCode, QString errorInfo, QString picPath, v
 
 void MainWindow::iLiveLogin()
 {
-	LiveSDK::getInstance()->LiveLogin(m_szUserId.toStdString(), m_szUserSig.toStdString(), OniLiveLoginSuccess, OniLiveLoginError, this);
+	iLiveSDKWrap::getInstance()->LiveLogin(m_szUserId.toStdString(), m_szUserSig.toStdString(), OniLiveLoginSuccess, OniLiveLoginError, this);
 }
 
 void MainWindow::iLiveLogout()
 {
-	LiveSDK::getInstance()->LiveLogout(OniLiveLogoutSuccess, OniLiveLogoutError, this);
+	iLiveSDKWrap::getInstance()->LiveLogout(OniLiveLogoutSuccess, OniLiveLogoutError, this);
 }
 
 void MainWindow::iLiveCreateRoom()
@@ -538,13 +538,14 @@ void MainWindow::iLiveCreateRoom()
 	roomOption.roomId = m_curRoomInfo.info.roomnum;
 	roomOption.auth_buffer = "";
 	roomOption.control_role = LiveMaster;
-	roomOption.audio_category = AUDIO_CATEGORY_MEDIA_PLAY_AND_RECORD;//直播场景
+	roomOption.audio_category = AUDIO_CATEGORY_MEDIA_PLAY_AND_RECORD;//互动直播场景
 	roomOption.video_recv_mode = VIDEO_RECV_MODE_SEMI_AUTO_RECV_CAMERA_VIDEO; //半自动模式
+	roomOption.screen_recv_mode = SCREEN_RECV_MODE_SEMI_AUTO_RECV_SCREEN_VIDEO;//半自动模式
 	roomOption.m_roomDisconnectListener = Live::OnRoomDisconnect;
 	roomOption.m_memberStatusListener = Live::OnMemStatusChange;
 	roomOption.m_autoRecvListener = Live::OnSemiAutoRecvCameraVideo;
 	roomOption.data = m_pLive;
-	LiveSDK::getInstance()->createRoom( roomOption, OniLiveCreateRoomSuc, OniLiveCreateRoomErr, this );
+	iLiveSDKWrap::getInstance()->createRoom( roomOption, OniLiveCreateRoomSuc, OniLiveCreateRoomErr, this );
 }
 
 void MainWindow::OniLiveLoginSuccess( void* data )
@@ -594,7 +595,7 @@ void MainWindow::closeEvent( QCloseEvent* event )
 	{
 		event->accept();
 		saveConfig();
-		LiveSDK::getInstance()->destroy();
+		iLiveSDKWrap::getInstance()->destroy();
 	}
 	if (m_pRegister->isVisible())
 	{

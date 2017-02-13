@@ -3,8 +3,9 @@
 
 #include <string>
 #include <map>
-#include <Windows.h>
 #include <assert.h>
+#include <winsock2.h> //由于avsdk中使用到了winsock2.h，而windows.h中包含了winsock.h,所以提前包含winsock2.h;这里也可以定义WIN32_LEAN_AND_MEAN宏来屏蔽windows.h中对winsock.h的引入;
+#include <windows.h>
 
 #pragma comment(lib, "libtim.lib")
 

@@ -75,6 +75,7 @@ Live::Live( QWidget * parent /*= 0*/, Qt::WindowFlags f /*= 0*/ )
 	connect( m_ui.btnOpenPlayer, SIGNAL(clicked()), this, SLOT(OnBtnOpenPlayer()) );
 	connect( m_ui.btnClosePlayer, SIGNAL(clicked()), this, SLOT(OnBtnClosePlayer()) );
 	connect( m_ui.btnOpenScreenShare, SIGNAL(clicked()), this, SLOT(OnBtnOpenScreenShare()) );
+	connect( m_ui.btnUpdateScreenShare, SIGNAL(clicked()), this, SLOT(OnBtnUpdateScreenShare()) );
 	connect( m_ui.btnCloseScreenShare, SIGNAL(clicked()), this, SLOT(OnBtnCloseScreenShare()) );
 	connect( m_ui.btnSendGroupMsg, SIGNAL(clicked()), this, SLOT(OnBtnSendGroupMsg()) );
 	connect( m_ui.btnStartRecord, SIGNAL(clicked()), this, SLOT(OnBtnStartRecord()) );
@@ -82,6 +83,10 @@ Live::Live( QWidget * parent /*= 0*/, Qt::WindowFlags f /*= 0*/ )
 	connect( m_ui.btnStartPushStream, SIGNAL(clicked()), this, SLOT(OnBtnStartPushStream()) );
 	connect( m_ui.btnStopPushStream, SIGNAL(clicked()), this, SLOT(OnBtnStopPushStream()) );
 	connect( m_ui.btnPraise, SIGNAL(clicked()), this, SLOT(OnBtnPraise()) );
+	connect( m_ui.vsSkinSmooth, SIGNAL(valueChanged(int)), this, SLOT(OnVsSkinSmoothChanged(int)) );
+	connect( m_ui.sbSkinSmooth, SIGNAL(valueChanged(int)), this, SLOT(OnSbSkinSmoothChanged(int)) );
+	connect( m_ui.vsSkinWhite, SIGNAL(valueChanged(int)), this, SLOT(OnVsSkinWhiteChanged(int)) );
+	connect( m_ui.sbSkinWhite, SIGNAL(valueChanged(int)), this, SLOT(OnSbSkinWhiteChanged(int)) );
 	connect( m_pTimer, SIGNAL(timeout()), this, SLOT(OnTimer()) );
 	connect( m_pDelayUpdateTimer, SIGNAL(timeout()), this, SLOT(OnDelayUpdateTimer()) );
 	connect( pActInviteInteract, SIGNAL(triggered()), this, SLOT(OnActInviteInteract()) );
@@ -97,6 +102,9 @@ Live::~Live()
 void Live::setRoomUserType( E_RoomUserType userType )
 {
 	m_userType = userType;
+	m_ui.SkinGB->setVisible(false);
+	m_ui.btnOpenPlayer->setEnabled(true);
+	m_ui.btnClosePlayer->setEnabled(false);
 	switch(m_userType)
 	{
 	case E_RoomUserCreator:
@@ -104,14 +112,16 @@ void Live::setRoomUserType( E_RoomUserType userType )
 			m_ui.cameraGB->setVisible(true);
 			m_ui.btnOpenCamera->setEnabled(true);
 			m_ui.btnCloseCamera->setEnabled(false);
-			getCameraList();
+			updateCameraList();
 
 			m_ui.microphoneGB->setVisible(true);
 			m_ui.btnOpenMic->setEnabled(true);
 			m_ui.btnCloseMic->setEnabled(false);
 
 			m_ui.screenShareGB->setVisible(true);
+			m_ui.sbFPS->setEnabled(true);
 			m_ui.btnOpenScreenShare->setEnabled(true);
+			m_ui.btnUpdateScreenShare->setEnabled(false);
 			m_ui.btnCloseScreenShare->setEnabled(false);
 
 			m_ui.recordGB->setVisible(true);
@@ -129,14 +139,16 @@ void Live::setRoomUserType( E_RoomUserType userType )
 			m_ui.cameraGB->setVisible(true);
 			m_ui.btnOpenCamera->setEnabled(true);
 			m_ui.btnCloseCamera->setEnabled(false);
-			getCameraList();
+			updateCameraList();
 
 			m_ui.microphoneGB->setVisible(true);
 			m_ui.btnOpenMic->setEnabled(true);
 			m_ui.btnCloseMic->setEnabled(false);
 
 			m_ui.screenShareGB->setVisible(true);
+			m_ui.sbFPS->setEnabled(true);
 			m_ui.btnOpenScreenShare->setEnabled(true);
+			m_ui.btnUpdateScreenShare->setEnabled(false);
 			m_ui.btnCloseScreenShare->setEnabled(false);
 
 			m_ui.recordGB->setVisible(false);
@@ -177,7 +189,7 @@ void Live::ChangeRoomUserType()
 
 void Live::updatePushAndRecordStateUI()
 {
-	if ( LiveSDK::getInstance()->getCurCameraState() || LiveSDK::getInstance()->getScreenShareState() )
+	if ( iLiveSDKWrap::getInstance()->getCurCameraState() || iLiveSDKWrap::getInstance()->getScreenShareState() )
 	{
 		m_ui.pushStreamGB->setEnabled(true);
 		m_ui.recordGB->setEnabled(true);
@@ -197,7 +209,7 @@ void Live::updatePushAndRecordStateUI()
 		return;
 	}
 
-	if ( LiveSDK::getInstance()->getRecordState() )//录制中
+	if ( iLiveSDKWrap::getInstance()->getRecordState() )//录制中
 	{
 		m_ui.btnStartRecord->setEnabled(false);
 		m_ui.btnStopRecord->setEnabled(true);
@@ -210,7 +222,7 @@ void Live::updatePushAndRecordStateUI()
 		m_ui.cbRecordDataType->setEnabled(true);
 	}
 
-	if( LiveSDK::getInstance()->getPushStreamState() )//推流中
+	if( iLiveSDKWrap::getInstance()->getPushStreamState() )//推流中
 	{
 		m_ui.btnStartPushStream->setEnabled(false);
 		m_ui.btnStopPushStream->setEnabled(true);
@@ -456,7 +468,7 @@ void Live::OnSemiAutoRecvCameraVideo( std::vector<std::string> identifier_list, 
 	iLiveLog_d("OnSemiAutoRecvCameraVideo");
 }
 
-void Live::OnRoomDisconnect( int reason, void* data )
+void Live::OnRoomDisconnect( int32 reason, std::string errorinfo, void* data )
 {
 	iLiveLog_d("OnRoomDisconnect");
 }
@@ -504,7 +516,7 @@ void Live::OnBtnOpenCamera()
 	//PC端SDK本可以支持摄像头和屏幕分享同时打开,为了Android和ios端随心播的显示方便，
 	//限制每个PC端用户只允许打开摄像头和屏幕分享之一,需要同时打开屏幕分享和摄像头
 	//的用户请注释掉本段代码;
-	if ( LiveSDK::getInstance()->getScreenShareState() )
+	if ( iLiveSDKWrap::getInstance()->getScreenShareState() )
 	{
 		ShowTips( FromBits("提示"), FromBits("请先关闭屏幕分享"), this );
 		return;
@@ -518,9 +530,10 @@ void Live::OnBtnOpenCamera()
 	}
 	m_ui.btnOpenCamera->setEnabled(false);
 	int ndx = m_ui.cbCamera->currentIndex();
-	int nRet = LiveSDK::getInstance()->openCamera(m_cameraList[ndx].first);
+	int nRet = iLiveSDKWrap::getInstance()->openCamera(m_cameraList[ndx].first);
 	if (nRet==0)
 	{
+		m_ui.SkinGB->setVisible(true);
 		m_ui.btnCloseCamera->setEnabled(true);
 		updatePushAndRecordStateUI();
 	}
@@ -534,9 +547,10 @@ void Live::OnBtnOpenCamera()
 void Live::OnBtnCloseCamera()
 {
 	m_ui.btnCloseCamera->setEnabled(false);
-	int nRet = LiveSDK::getInstance()->closeCamera();
+	int nRet = iLiveSDKWrap::getInstance()->closeCamera();
 	if (nRet==0)
-	{		
+	{
+		m_ui.SkinGB->setVisible(false);
 		m_ui.btnOpenCamera->setEnabled(true);
 		m_pLocalCameraRender->update();
 		updatePushAndRecordStateUI();
@@ -551,7 +565,7 @@ void Live::OnBtnCloseCamera()
 void Live::OnBtnOpenMic()
 {
 	m_ui.btnOpenMic->setEnabled(false);
-	int nRet = LiveSDK::getInstance()->openMic();
+	int nRet = iLiveSDKWrap::getInstance()->openMic();
 	if (nRet==0)
 	{		
 		m_ui.btnCloseMic->setEnabled(true);
@@ -566,7 +580,7 @@ void Live::OnBtnOpenMic()
 void Live::OnBtnCloseMic()
 {
 	m_ui.btnCloseMic->setEnabled(false);
-	int nRet = LiveSDK::getInstance()->closeMic();
+	int nRet = iLiveSDKWrap::getInstance()->closeMic();
 	if (nRet==0)
 	{
 		m_ui.btnOpenMic->setEnabled(true);
@@ -581,7 +595,7 @@ void Live::OnBtnCloseMic()
 void Live::OnBtnOpenPlayer()
 {
 	m_ui.btnOpenPlayer->setEnabled(false);
-	int nRet = LiveSDK::getInstance()->openPlayer();
+	int nRet = iLiveSDKWrap::getInstance()->openPlayer();
 	if (nRet==0)
 	{		
 		m_ui.btnClosePlayer->setEnabled(true);
@@ -596,7 +610,7 @@ void Live::OnBtnOpenPlayer()
 void Live::OnBtnClosePlayer()
 {
 	m_ui.btnClosePlayer->setEnabled(false);
-	int nRet = LiveSDK::getInstance()->closePlayer();
+	int nRet = iLiveSDKWrap::getInstance()->closePlayer();
 	if (nRet==0)
 	{		
 		m_ui.btnOpenPlayer->setEnabled(true);
@@ -614,7 +628,7 @@ void Live::OnBtnOpenScreenShare()
 	//PC端SDK本可以支持摄像头和屏幕分享同时打开,为了Android和ios端随心播的显示方便，
 	//限制每个PC端用户只允许打开摄像头和屏幕分享之一,需要同时打开屏幕分享和摄像头
 	//的用户请注释掉本段代码;
-	if ( LiveSDK::getInstance()->getCurCameraState() )
+	if ( iLiveSDKWrap::getInstance()->getCurCameraState() )
 	{
 		ShowTips( FromBits("提示"), FromBits("请先关闭摄像头"), this );
 		return;
@@ -622,20 +636,27 @@ void Live::OnBtnOpenScreenShare()
 	//////////////////////////////////////////////////
 
 	m_ui.btnOpenScreenShare->setEnabled(false);
-	int x0 = m_ui.sbX0->value();
-	int y0 = m_ui.sbY0->value();
-	int x1 = m_ui.sbX1->value();
-	int y1 = m_ui.sbY1->value();
-	int fps= m_ui.sbFPS->value();
-	int nRet = LiveSDK::getInstance()->openScreenShare(x0, y0, x1, y1, fps);
+	unsigned int x0 = m_ui.sbX0->value();
+	unsigned int y0 = m_ui.sbY0->value();
+	unsigned int x1 = m_ui.sbX1->value();
+	unsigned int y1 = m_ui.sbY1->value();
+	unsigned int fps= m_ui.sbFPS->value();
+	int nRet = iLiveSDKWrap::getInstance()->openScreenShare(x0, y0, x1, y1, fps);
 	if (nRet==0)
-	{		
+	{
+		m_ui.sbFPS->setEnabled(false);
+		m_ui.btnOpenScreenShare->setEnabled(false);
+		m_ui.btnUpdateScreenShare->setEnabled(true);
 		m_ui.btnCloseScreenShare->setEnabled(true);
 		updatePushAndRecordStateUI();
+		updateScreenShareParam(x0, y0, x1, y1, fps);
 	}
 	else
 	{
+		m_ui.sbFPS->setEnabled(true);
 		m_ui.btnOpenScreenShare->setEnabled(true);
+		m_ui.btnUpdateScreenShare->setEnabled(false);
+		m_ui.btnCloseScreenShare->setEnabled(false);
 		if (nRet==1008)
 		{
 			ShowErrorTips( FromBits("房间内只允许一个用户打开屏幕分享"), this );
@@ -647,19 +668,42 @@ void Live::OnBtnOpenScreenShare()
 	}
 }
 
+void Live::OnBtnUpdateScreenShare()
+{
+	unsigned int x0 = m_ui.sbX0->value();
+	unsigned int y0 = m_ui.sbY0->value();
+	unsigned int x1 = m_ui.sbX1->value();
+	unsigned int y1 = m_ui.sbY1->value();
+
+	int nRet = iLiveSDKWrap::getInstance()->changeScreenShareSize( x0, y0, x1, y1 );
+	if (nRet==NO_ERR)
+	{
+		updateScreenShareParam( x0, y0, x1, y1 );
+	}
+	else
+	{
+		ShowCodeErrorTips( nRet, "changeScreenShareSize failed.", this );
+	}
+}
+
 void Live::OnBtnCloseScreenShare()
 {
-	m_ui.btnCloseScreenShare->setEnabled(false);
-	int nRet = LiveSDK::getInstance()->closeScreenShare();
+	int nRet = iLiveSDKWrap::getInstance()->closeScreenShare();
 	if (nRet==0)
 	{
+		m_ui.sbFPS->setEnabled(true);
 		m_ui.btnOpenScreenShare->setEnabled(true);
+		m_ui.btnUpdateScreenShare->setEnabled(false);
+		m_ui.btnCloseScreenShare->setEnabled(false);
 		m_pScreenShareRender->update();
 		updatePushAndRecordStateUI();
 	}
 	else
 	{
+		m_ui.sbFPS->setEnabled(false);
+		m_ui.btnOpenScreenShare->setEnabled(false);
 		m_ui.btnCloseScreenShare->setEnabled(true);
+		m_ui.btnUpdateScreenShare->setEnabled(true);
 		ShowErrorTips( "Close Screen Share Failed.", this );
 	}
 }
@@ -680,7 +724,7 @@ void Live::OnBtnSendGroupMsg()
 	message.AddElem(&textElem);
 	
 	addMsgLab( QString::fromLocal8Bit("我说： ") + szText );
-	LiveSDK::getInstance()->sendGroupMessage(  message, OnSendGroupMsgSuc, OnSendGroupMsgErr, this );
+	iLiveSDKWrap::getInstance()->sendGroupMessage(  message, OnSendGroupMsgSuc, OnSendGroupMsgErr, this );
 }
 
 void Live::OnBtnStartRecord()
@@ -704,12 +748,12 @@ void Live::OnBtnStartRecord()
 	
 	m_recordOpt.filename = fileName.toStdString();
 	m_recordOpt.record_data_type = (ilivesdk::E_RecordDataType)m_ui.cbRecordDataType->itemData( m_ui.cbRecordDataType->currentIndex() ).value<int>();
-	LiveSDK::getInstance()->startRecordVideo(m_recordOpt, OnStartRecordVideoSuc, OnStartRecordVideoErr, this);
+	iLiveSDKWrap::getInstance()->startRecordVideo(m_recordOpt, OnStartRecordVideoSuc, OnStartRecordVideoErr, this);
 }
 
 void Live::OnBtnStopRecord()
 {
-	LiveSDK::getInstance()->stopRecordVideo( OnStopRecordSuc, OnStopRecordVideoErr, this);
+	iLiveSDKWrap::getInstance()->stopRecordVideo( OnStopRecordSuc, OnStopRecordVideoErr, this);
 }
 
 void Live::OnBtnStartPushStream()
@@ -718,18 +762,50 @@ void Live::OnBtnStartPushStream()
 	m_pushOpt.channel_desc = g_pMainWindow->getUserId().toStdString();
 	m_pushOpt.push_data_type = (E_PushDataType)m_ui.cbPushDataType->itemData( m_ui.cbPushDataType->currentIndex() ).value<int>();
 	m_pushOpt.encode = (imcore::E_TIMStreamEncode)m_ui.cbPushEncodeType->itemData( m_ui.cbPushEncodeType->currentIndex() ).value<int>();
-	LiveSDK::getInstance()->startPushStream( m_pushOpt, OnStartPushStreamSuc, OnStartPushStreamErr, this );
+	iLiveSDKWrap::getInstance()->startPushStream( m_pushOpt, OnStartPushStreamSuc, OnStartPushStreamErr, this );
 }
 
 void Live::OnBtnStopPushStream()
 {
-	LiveSDK::getInstance()->stopPushStream(m_channelId, OnStopPushStreamSuc, OnStopPushStreamErr, this);
+	iLiveSDKWrap::getInstance()->stopPushStream(m_channelId, OnStopPushStreamSuc, OnStopPushStreamErr, this);
 }
 
 void Live::OnBtnPraise()
 {
 	sendGroupCustomCmd( AVIMCMD_Praise, g_pMainWindow->getUserId() );
 	addMsgLab( g_pMainWindow->getUserId()+FromBits("点赞") );
+}
+
+void Live::OnVsSkinSmoothChanged( int value )
+{
+	m_ui.sbSkinSmooth->blockSignals(true);
+	m_ui.sbSkinSmooth->setValue(value);
+	m_ui.sbSkinSmooth->blockSignals(false);
+	iLiveSetSkinSmoothGrade(value);
+}
+
+void Live::OnSbSkinSmoothChanged( int value )
+{
+	m_ui.vsSkinSmooth->blockSignals(true);
+	m_ui.vsSkinSmooth->setValue(value);
+	m_ui.vsSkinSmooth->blockSignals(false);
+	iLiveSetSkinSmoothGrade(value);
+}
+
+void Live::OnVsSkinWhiteChanged( int value )
+{
+	m_ui.sbSkinWhite->blockSignals(true);
+	m_ui.sbSkinWhite->setValue(value);
+	m_ui.sbSkinWhite->blockSignals(false);
+	iLiveSetSkinWhitenessGrade(value);
+}
+
+void Live::OnSbSkinWhiteChanged( int value )
+{
+	m_ui.vsSkinWhite->blockSignals(true);
+	m_ui.vsSkinWhite->setValue(value);
+	m_ui.vsSkinWhite->blockSignals(false);
+	iLiveSetSkinWhitenessGrade(value);
 }
 
 void Live::OnTimer()
@@ -745,16 +821,9 @@ void Live::OnRequestViewsTimer()
 		return;
 	}
 	m_bIsRequesting = true;
-	int nRet = LiveSDK::getInstance()->requestViewList(m_toRequestIdentifiers, m_toRequestViews, OnRequestViewListSuc, OnRequestViewListErr, this);
+	iLiveSDKWrap::getInstance()->requestViewList(m_toRequestIdentifiers, m_toRequestViews, OnRequestViewListSuc, OnRequestViewListErr, this);
 	m_toRequestIdentifiers.clear();
 	m_toRequestViews.clear();
-	if (nRet!=NO_ERR)
-	{
-		iLiveLog_e("requestViewList failed.");
-		m_pRequestViewsTimer->stop();
-		m_bIsRequesting = false;		
-		ShowErrorTips( "requestViewList failed.", this );
-	}
 }
 
 void Live::OnDelayUpdateTimer()
@@ -782,9 +851,9 @@ void Live::closeEvent( QCloseEvent* event )
 	event->accept();
 }
 
-void Live::getCameraList()
+void Live::updateCameraList()
 {
-	LiveSDK::getInstance()->getCameraList(m_cameraList);
+	iLiveSDKWrap::getInstance()->getCameraList(m_cameraList);
 	m_ui.cbCamera->clear();
 	for(int i=0; i<m_cameraList.size(); ++i)
 	{
@@ -895,6 +964,33 @@ void Live::updateMemberList()
 		}
 		m_ui.liMembers->addItem( new QListWidgetItem(szShowName) );
 	}
+}
+
+void Live::updateScreenShareParam( int x0, int y0, int x1, int y1, int fps )
+{
+	updateScreenShareParam(x0, y0, x1, y1);
+
+	m_ui.sbFPS->blockSignals(true);
+	m_ui.sbFPS->setValue(fps);
+	m_ui.sbFPS->blockSignals(false);
+}
+
+void Live::updateScreenShareParam( int x0, int y0, int x1, int y1 )
+{
+	m_ui.sbX0->blockSignals(true);
+	m_ui.sbY0->blockSignals(true);
+	m_ui.sbX1->blockSignals(true);
+	m_ui.sbY1->blockSignals(true);
+
+	m_ui.sbX0->setValue(x0);
+	m_ui.sbY0->setValue(y0);
+	m_ui.sbX1->setValue(x1);
+	m_ui.sbY1->setValue(y1);
+
+	m_ui.sbX0->blockSignals(false);
+	m_ui.sbY0->blockSignals(false);
+	m_ui.sbX1->blockSignals(false);
+	m_ui.sbY1->blockSignals(false);
 }
 
 void Live::sendInviteInteract()
@@ -1117,17 +1213,27 @@ void Live::OnSxbReportrecord( int errorCode, QString errorInfo, QVariantMap data
 
 void Live::iLiveQuitRoom()
 {
-	LiveSDK::getInstance()->quitRoom(OnQuitRoomSuc, OnQuitRoomErr, this);
+	iLiveSDKWrap::getInstance()->quitRoom(OnQuitRoomSuc, OnQuitRoomErr, this);
 }
 
 void Live::iLiveChangeAuthority( uint64 authBits, const std::string& authBuffer )
 {
-	LiveSDK::getInstance()->changeAuthority(authBits, authBuffer, OnChangeAuthoritySuc, OnChangeAuthorityErr, this);
+	iLiveSDKWrap::getInstance()->changeAuthority(authBits, authBuffer, OnChangeAuthoritySuc, OnChangeAuthorityErr, this);
 }
 
 void Live::iLiveChangeRole( const std::string& szControlRole )
 {
-	LiveSDK::getInstance()->changeRole(szControlRole, OnChangeRoleSuc, OnChangeRoleErr, this);
+	iLiveSDKWrap::getInstance()->changeRole(szControlRole, OnChangeRoleSuc, OnChangeRoleErr, this);
+}
+
+int Live::iLiveSetSkinSmoothGrade( int grade )
+{
+	return iLiveSDKWrap::getInstance()->SetSkinSmoothGrade(grade);
+}
+
+int Live::iLiveSetSkinWhitenessGrade( int grade )
+{
+	return iLiveSDKWrap::getInstance()->SetSkinWhitenessGrade(grade);
 }
 
 void Live::OnQuitRoomSuc( void* data )
@@ -1175,11 +1281,9 @@ void Live::OnRequestViewListSuc( void* data )
 void Live::OnRequestViewListErr( int code, const std::string& desc, void* data )
 {
 	Live* pLive = reinterpret_cast<Live*>(data);
+	iLiveLog_e("requestViewList failed.");
 	pLive->m_bIsRequesting = false;
-	if ( pLive->m_toRequestIdentifiers.empty() )
-	{
-		pLive->m_pRequestViewsTimer->stop();
-	}
+	pLive->m_pRequestViewsTimer->stop();
 	postCusEvent( g_pMainWindow, new Event(E_CERequestViewList, code, desc) );
 }
 
@@ -1312,3 +1416,4 @@ void Live::OnStopPushStreamErr( int code, const std::string& desc, void* data )
 {
 	postCusEvent( g_pMainWindow, new Event(E_CEStopPushStream, code, desc) );
 }
+

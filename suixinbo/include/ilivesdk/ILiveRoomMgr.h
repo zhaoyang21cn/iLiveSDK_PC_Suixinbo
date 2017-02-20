@@ -29,6 +29,17 @@ using tencent::av::AVLocalScreenVideoDevice;
 namespace ilivesdk
 {
 	/**
+	@brief 屏幕共享状态。
+	@details 屏幕共享状态。
+	*/
+	enum E_ScreenShareState
+	{
+		E_ScreenShareNone,	///< 未开启屏幕分享
+		E_ScreenShareWnd,	///< 开启了指定窗口的共享
+		E_ScreenShareArea,	///< 开启了指定区域的共享
+	};
+
+	/**
 	@brief iLiveRoom管理类。
 	@details 此类封装了iLiveRoom的相关操作接口。
 	*/
@@ -303,23 +314,33 @@ namespace ilivesdk
 		int						closePlayer();
 
 		/**
-		@brief 打开屏幕共享。
+		@brief 打开屏幕分享(指定窗口)。
+		@param [in] hWnd 所要捕获的窗口句柄。
+		@param [in] fps 捕获帧率,取值范围[MIN_SCREEN_VIDEO_CAPTURE_FPS-MAX_SCREEN_VIDEO_CAPTURE_FPS],具体参考MIN_SCREEN_VIDEO_CAPTURE_FPS和MAX_SCREEN_VIDEO_CAPTURE_FPS两个宏的定义。
+		@return 操作结果，NO_ERR表示无错误。
+		@remark 传入的参数(fps)可能会经过sdk内部调整，并通过引用方式传回给调用者，实际分享使用的fps以传回值为准;
+		*/
+		int						openScreenShare( HWND hWnd, uint32& fps );
+		/**
+		@brief 打开屏幕共享(指定区域)。
 		@param [in] left/top/right/bottom 所要捕获屏幕画面的区域的左上角坐标(left, top)和右下角坐标(right, bottom)，它们是以屏幕的左上角坐标为原点的。
 		@param [in] fps 捕获帧率，取值范围[MIN_SCREEN_VIDEO_CAPTURE_FPS-MAX_SCREEN_VIDEO_CAPTURE_FPS]，具体参考MIN_SCREEN_VIDEO_CAPTURE_FPS和MAX_SCREEN_VIDEO_CAPTURE_FPS两个宏的定义。
 		@return 操作结果，NO_ERR表示无错误。
-		@remark 传入的参数会经过sdk内部细微的调整，并通过引用方式传回给调用者，实际的分享区域以传回的值为准;
+		@remark 传入的参数可能会经过sdk内部细微的调整，并通过引用方式传回给调用者，实际的分享区域以传回的值为准;
 		*/
 		int						openScreenShare( uint32& left, uint32& top, uint32& right, uint32& bottom, uint32& fps );
 		/**
 		@brief 屏幕分享过程中,动态修改屏幕分享的区域。
 		@param [in] left/top/right/bottom 所要捕获屏幕画面的区域的左上角坐标(left, top)和右下角坐标(right, bottom)，它们是以屏幕的左上角坐标为原点的。
 		@return 操作结果，NO_ERR表示无错误。
-		@remark 传入的参数会经过sdk内部细微的调整，并通过引用方式传回给调用者，实际的分享区域以传回的值为准;
+		@remark 传入的参数可能会经过sdk内部细微的调整，并通过引用方式传回给调用者，实际的分享区域以传回的值为准;
+		@note 此接口只有在打开了指定区域的屏幕共享时才有效,其他状态下将会返回ERR_WRONG_STATE错误;
 		*/
 		int						changeScreenShareSize( uint32& left, uint32& top, uint32& right, uint32& bottom );
 		/**
 		@brief 关闭屏幕共享。
 		@return 操作结果，NO_ERR表示无错误。
+		@remark 指定窗口的屏幕分享和指定区域的屏幕分享都调用此接口来关闭.
 		*/
 		int						closeScreenShare();
 
@@ -376,7 +397,7 @@ namespace ilivesdk
 		@brief 获取当前屏幕分享状态
 		@return true:打开 false：关闭
 		*/
-		bool					getScreenShareState();
+		E_ScreenShareState		getScreenShareState();
 		/**
 		@brief 获取当前推流状态
 		@return true:打开 false：关闭
@@ -392,6 +413,7 @@ namespace ilivesdk
 		iLiveRoomMgr();
 		~iLiveRoomMgr();
 
+		void					ResetAllState();
 		int						SetupAVRoom();
 
 		void					CommentViewList(bool isCancelView);
@@ -455,9 +477,9 @@ namespace ilivesdk
 		bool						m_bCurCameraState;
 		bool						m_bCurMicState;
 		bool						m_bCurPlayerState;
-		bool						m_bScreenShareState;
+		E_ScreenShareState			m_eScreenShareState;
 		bool						m_bPushStreamState;
-		bool						m_bRecordState;		
+		bool						m_bRecordState;
 
 		std::vector<sRequestPair>	m_curRequestViews;
 

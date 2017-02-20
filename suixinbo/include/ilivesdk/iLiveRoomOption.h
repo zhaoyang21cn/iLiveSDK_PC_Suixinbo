@@ -35,6 +35,20 @@ namespace ilivesdk
 	@param [in] data 用户自定数据类型，回调函数中原封不动传回给业务侧。
     */
 	typedef	void (*iLiveSemiAutoRecvCameraVideoListener)(std::vector<std::string> identifier_list, void* data);
+	/**
+    @brief 半自动模式接收屏幕分享的事件通知。
+    @details 半自动模式接收屏幕分享的事件通知。也就是当进入房间时，如果已经有人开启了屏幕分享，则会自动接收屏幕分享，不用手动去请求。当然，进入房间后，如果其他人再开启屏幕分享，则不会自动接收。
+	@param [in] identifier_list 自动接收屏幕分享所对应的成员id列表。
+	@param [in] data 用户自定数据类型，回调函数中原封不动传回给业务侧。
+    */
+	typedef	void (*iLiveSemiAutoRecvScreenVideoListener)(std::vector<std::string> identifier_list, void* data);
+	/**
+    @brief 半自动模式接收播片的事件通知。
+    @details 半自动模式接收播片的事件通知。也就是当进入房间时，如果已经有人在播片，则会自动接收播片，不用手动去请求。当然，进入房间后，如果其他人再开始播片，则不会自动接收。
+	@param [in] identifier_list 自动接收播片所对应的成员id列表。
+	@param [in] data 用户自定数据类型，回调函数中原封不动传回给业务侧。
+    */
+	typedef	void (*iLiveSemiAutoRecvMediaFileVideoListener)(std::vector<std::string> identifier_list, void* data);
 
 	/**
 	@brief iLiveRoom配置项。
@@ -52,7 +66,9 @@ namespace ilivesdk
 			,screen_recv_mode(tencent::av::SCREEN_RECV_MODE_SEMI_AUTO_RECV_SCREEN_VIDEO)//半自动模式
 			,m_roomDisconnectListener(NULL)
 			,m_memberStatusListener(NULL)
-			,m_autoRecvListener(NULL)
+			,m_autoRecvCameraListener(NULL)
+			,m_autoRecvScreenListener(NULL)
+			,m_autoRecvMediaFileListener(NULL)
 			,data(NULL)
 		{
 		}
@@ -66,8 +82,10 @@ namespace ilivesdk
 
 		iLiveRoomDisconnectListener				m_roomDisconnectListener; ///< SDK主动退出房间提示,参见iLiveRoomDisconnectListener定义。
 		iLiveMemStatusListener					m_memberStatusListener;	  ///< 房间成员状态变化通知，参见iLiveMemStatusListener定义。
-		iLiveSemiAutoRecvCameraVideoListener	m_autoRecvListener;		  ///< 半自动模式接收摄像头视频的通知，参见iLiveSemiAutoRecvCameraVideoListener定义。
-		void*									data;					  ///< 用户自定义数据类型，在m_roomDisconnectListener、m_memberStatusListener和m_autoRecvListener中原封不动返回。
+		iLiveSemiAutoRecvCameraVideoListener	m_autoRecvCameraListener; ///< 半自动模式接收摄像头视频的通知，参见iLiveSemiAutoRecvCameraVideoListener定义。
+		iLiveSemiAutoRecvScreenVideoListener	m_autoRecvScreenListener; ///< 半自动模式接收屏幕分享的通知，参见iLiveSemiAutoRecvScreenVideoListener定义。
+		iLiveSemiAutoRecvMediaFileVideoListener m_autoRecvMediaFileListener;///< 半自动模式接收播片的通知，参见iLiveSemiAutoRecvMediaFileVideoListener定义。
+		void*									data;					  ///< 用户自定义数据类型，在m_roomDisconnectListener、m_memberStatusListener、m_autoRecvCameraListener、m_autoRecvScreenListener和m_autoRecvMediaFileListener中原封不动返回。
 	};
 }
 

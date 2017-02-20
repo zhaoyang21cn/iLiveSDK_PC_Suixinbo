@@ -4,7 +4,6 @@
 Live::Live( QWidget * parent /*= 0*/, Qt::WindowFlags f /*= 0*/ )
 	:QDialog(parent, f)
 {
-	//setAttribute(Qt::WA_DeleteOnClose);
 	m_ui.setupUi(this);
 
 	m_userType =  E_RoomUserInvalid;
@@ -30,12 +29,18 @@ Live::Live( QWidget * parent /*= 0*/, Qt::WindowFlags f /*= 0*/ )
 	m_ui.layoutRemoteVideo1->addWidget(m_pRemoteVideoRenders[1]);
 	m_ui.layoutRemoteVideo2->addWidget(m_pRemoteVideoRenders[2]);
 
+	m_x0 = 0;
+	m_y0 = 0;
+	m_fps = 10;
 	QDesktopWidget* desktopWidget = QApplication::desktop();
 	QRect screenRect = desktopWidget->screenGeometry();
-	int nScreenX = screenRect.width();
-	int nScreenY = screenRect.height();
-	m_ui.sbX1->setValue(nScreenX);
-	m_ui.sbY1->setValue(nScreenY);
+	m_x1 = screenRect.width();
+	m_y1 = screenRect.height();
+	m_ui.sbX0->setValue(m_x0);
+	m_ui.sbY0->setValue(m_y0);
+	m_ui.sbX1->setValue(m_x1);
+	m_ui.sbY1->setValue(m_y1);
+	m_ui.sbFPS->setValue(m_fps);
 
 	m_nRoomSize = 0;
 
@@ -74,7 +79,8 @@ Live::Live( QWidget * parent /*= 0*/, Qt::WindowFlags f /*= 0*/ )
 	connect( m_ui.btnCloseMic, SIGNAL(clicked()), this, SLOT(OnBtnCloseMic()) );
 	connect( m_ui.btnOpenPlayer, SIGNAL(clicked()), this, SLOT(OnBtnOpenPlayer()) );
 	connect( m_ui.btnClosePlayer, SIGNAL(clicked()), this, SLOT(OnBtnClosePlayer()) );
-	connect( m_ui.btnOpenScreenShare, SIGNAL(clicked()), this, SLOT(OnBtnOpenScreenShare()) );
+	connect( m_ui.btnOpenScreenShareArea, SIGNAL(clicked()), this, SLOT(OnBtnOpenScreenShareArea()) );
+	connect( m_ui.btnOpenScreenShareWnd, SIGNAL(clicked()), this, SLOT(OnBtnOpenScreenShareWnd()) );
 	connect( m_ui.btnUpdateScreenShare, SIGNAL(clicked()), this, SLOT(OnBtnUpdateScreenShare()) );
 	connect( m_ui.btnCloseScreenShare, SIGNAL(clicked()), this, SLOT(OnBtnCloseScreenShare()) );
 	connect( m_ui.btnSendGroupMsg, SIGNAL(clicked()), this, SLOT(OnBtnSendGroupMsg()) );
@@ -120,7 +126,7 @@ void Live::setRoomUserType( E_RoomUserType userType )
 
 			m_ui.screenShareGB->setVisible(true);
 			m_ui.sbFPS->setEnabled(true);
-			m_ui.btnOpenScreenShare->setEnabled(true);
+			m_ui.btnOpenScreenShareArea->setEnabled(true);
 			m_ui.btnUpdateScreenShare->setEnabled(false);
 			m_ui.btnCloseScreenShare->setEnabled(false);
 
@@ -147,7 +153,7 @@ void Live::setRoomUserType( E_RoomUserType userType )
 
 			m_ui.screenShareGB->setVisible(true);
 			m_ui.sbFPS->setEnabled(true);
-			m_ui.btnOpenScreenShare->setEnabled(true);
+			m_ui.btnOpenScreenShareArea->setEnabled(true);
 			m_ui.btnUpdateScreenShare->setEnabled(false);
 			m_ui.btnCloseScreenShare->setEnabled(false);
 
@@ -412,7 +418,6 @@ void Live::updateLater(int msec)
 
 void Live::OnMemStatusChange( AVRoomMulti::EndpointEventId event_id, std::vector<std::string> identifier_list, void* data )
 {
-	iLiveLog_d("OnMemStatusChange");
 	Live* pLive = reinterpret_cast<Live*>(data);
 	switch(event_id)
 	{
@@ -465,17 +470,26 @@ void Live::OnMemStatusChange( AVRoomMulti::EndpointEventId event_id, std::vector
 
 void Live::OnSemiAutoRecvCameraVideo( std::vector<std::string> identifier_list, void* data )
 {
-	iLiveLog_d("OnSemiAutoRecvCameraVideo");
+	
+}
+
+void Live::OnSemiAutoRecvScreenVideo( std::vector<std::string> identifier_list, void* data )
+{
+
+}
+
+void Live::OnSemiAutoRecvMediaFileVideo( std::vector<std::string> identifier_list, void* data )
+{
+
 }
 
 void Live::OnRoomDisconnect( int32 reason, std::string errorinfo, void* data )
 {
-	iLiveLog_d("OnRoomDisconnect");
+	
 }
 
 void Live::OnLocalVideo( VideoFrame* video_frame, void* custom_data )
 {
-	//iLiveLog_d("OnLocalVideo");
 	Live* pLive = reinterpret_cast<Live*>(custom_data);
 
 	if(video_frame->desc.src_type == VIDEO_SRC_TYPE_SCREEN)
@@ -490,7 +504,6 @@ void Live::OnLocalVideo( VideoFrame* video_frame, void* custom_data )
 
 void Live::OnRemoteVideo( VideoFrame* video_frame, void* custom_data )
 {
-	//iLiveLog_d("OnRemoteVideo");
 	Live* pLive = reinterpret_cast<Live*>(custom_data);
 	if (video_frame->desc.src_type == VIDEO_SRC_TYPE_SCREEN)
 	{
@@ -505,7 +518,7 @@ void Live::OnRemoteVideo( VideoFrame* video_frame, void* custom_data )
 		}
 		else
 		{
-			iLiveLog_e("Render is not enough.");
+			iLiveLog_e("suixinbo", "Render is not enough.");
 		}
 	}
 }
@@ -622,7 +635,7 @@ void Live::OnBtnClosePlayer()
 	}
 }
 
-void Live::OnBtnOpenScreenShare()
+void Live::OnBtnOpenScreenShareArea()
 {
 	//////////////////////////////////////////////////
 	//PC端SDK本可以支持摄像头和屏幕分享同时打开,为了Android和ios端随心播的显示方便，
@@ -635,28 +648,52 @@ void Live::OnBtnOpenScreenShare()
 	}
 	//////////////////////////////////////////////////
 
-	m_ui.btnOpenScreenShare->setEnabled(false);
-	unsigned int x0 = m_ui.sbX0->value();
-	unsigned int y0 = m_ui.sbY0->value();
-	unsigned int x1 = m_ui.sbX1->value();
-	unsigned int y1 = m_ui.sbY1->value();
-	unsigned int fps= m_ui.sbFPS->value();
-	int nRet = iLiveSDKWrap::getInstance()->openScreenShare(x0, y0, x1, y1, fps);
+	m_x0 = m_ui.sbX0->value();
+	m_y0 = m_ui.sbY0->value();
+	m_x1 = m_ui.sbX1->value();
+	m_y1 = m_ui.sbY1->value();
+	m_fps= m_ui.sbFPS->value();
+	int nRet = iLiveSDKWrap::getInstance()->openScreenShare(m_x0, m_y0, m_x1, m_y1, m_fps);
 	if (nRet==0)
 	{
-		m_ui.sbFPS->setEnabled(false);
-		m_ui.btnOpenScreenShare->setEnabled(false);
-		m_ui.btnUpdateScreenShare->setEnabled(true);
-		m_ui.btnCloseScreenShare->setEnabled(true);
 		updatePushAndRecordStateUI();
-		updateScreenShareParam(x0, y0, x1, y1, fps);
+		updateScreenShareUI();
 	}
 	else
 	{
-		m_ui.sbFPS->setEnabled(true);
-		m_ui.btnOpenScreenShare->setEnabled(true);
-		m_ui.btnUpdateScreenShare->setEnabled(false);
-		m_ui.btnCloseScreenShare->setEnabled(false);
+		if (nRet==1008)
+		{
+			ShowErrorTips( FromBits("房间内只允许一个用户打开屏幕分享"), this );
+		}
+		else
+		{
+			ShowCodeErrorTips( nRet, "Open Screen Share Failed.", this );
+		}
+	}
+}
+
+void Live::OnBtnOpenScreenShareWnd()
+{
+	//////////////////////////////////////////////////
+	//PC端SDK本可以支持摄像头和屏幕分享同时打开,为了Android和ios端随心播的显示方便，
+	//限制每个PC端用户只允许打开摄像头和屏幕分享之一,需要同时打开屏幕分享和摄像头
+	//的用户请注释掉本段代码;
+	if ( iLiveSDKWrap::getInstance()->getCurCameraState() )
+	{
+		ShowTips( FromBits("提示"), FromBits("请先关闭摄像头"), this );
+		return;
+	}
+	//////////////////////////////////////////////////
+
+	m_fps= m_ui.sbFPS->value();
+	int nRet = iLiveSDKWrap::getInstance()->openScreenShare( (HWND)this->winId(), m_fps );//这里演示分享直播界面窗口
+	if (nRet==0)
+	{
+		updatePushAndRecordStateUI();
+		updateScreenShareUI();
+	}
+	else
+	{
 		if (nRet==1008)
 		{
 			ShowErrorTips( FromBits("房间内只允许一个用户打开屏幕分享"), this );
@@ -670,19 +707,19 @@ void Live::OnBtnOpenScreenShare()
 
 void Live::OnBtnUpdateScreenShare()
 {
-	unsigned int x0 = m_ui.sbX0->value();
-	unsigned int y0 = m_ui.sbY0->value();
-	unsigned int x1 = m_ui.sbX1->value();
-	unsigned int y1 = m_ui.sbY1->value();
+	m_x0 = m_ui.sbX0->value();
+	m_y0 = m_ui.sbY0->value();
+	m_x1 = m_ui.sbX1->value();
+	m_y1 = m_ui.sbY1->value();
 
-	int nRet = iLiveSDKWrap::getInstance()->changeScreenShareSize( x0, y0, x1, y1 );
+	int nRet = iLiveSDKWrap::getInstance()->changeScreenShareSize( m_x0, m_y0, m_x1, m_y1 );
 	if (nRet==NO_ERR)
 	{
-		updateScreenShareParam( x0, y0, x1, y1 );
+		updateScreenShareUI();
 	}
 	else
 	{
-		ShowCodeErrorTips( nRet, "changeScreenShareSize failed.", this );
+		ShowCodeErrorTips( nRet, "changeScreenShareAreaSize failed.", this );
 	}
 }
 
@@ -691,19 +728,13 @@ void Live::OnBtnCloseScreenShare()
 	int nRet = iLiveSDKWrap::getInstance()->closeScreenShare();
 	if (nRet==0)
 	{
-		m_ui.sbFPS->setEnabled(true);
-		m_ui.btnOpenScreenShare->setEnabled(true);
-		m_ui.btnUpdateScreenShare->setEnabled(false);
-		m_ui.btnCloseScreenShare->setEnabled(false);
 		m_pScreenShareRender->update();
+		updateScreenShareUI();
 		updatePushAndRecordStateUI();
 	}
 	else
 	{
-		m_ui.sbFPS->setEnabled(false);
-		m_ui.btnOpenScreenShare->setEnabled(false);
-		m_ui.btnCloseScreenShare->setEnabled(true);
-		m_ui.btnUpdateScreenShare->setEnabled(true);
+		updateScreenShareUI();
 		ShowErrorTips( "Close Screen Share Failed.", this );
 	}
 }
@@ -966,31 +997,71 @@ void Live::updateMemberList()
 	}
 }
 
-void Live::updateScreenShareParam( int x0, int y0, int x1, int y1, int fps )
-{
-	updateScreenShareParam(x0, y0, x1, y1);
-
-	m_ui.sbFPS->blockSignals(true);
-	m_ui.sbFPS->setValue(fps);
-	m_ui.sbFPS->blockSignals(false);
-}
-
-void Live::updateScreenShareParam( int x0, int y0, int x1, int y1 )
+void Live::updateScreenShareUI()
 {
 	m_ui.sbX0->blockSignals(true);
 	m_ui.sbY0->blockSignals(true);
 	m_ui.sbX1->blockSignals(true);
 	m_ui.sbY1->blockSignals(true);
-
-	m_ui.sbX0->setValue(x0);
-	m_ui.sbY0->setValue(y0);
-	m_ui.sbX1->setValue(x1);
-	m_ui.sbY1->setValue(y1);
-
+	m_ui.sbFPS->blockSignals(true);
+	m_ui.sbX0->setValue(m_x0);
+	m_ui.sbY0->setValue(m_y0);
+	m_ui.sbX1->setValue(m_x1);
+	m_ui.sbY1->setValue(m_y1);
+	m_ui.sbFPS->setValue(m_fps);
 	m_ui.sbX0->blockSignals(false);
 	m_ui.sbY0->blockSignals(false);
 	m_ui.sbX1->blockSignals(false);
 	m_ui.sbY1->blockSignals(false);
+	m_ui.sbFPS->blockSignals(false);
+
+	E_ScreenShareState state = iLiveSDKWrap::getInstance()->getScreenShareState();
+	switch(state)
+	{
+	case E_ScreenShareNone:
+		{
+			m_ui.sbX0->setEnabled(true);
+			m_ui.sbY0->setEnabled(true);
+			m_ui.sbX1->setEnabled(true);
+			m_ui.sbY1->setEnabled(true);
+			m_ui.sbFPS->setEnabled(true);
+			m_ui.btnOpenScreenShareArea->setEnabled(true);
+			m_ui.btnOpenScreenShareWnd->setEnabled(true);
+			m_ui.btnUpdateScreenShare->setEnabled(false);
+			m_ui.btnCloseScreenShare->setEnabled(false);
+			break;
+		}
+	case E_ScreenShareWnd:
+		{
+			m_ui.sbX0->setEnabled(false);
+			m_ui.sbY0->setEnabled(false);
+			m_ui.sbX1->setEnabled(false);
+			m_ui.sbY1->setEnabled(false);
+			m_ui.sbFPS->setEnabled(false);
+			m_ui.btnOpenScreenShareArea->setEnabled(false);
+			m_ui.btnOpenScreenShareWnd->setEnabled(false);
+			m_ui.btnUpdateScreenShare->setEnabled(false);
+			m_ui.btnCloseScreenShare->setEnabled(true);
+			break;
+		}
+	case E_ScreenShareArea:
+		{
+			m_ui.sbX0->setEnabled(true);
+			m_ui.sbY0->setEnabled(true);
+			m_ui.sbX1->setEnabled(true);
+			m_ui.sbY1->setEnabled(true);
+			m_ui.sbFPS->setEnabled(false);
+			m_ui.btnOpenScreenShareArea->setEnabled(false);
+			m_ui.btnOpenScreenShareWnd->setEnabled(false);
+			m_ui.btnUpdateScreenShare->setEnabled(true);
+			m_ui.btnCloseScreenShare->setEnabled(true);
+			break;
+		}
+	default:
+		{
+			break;
+		}
+	}
 }
 
 void Live::sendInviteInteract()
@@ -1159,7 +1230,7 @@ void Live::OnSxbHeartBeat( int errorCode, QString errorInfo, QVariantMap datamap
 
 	if (errorCode!=E_SxbOK)
 	{
-		iLiveLog_e( "Sui xin bo heartbeat failed: %d %s", errorCode, errorInfo.toStdString().c_str() );
+		iLiveLog_e( "suixinbo", "Sui xin bo heartbeat failed: %d %s", errorCode, errorInfo.toStdString().c_str() );
 	}
 }
 
@@ -1169,7 +1240,7 @@ void Live::OnSxbRoomIdList( int errorCode, QString errorInfo, QVariantMap datama
 
 	if (errorCode!=E_SxbOK)
 	{
-		iLiveLog_e( "Suixinbo get Room Id List failed: %d %s", errorCode, errorInfo.toStdString().c_str() );
+		iLiveLog_e( "suixinbo", "Suixinbo get Room id list failed: %d %s", errorCode, errorInfo.toStdString().c_str() );
 		return ;
 	}
 
@@ -1206,7 +1277,7 @@ void Live::OnSxbReportrecord( int errorCode, QString errorInfo, QVariantMap data
 
 	if (errorCode!=E_SxbOK)
 	{
-		iLiveLog_e( "Suixinbo report record video failed: %d %s", errorCode, errorInfo.toStdString().c_str() );
+		iLiveLog_e( "suixinbo", "Suixinbo report record video failed: %d %s", errorCode, errorInfo.toStdString().c_str() );
 		return ;
 	}
 }
@@ -1259,12 +1330,12 @@ void Live::OnChangeAuthorityErr( int code, const std::string& desc, void* data )
 
 void Live::OnChangeRoleSuc( void* data )
 {
-	iLiveLog_d("Change Role Suc.");
+	
 }
 
 void Live::OnChangeRoleErr( int code, const std::string& desc, void* data )
 {
-	iLiveLog_d("Change Role Error.");
+	
 }
 
 void Live::OnRequestViewListSuc( void* data )
@@ -1281,7 +1352,6 @@ void Live::OnRequestViewListSuc( void* data )
 void Live::OnRequestViewListErr( int code, const std::string& desc, void* data )
 {
 	Live* pLive = reinterpret_cast<Live*>(data);
-	iLiveLog_e("requestViewList failed.");
 	pLive->m_bIsRequesting = false;
 	pLive->m_pRequestViewsTimer->stop();
 	postCusEvent( g_pMainWindow, new Event(E_CERequestViewList, code, desc) );

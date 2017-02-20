@@ -96,7 +96,6 @@ void MainWindow::OnForceOffline()
 
 void MainWindow::initSDK()
 {
-	SetiLiveLogLevel(E_LogWarn);
 	iLiveSDKWrap::getInstance()->SetMessageCallBack(&m_messageCallBack);
 	iLiveSDKWrap::getInstance()->SetForceOfflineCallback(&m_forceOfflineCallBack);
 	iLiveSDKWrap::getInstance()->setLocalVideoCallBack(Live::OnLocalVideo, m_pLive);
@@ -402,7 +401,6 @@ void MainWindow::OnSxbReportroom( int errorCode, QString errorInfo, QVariantMap 
 
 	if (errorCode==E_SxbOK)
 	{
-		iLiveLog_d("Suixinbo Remport Room Succeed.");
 		pMainWindow->sxbCreatorJoinRoom();//随心播服务器要求，创建房间、上报房间信息、主播还需要上报一次自己进入房间;
 	}
 	else
@@ -417,7 +415,6 @@ void MainWindow::OnSxbCreatorJoinRoom( int errorCode, QString errorInfo, QVarian
 
 	if (errorCode==E_SxbOK)
 	{
-		iLiveLog_d("Suixinbo Creator Join Room Succeed.");
 		pMainWindow->m_pLive->startTimer();//启动计时器
 	}
 	else
@@ -432,7 +429,7 @@ void MainWindow::OnSxbRoomList( int errorCode, QString errorInfo, QVariantMap da
 
 	if (errorCode!=E_SxbOK)
 	{
-		iLiveLog_e("SxbRoomList Failed.");
+		iLiveLog_e("suixinbo", "SxbRoomList Failed.");
 		return;
 	}
 
@@ -543,7 +540,9 @@ void MainWindow::iLiveCreateRoom()
 	roomOption.screen_recv_mode = SCREEN_RECV_MODE_SEMI_AUTO_RECV_SCREEN_VIDEO;//半自动模式
 	roomOption.m_roomDisconnectListener = Live::OnRoomDisconnect;
 	roomOption.m_memberStatusListener = Live::OnMemStatusChange;
-	roomOption.m_autoRecvListener = Live::OnSemiAutoRecvCameraVideo;
+	roomOption.m_autoRecvCameraListener = Live::OnSemiAutoRecvCameraVideo;
+	roomOption.m_autoRecvScreenListener = Live::OnSemiAutoRecvScreenVideo;
+	roomOption.m_autoRecvMediaFileListener = Live::OnSemiAutoRecvMediaFileVideo;
 	roomOption.data = m_pLive;
 	iLiveSDKWrap::getInstance()->createRoom( roomOption, OniLiveCreateRoomSuc, OniLiveCreateRoomErr, this );
 }
@@ -671,7 +670,6 @@ void MainWindow::customEvent( QEvent * event )
 		{
 			if (e->code==0)
 			{
-				iLiveLog_d("Quit Room Succeed.");
 				m_curRoomInfo.szId = "";
 				m_curRoomInfo.info.thumbup = 0;
 			}
@@ -683,11 +681,7 @@ void MainWindow::customEvent( QEvent * event )
 		}
 	case E_CERequestViewList:
 		{
-			if (e->code==0)
-			{
-				iLiveLog_d("Request View List Succeed.");
-			}
-			else
+			if (e->code!=0)
 			{
 				ShowCodeErrorTips(e->code, FromStdStr(e->desc), this, "Request View List Error.");
 			}
@@ -695,11 +689,7 @@ void MainWindow::customEvent( QEvent * event )
 		}
 	case E_CECancelViewList:
 		{
-			if (e->code==0)
-			{
-				iLiveLog_d("Cancel View List Succeed.");
-			}
-			else
+			if (e->code!=0)
 			{
 				ShowCodeErrorTips(e->code, FromStdStr(e->desc), this, "Cancel View List Error.");
 			}
@@ -707,11 +697,7 @@ void MainWindow::customEvent( QEvent * event )
 		}
 	case E_CESendGroupMsg:
 		{
-			if (e->code==0)
-			{
-				iLiveLog_d("Send Group Message Succeed.");
-			}
-			else
+			if (e->code!=0)
 			{
 				ShowCodeErrorTips(e->code, FromStdStr(e->desc), this, "Send Group Message Error.");
 			}

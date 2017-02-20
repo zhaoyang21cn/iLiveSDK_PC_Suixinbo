@@ -65,7 +65,7 @@ bool PicDownHelper::clearPicCache()
 
 void PicDownHelper::doGetPic()
 {
-	iLiveLog_d( "To get pic: %s", m_url.toUtf8().data() );
+	//iLiveLog_d( "To get pic: %s", m_url.toUtf8().data() );
 	NetworkHelper::get( m_url, OnNetworkReply, this );
 }
 

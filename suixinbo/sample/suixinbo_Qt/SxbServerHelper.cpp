@@ -26,7 +26,7 @@ void SxbServerHelper::request( QVariantMap varmap, QString svc, QString cmd, Sxb
 
 void SxbServerHelper::doRequest()
 {
-	iLiveLog_d( "Send:\n%s", m_content.toUtf8().data() );
+	//iLiveLog_d( "Send:\n%s", m_content.toUtf8().data() );
 	NetworkHelper::post( m_url, m_content, OnNetworkReply, this );
 }
 
@@ -50,7 +50,7 @@ void SxbServerHelper::OnNetworkReply( int errCode, const QByteArray& bytes, void
 	}
 	else if (errCode==E_NetOK)
 	{
-		iLiveLog_d( "Receive: %s ", bytes.data() );
+		//iLiveLog_d( "Receive: %s ", bytes.data() );
 		
 		//解析接收到的json
 		QJsonParseError json_error;

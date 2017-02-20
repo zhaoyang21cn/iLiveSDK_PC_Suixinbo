@@ -32,55 +32,63 @@ namespace ilivesdk
 
 	/**
 	@brief 输出Error日志信息.
+	@param [in] szModule 模块名.
 	@param [in] szFormat 日志内容格式.
 	@note 使用方法类似prinf()函数.
 	*/
-	iLiveAPI void iLiveLog_e(const char* szFormat, ...);
+	iLiveAPI void iLiveLog_e(const char* szModule, const char* szFormat, ...);
 	/**
 	@brief 输出Error日志信息(双字节版本).
+	@param [in] szModule 模块名.
 	@param [in] szFormat 日志内容格式.
 	@note 使用方法类似wprintf()函数.
 	*/
-	iLiveAPI void iLiveLog_e(const wchar_t* szFormat, ...);
+	iLiveAPI void iLiveLog_e(const wchar_t* szModule, const wchar_t* szFormat, ...);
 
 	/**
 	@brief 输出Warn日志信息.
+	@param [in] szModule 模块名.
 	@param [in] szFormat 日志内容格式.
 	@note 使用方法类似prinf()函数.
 	*/
-	iLiveAPI void iLiveLog_w(const char* szFormat, ...);
+	iLiveAPI void iLiveLog_w(const char* szModule, const char* szFormat, ...);
 	/**
 	@brief 输出Warn日志信息(双字节版本).
+	@param [in] szModule 模块名.
 	@param [in] szFormat 日志内容格式.
 	@note 使用方法类似wprintf()函数.
 	*/
-	iLiveAPI void iLiveLog_w(const wchar_t* szFormat, ...);
+	iLiveAPI void iLiveLog_w(const wchar_t* szModule, const wchar_t* szFormat, ...);
 
 	/**
 	@brief 输出Info日志信息.
+	@param [in] szModule 模块名.
 	@param [in] szFormat 日志内容格式.
 	@note 使用方法类似prinf()函数.
 	*/
-	iLiveAPI void iLiveLog_i(const char* szFormat, ...);
+	iLiveAPI void iLiveLog_i(const char* szModule, const char* szFormat, ...);
 	/**
 	@brief 输出Info日志信息(双字节版本).
+	@param [in] szModule 模块名.
 	@param [in] szFormat 日志内容格式.
 	@note 使用方法类似wprintf()函数.
 	*/
-	iLiveAPI void iLiveLog_i(const wchar_t* szFormat, ...);
+	iLiveAPI void iLiveLog_i(const wchar_t* szModule, const wchar_t* szFormat, ...);
 
 	/**
 	@brief 输出Debug日志信息.
+	@param [in] szModule 模块名.
 	@param [in] szFormat 日志内容格式.
 	@note 使用方法类似prinf()函数.
 	*/
-	iLiveAPI void iLiveLog_d(const char* szFormat, ...);
+	iLiveAPI void iLiveLog_d(const char* szModule, const char* szFormat, ...);
 	/**
 	@brief 输出Debug日志信息(双字节版本).
+	@param [in] szModule 模块名.
 	@param [in] szFormat 日志内容格式.
 	@note 使用方法类似wprintf()函数.
 	*/
-	iLiveAPI void iLiveLog_d(const wchar_t* szFormat, ...);
+	iLiveAPI void iLiveLog_d(const wchar_t* szModule, const wchar_t* szFormat, ...);
 }
 
 #endif //iLiveLog_h_

@@ -187,6 +187,11 @@ int iLiveSDKWrap::closePlayer()
 	return iLiveRoomMgr::getInstance()->closePlayer();
 }
 
+int iLiveSDKWrap::openScreenShare( HWND hWnd, uint32& fps )
+{
+	return iLiveRoomMgr::getInstance()->openScreenShare(hWnd, fps);
+}
+
 int iLiveSDKWrap::openScreenShare( uint32& left, uint32& top, uint32& right, uint32& bottom, uint32& fps )
 {
 	return iLiveRoomMgr::getInstance()->openScreenShare(left, top, right, bottom, fps);
@@ -217,7 +222,7 @@ bool iLiveSDKWrap::getCurPlayerState()
 	return iLiveRoomMgr::getInstance()->getCurPlayerState();
 }
 
-bool iLiveSDKWrap::getScreenShareState()
+E_ScreenShareState iLiveSDKWrap::getScreenShareState()
 {
 	return iLiveRoomMgr::getInstance()->getScreenShareState();
 }

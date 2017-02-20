@@ -44,6 +44,8 @@ public:
 
 	static void OnMemStatusChange(AVRoomMulti::EndpointEventId event_id, std::vector<std::string> identifier_list, void* data);
 	static void OnSemiAutoRecvCameraVideo(std::vector<std::string> identifier_list, void* data);
+	static void OnSemiAutoRecvScreenVideo(std::vector<std::string> identifier_list, void* data);
+	static void OnSemiAutoRecvMediaFileVideo(std::vector<std::string> identifier_list, void* data);
 	static void OnRoomDisconnect(int32 reason, std::string errorinfo, void* data);
 
 	static void OnLocalVideo(VideoFrame* video_frame, void* custom_data);
@@ -56,7 +58,8 @@ private slots:
 	void OnBtnCloseMic();
 	void OnBtnOpenPlayer();
 	void OnBtnClosePlayer();
-	void OnBtnOpenScreenShare();
+	void OnBtnOpenScreenShareArea();
+	void OnBtnOpenScreenShareWnd();
 	void OnBtnUpdateScreenShare();
 	void OnBtnCloseScreenShare();
 	void OnBtnSendGroupMsg();
@@ -93,9 +96,7 @@ private:
 	void addRequestViews(const std::vector<std::string>& identifiers, const std::vector<View>& views);
 
 	void updateMemberList();
-
-	void updateScreenShareParam( int x0, int y0, int x1, int y1, int fps );
-	void updateScreenShareParam( int x0, int y0, int x1, int y1 );
+	void updateScreenShareUI();
 
 	void sendInviteInteract();//主播向普通观众发出连线邀请
 	void sendCancelInteract();//主播向连线中的观众发出断线命令
@@ -186,6 +187,12 @@ private:
 	bool						m_bIsRequesting;
 	std::vector<std::string>	m_toRequestIdentifiers;
 	std::vector<View>			m_toRequestViews;
+
+	uint32	m_x0;
+	uint32	m_y0;
+	uint32	m_x1;
+	uint32	m_y1;
+	uint32	m_fps;
 };
 
 #endif//Live_h_

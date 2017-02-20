@@ -80,35 +80,22 @@
      <x>10</x>
      <y>190</y>
      <width>191</width>
-     <height>201</height>
+     <height>211</height>
     </rect>
    </property>
    <property name="title">
     <string>屏幕分享</string>
    </property>
-   <widget class="QPushButton" name="btnOpenScreenShare">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>140</y>
-      <width>81</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>打开屏幕分享</string>
-    </property>
-   </widget>
    <widget class="QPushButton" name="btnCloseScreenShare">
     <property name="enabled">
      <bool>false</bool>
     </property>
     <property name="geometry">
      <rect>
-      <x>100</x>
-      <y>140</y>
-      <width>81</width>
-      <height>41</height>
+      <x>10</x>
+      <y>170</y>
+      <width>171</width>
+      <height>31</height>
      </rect>
     </property>
     <property name="text">
@@ -131,8 +118,8 @@
    <widget class="QLabel" name="label_2">
     <property name="geometry">
      <rect>
-      <x>110</x>
-      <y>20</y>
+      <x>20</x>
+      <y>50</y>
       <width>21</width>
       <height>16</height>
      </rect>
@@ -145,7 +132,7 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>60</y>
+      <y>80</y>
       <width>21</width>
       <height>16</height>
      </rect>
@@ -157,8 +144,8 @@
    <widget class="QLabel" name="label_4">
     <property name="geometry">
      <rect>
-      <x>110</x>
-      <y>60</y>
+      <x>20</x>
+      <y>110</y>
       <width>21</width>
       <height>16</height>
      </rect>
@@ -171,7 +158,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>100</y>
+      <y>140</y>
       <width>31</width>
       <height>21</height>
      </rect>
@@ -199,8 +186,8 @@
    <widget class="QSpinBox" name="sbY0">
     <property name="geometry">
      <rect>
-      <x>140</x>
-      <y>20</y>
+      <x>50</x>
+      <y>50</y>
       <width>41</width>
       <height>22</height>
      </rect>
@@ -216,7 +203,7 @@
     <property name="geometry">
      <rect>
       <x>50</x>
-      <y>60</y>
+      <y>80</y>
       <width>41</width>
       <height>22</height>
      </rect>
@@ -231,8 +218,8 @@
    <widget class="QSpinBox" name="sbY1">
     <property name="geometry">
      <rect>
-      <x>140</x>
-      <y>60</y>
+      <x>50</x>
+      <y>110</y>
       <width>41</width>
       <height>22</height>
      </rect>
@@ -248,8 +235,8 @@
     <property name="geometry">
      <rect>
       <x>50</x>
-      <y>100</y>
-      <width>41</width>
+      <y>140</y>
+      <width>131</width>
       <height>22</height>
      </rect>
     </property>
@@ -260,7 +247,7 @@
      <number>300</number>
     </property>
     <property name="value">
-     <number>10</number>
+     <number>0</number>
     </property>
    </widget>
    <widget class="QPushButton" name="btnUpdateScreenShare">
@@ -270,13 +257,39 @@
     <property name="geometry">
      <rect>
       <x>100</x>
-      <y>90</y>
+      <y>60</y>
       <width>81</width>
-      <height>41</height>
+      <height>31</height>
      </rect>
     </property>
     <property name="text">
      <string>更改分享区域</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btnOpenScreenShareArea">
+    <property name="geometry">
+     <rect>
+      <x>100</x>
+      <y>20</y>
+      <width>81</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>分享指定区域</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btnOpenScreenShareWnd">
+    <property name="geometry">
+     <rect>
+      <x>100</x>
+      <y>100</y>
+      <width>81</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>分享指定窗口</string>
     </property>
    </widget>
   </widget>
@@ -622,7 +635,7 @@
      <x>210</x>
      <y>230</y>
      <width>131</width>
-     <height>161</height>
+     <height>171</height>
     </rect>
    </property>
    <property name="title">

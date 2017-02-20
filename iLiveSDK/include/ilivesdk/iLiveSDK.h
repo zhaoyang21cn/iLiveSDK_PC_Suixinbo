@@ -54,7 +54,8 @@ namespace ilivesdk
 		*/
 		int					initSdk(const int appId, const int accountType);
 		/**
-		@brief 释放内部资源,程序退出时需要调用
+		@brief 释放内部资源,程序退出时需要调用。
+		@remark 此函数会清理7天前的iLiveSDK日志文件。
 		*/
 		void				destroy();
 		/**

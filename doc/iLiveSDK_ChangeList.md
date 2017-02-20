@@ -14,3 +14,12 @@
 	(3) iLiveRoomMgr.h: requestViewList、cancelViewList、cancelAllView 接口返回值由int改为void;<br/>
 	(4)	iLiveRoomMgr.h: 增加changeScreenShareSize接口;<br/>
 	(5)	iLiveRoomMgr.h: openScreenShare接口参数改为引用方式;<br/>
+
+###### V1.2.1(2017-02-20)
+* iLiveSDK日志文件规范化;
+* iLiveSDK自动清理日志文件(7天前);
+* 增加屏幕分享指定窗口句柄的接口;
+* iLiveRoomOption结构修改:<br/>
+	(1)增加m_autoRecvScreenListener成员;<br/>
+	(2)增加m_autoRecvMediaFileListener成员;<br/>
+	(3)m_autoRecvListener成员改名为m_autoRecvCameraListener;<br/>

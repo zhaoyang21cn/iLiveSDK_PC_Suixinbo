@@ -11,6 +11,7 @@ using ilivesdk::ErrorCallback;
 using ilivesdk::iLiveRoomOption;
 using ilivesdk::iLiveRecordOption;
 using ilivesdk::iLivePushOption;
+using ilivesdk::E_ScreenShareState;
 
 #pragma comment(lib, "iLiveSDK.lib")
 
@@ -63,6 +64,7 @@ public:
 	int openPlayer();
 	int closePlayer();
 
+	int openScreenShare( HWND hWnd, uint32& fps );
 	int openScreenShare( uint32& left, uint32& top, uint32& right, uint32& bottom, uint32& fps );
 	int changeScreenShareSize( uint32& left, uint32& top, uint32& right, uint32& bottom );
 	int closeScreenShare();
@@ -70,7 +72,7 @@ public:
 	bool getCurCameraState();
 	bool getCurMicState();
 	bool getCurPlayerState();
-	bool getScreenShareState();
+	E_ScreenShareState getScreenShareState();
 	bool getPushStreamState();
 	bool getRecordState();
 

@@ -23,3 +23,7 @@
 	(1)增加m_autoRecvScreenListener成员;<br/>
 	(2)增加m_autoRecvMediaFileListener成员;<br/>
 	(3)m_autoRecvListener成员改名为m_autoRecvCameraListener;<br/>
+	
+###### V1.2.2(2017-02-27)
+* 代码注释修正;
+* 内部实现优化;

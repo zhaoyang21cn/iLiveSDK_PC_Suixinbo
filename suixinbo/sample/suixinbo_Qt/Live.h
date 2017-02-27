@@ -85,6 +85,7 @@ protected:
 	void closeEvent(QCloseEvent* event) override;
 
 private:
+	//自定义私有函数
 	void updateCameraList();
 	VideoRender* getVideoRender(std::string szIdentifier);
 	void freeCameraVideoRenders(std::vector<std::string> arrNeedFreeRenders);
@@ -98,6 +99,7 @@ private:
 	void updateMemberList();
 	void updateScreenShareUI();
 
+	//信令层函数
 	void sendInviteInteract();//主播向普通观众发出连线邀请
 	void sendCancelInteract();//主播向连线中的观众发出断线命令
 	static void OnSendInviteInteractSuc(void* data);
@@ -112,6 +114,7 @@ private:
 
 	void sendQuitRoom();//主播发送退出房间信令
 
+	//随心播服务器请求相关函数
 	void sxbCreatorQuitRoom();
 	void sxbWatcherOrJoinerQuitRoom();
 	void sxbHeartBeat();
@@ -123,6 +126,7 @@ private:
 	static void OnSxbRoomIdList(int errorCode, QString errorInfo, QVariantMap datamap, void* pCusData);
 	static void OnSxbReportrecord(int errorCode, QString errorInfo, QVariantMap datamap, void* pCusData);
 
+	//iLiveSDK相关函数
 	void iLiveQuitRoom();
 	void iLiveChangeAuthority(uint64 authBits, const std::string& authBuffer);
 	void iLiveChangeRole(const std::string& szControlRole);

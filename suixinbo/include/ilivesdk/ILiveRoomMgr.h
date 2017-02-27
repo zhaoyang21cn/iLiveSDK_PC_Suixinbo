@@ -197,10 +197,11 @@ namespace ilivesdk
 		@param [in] suc 成功的回调函数；
 		@param [in] err 失败的回调函数；
 		@param [in] data 用户自定义的数据的指针，在成功和失败的回调函数中原封不动地返回;
-		@note 1、identifiers和views必须一一对应;
-			  2、requestViewList操作必须等待异步回调函数执行结束后，才能进行新的requestViewList操作；
-			  3、requestViewList、cancelViewList和cancelAllView不能并发执行，即同一时刻只能进行一种操作；
-			  4、在请求画面前最好先检查该成员是否有对应的视频源；
+		@note 
+		1、identifiers和views必须一一对应;<br/>
+		2、requestViewList操作必须等待异步回调函数执行结束后，才能进行新的requestViewList操作；<br/>
+		3、requestViewList、cancelViewList和cancelAllView不能并发执行，即同一时刻只能进行一种操作；<br/>
+		4、在请求画面前最好先检查该成员是否有对应的视频源；
 		*/
 		void					requestViewList( const std::vector<std::string>& identifiers, const std::vector<View>& views, SuccessCalllback suc, ErrorCallback err, void* data );
 		/**
@@ -395,7 +396,7 @@ namespace ilivesdk
 		bool					getCurPlayerState();
 		/**
 		@brief 获取当前屏幕分享状态
-		@return true:打开 false：关闭
+		@return 当前屏幕分享状态
 		*/
 		E_ScreenShareState		getScreenShareState();
 		/**

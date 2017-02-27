@@ -77,6 +77,7 @@ void RoomListItem::iLiveJoinRoom()
 	roomOption.auth_buffer = "";
 	roomOption.control_role = Guest;
 	roomOption.video_recv_mode = VIDEO_RECV_MODE_SEMI_AUTO_RECV_CAMERA_VIDEO; //半自动模式
+	roomOption.screen_recv_mode = SCREEN_RECV_MODE_SEMI_AUTO_RECV_SCREEN_VIDEO; //半自动模式
 	roomOption.m_autoRecvCameraListener = Live::OnSemiAutoRecvCameraVideo;
 	roomOption.m_autoRecvScreenListener = Live::OnSemiAutoRecvScreenVideo;
 	roomOption.m_autoRecvMediaFileListener = Live::OnSemiAutoRecvMediaFileVideo;

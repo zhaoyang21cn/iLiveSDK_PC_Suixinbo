@@ -15,8 +15,6 @@ iLiveSDK 提供了账号登录，音视频互动，文本互动等基础功能�
 ## 错误码
 [错误码表](https://github.com/zhaoyang21cn/ILiveSDK_Android_Demos/blob/master/doc/ILiveSDK/error.md)
 
-## 已知问题
-
 ## 关键路径LOG
 [关键路径LOG 请遇到问题先自行对比](https://github.com/zhaoyang21cn/suixinbo_doc/blob/master/doc2/log.md)
 

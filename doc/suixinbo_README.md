@@ -4,7 +4,7 @@
 # 随心播
 
 ## 随心播运行
-  suixinbo_run.zip即为已经编译好的可执行包，解压后，直接双击运行suixinbo_Qt.exe即可；
+  [suixinbo_run.zip](https://github.com/zhaoyang21cn/iLiveSDK_PC_Demos/blob/master/suixinbo_run.zip)即为已经编译好的可执行包，解压后，直接双击运行suixinbo_Qt.exe即可；
 
 ## 随心播编译
 

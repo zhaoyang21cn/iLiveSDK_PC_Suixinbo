@@ -3,9 +3,6 @@
 
 #define VIEW_BKG_COLOR 0x60	//Ä¬ÈÏ±³¾°ÑÕÉ«Öµ
 
-using namespace tencent::av;
-
-
 VideoRender::VideoRender(QWidget* parent/* = 0*/, Qt::WindowFlags f/* = 0*/)
 	:QWidget(parent, f)
 	,m_colorFormat(COLOR_FORMAT_RGB24)

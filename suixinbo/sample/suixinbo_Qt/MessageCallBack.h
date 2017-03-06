@@ -29,18 +29,13 @@ enum E_CustomCmd
 void sendC2CCustomCmd( QString dstUser, E_CustomCmd userAction, QString actionParam, SuccessCalllback suc = NULL, ErrorCallback err = NULL, void* data = NULL );
 void sendGroupCustomCmd( E_CustomCmd userAction, QString actionParam, SuccessCalllback suc = NULL, ErrorCallback err = NULL, void* data = NULL );
 
-class MessageCallBack : public imcore::TIMMessageCallBack
+class MessageCallBack
 {
 public:
-	virtual void OnNewMessage(const std::vector<TIMMessage> &msgs);
-	
-	static 	QQueue<TIMMessage>	ms_messageQueue;
-};
+	static void OnGropuMessage( const TIMMessage& msg );
+	static void OnC2CMessage( const TIMMessage& msg );
 
-class ForceOfflineCallBack : public imcore::TIMForceOfflineCallBack
-{
-public:
-	virtual void OnForceOffline();
+	static 	QQueue<TIMMessage>	ms_messageQueue;
 };
 
 #endif//MesageCallBack_h_

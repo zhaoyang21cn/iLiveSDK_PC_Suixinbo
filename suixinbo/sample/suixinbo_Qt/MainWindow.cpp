@@ -89,15 +89,11 @@ void MainWindow::setUseable( bool bUseable )
 	m_ui.tabWidget->setEnabled(bUseable);
 }
 
-void MainWindow::OnForceOffline()
-{
-	postCusEvent( g_pMainWindow, new Event(E_CEForceOffline, 0, "") );
-}
-
 void MainWindow::initSDK()
 {
-	iLiveSDKWrap::getInstance()->SetMessageCallBack(&m_messageCallBack);
-	iLiveSDKWrap::getInstance()->SetForceOfflineCallback(&m_forceOfflineCallBack);
+	iLiveSDKWrap::getInstance()->setGroupMessageCallBack(MessageCallBack::OnGropuMessage);
+	iLiveSDKWrap::getInstance()->setC2CMessageCallBack(MessageCallBack::OnC2CMessage);
+	iLiveSDKWrap::getInstance()->setForceOfflineCallback(onForceOffline);
 	iLiveSDKWrap::getInstance()->setLocalVideoCallBack(Live::OnLocalVideo, m_pLive);
 	iLiveSDKWrap::getInstance()->setRemoteVideoCallBack(Live::OnRemoteVideo, m_pLive);
 
@@ -209,6 +205,11 @@ void MainWindow::dealMessages()
 
 		MessageCallBack::ms_messageQueue.pop_front();
 	}
+}
+
+void MainWindow::onForceOffline()
+{
+	postCusEvent( g_pMainWindow, new Event(E_CEForceOffline, 0, "") );
 }
 
 void MainWindow::clearShowRoomList()

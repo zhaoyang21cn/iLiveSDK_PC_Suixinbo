@@ -4,17 +4,17 @@
 #include <imsdk/tim_comm.h>
 #include <avsdk/av_callback.h>
 #include <ilivesdk/iLiveCommon.h>
-using imcore::TIMCallBack;
-using imcore::TIMUser;
-using tencent::av::AVCallback;
 
 namespace ilivesdk
 {
+	typedef void (*ForceOfflineCallback)(); ///< 被挤下线回调函数指针类型;
+
 	/**
 	@brief 登录、登出的封装;
 	*/
 	class iLiveAPI iLiveLoginMgr
 	{
+		friend class iLiveSDK;
 		class IMLoginCallBack : public TIMCallBack
 		{
 		public:
@@ -41,6 +41,13 @@ namespace ilivesdk
 		@return 单例对象
 		*/
 		static iLiveLoginMgr*	getInstance();
+
+		/**
+		@brief 设置被挤下线的回调。
+		@param [in] cb 回调接口的指针;
+		@remark 账号在其他地方登陆时，会收到此回调;
+		*/
+		void					setForceOfflineCallback(ForceOfflineCallback cb);
 		/**
 		@brief 登录
 		@param [in] szUserId 用户id
@@ -80,6 +87,8 @@ namespace ilivesdk
 		IMLoginCallBack				m_timLoginCallback;
 		IMLogoutCallBack			m_timLogoutCallBack;
 		StartAVContextCallBack		m_startAVContextCallBack;
+
+		ForceOfflineCallback		m_pForceOfflineCB;
 
 		SuccessCalllback			m_pLoginSuccessCB;
 		ErrorCallback				m_pLoginErrorCB;

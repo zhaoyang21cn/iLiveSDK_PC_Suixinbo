@@ -32,6 +32,10 @@ namespace ilivesdk
 		ERR_ENTER_AV_ROOM_FAIL  = 8006, ///< 进入AV房间失败
 		ERR_USER_CANCEL         = 8007, ///< 用户取消
 		ERR_WRONG_STATE         = 8008, ///< 状态异常
+		ERR_NOT_LOGIN			= 8009, ///< 未登录
+		ERR_ALREADY_IN_ROOM		= 8010, ///< 已在房间中
+		ERR_BUSY_HERE			= 8011,	///< 内部忙(上一请求未完成)
+		ERR_NET_UNDEFINE		= 8012, ///< 网络未识别或网络不可达
 		ERR_SDK_FAILED          = 8020, ///< iLiveSDK处理失败(通用)
 		ERR_INVALID_PARAM       = 8021, ///< 无效的参数
 		ERR_NOT_FOUND           = 8022, ///< 无法找到目标

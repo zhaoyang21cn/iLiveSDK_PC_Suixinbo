@@ -10,7 +10,7 @@ void sendC2CCustomCmd( QString dstUser, E_CustomCmd userAction, QString actionPa
 	doc.setObject( QJsonObject::fromVariantMap(varmap) );
 
 	TIMMessage message;
-	imcore::TIMCustomElem cusElem;
+	TIMCustomElem cusElem;
 	cusElem.set_ext(LiveNoti);
 	cusElem.set_data( QString( doc.toJson() ).toStdString() );
 	message.AddElem(&cusElem);
@@ -26,7 +26,7 @@ void sendGroupCustomCmd( E_CustomCmd userAction, QString actionParam, SuccessCal
 	doc.setObject( QJsonObject::fromVariantMap(varmap) );
 
 	TIMMessage message;
-	imcore::TIMCustomElem cusElem;
+	TIMCustomElem cusElem;
 	cusElem.set_ext(LiveNoti);
 	cusElem.set_data( QString( doc.toJson() ).toStdString() );
 	message.AddElem(&cusElem);
@@ -35,17 +35,14 @@ void sendGroupCustomCmd( E_CustomCmd userAction, QString actionParam, SuccessCal
 
 QQueue<TIMMessage> MessageCallBack::ms_messageQueue;
 
-void MessageCallBack::OnNewMessage( const std::vector<TIMMessage> &msgs )
+void MessageCallBack::OnGropuMessage( const TIMMessage& msg )
 {
-	for (uint32 i=0; i<msgs.size(); ++i)
-	{
-		ms_messageQueue.push_back( msgs[i] );
-	}
+	ms_messageQueue.push_back( msg );
 	postCusEvent( g_pMainWindow, new Event(E_CERecMsg, 0, "") );
 }
 
-void ForceOfflineCallBack::OnForceOffline()
+void MessageCallBack::OnC2CMessage( const TIMMessage& msg )
 {
-	g_pMainWindow->OnForceOffline();
+	ms_messageQueue.push_back( msg );
+	postCusEvent( g_pMainWindow, new Event(E_CERecMsg, 0, "") );
 }
-

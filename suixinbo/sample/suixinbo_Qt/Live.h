@@ -3,7 +3,6 @@
 
 #include "ui_Live.h"
 #include "VideoRender.h"
-using imcore::TIMLiveUrl;
 
 #define MaxVideoRender 3
 #define MaxShowMembers 50

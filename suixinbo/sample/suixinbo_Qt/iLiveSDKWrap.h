@@ -6,12 +6,7 @@
 #include <ilivesdk/iLiveLoginMgr.h>
 #include <ilivesdk/iLiveRoomMgr.h>
 
-using ilivesdk::SuccessCalllback;
-using ilivesdk::ErrorCallback;
-using ilivesdk::iLiveRoomOption;
-using ilivesdk::iLiveRecordOption;
-using ilivesdk::iLivePushOption;
-using ilivesdk::E_ScreenShareState;
+using namespace ilivesdk;
 
 #pragma comment(lib, "iLiveSDK.lib")
 
@@ -23,8 +18,10 @@ public:
 	int initSdk(const int appId, const int accountType);///< 初始化sdk
 	void destroy();
 
-	void SetForceOfflineCallback(TIMForceOfflineCallBack* cb);
-	void SetMessageCallBack( TIMMessageCallBack *cb );
+	void setForceOfflineCallback( ForceOfflineCallback cb );
+	void setGroupMessageCallBack( GropuMessageCallback cb );
+	void setC2CMessageCallBack( C2CMessageCallback cb );
+	void setSysemMessageCallback( SysemMessageCallback cb );
 	void setLocalVideoCallBack( AVSupportVideoPreview::PreviewCallback pLocalVideoCB, void* pCustomData );
 	void setRemoteVideoCallBack( AVSupportVideoPreview::PreviewCallback pRemoteVideoCB, void* pCustomData );//设置远程视频回调,需要在进入房间前调用
 

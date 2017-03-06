@@ -22,8 +22,6 @@
 	#pragma comment(lib, "Qt5Network.lib")
 #endif//_DEBUG
 
-using namespace tencent::av;
-using namespace ilivesdk;
 
 #define SafeDelete(p) {delete p; p = 0;}
 #define SafeDeleteArr(pArr) {delete[] pArr; pArr = 0;}

@@ -2,8 +2,6 @@
 #define VideoRender_h_
 
 #include <avsdk/av_common.h>
-using tencent::av::ColorFormat;
-using tencent::av::VideoFrame;
 
 class VideoRender : public QWidget
 {

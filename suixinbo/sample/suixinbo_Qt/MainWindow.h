@@ -43,6 +43,7 @@ private:
 	void connectSignals();
 	void switchLoginState(E_LoginState state);
 	void dealMessages();
+	static void onForceOffline();
 
 	void clearShowRoomList();
 	void updatePageNum();
@@ -106,8 +107,6 @@ private:
 
 	Register*			m_pRegister;
 	Live*				m_pLive;
-	MessageCallBack		m_messageCallBack;
-	ForceOfflineCallBack m_forceOfflineCallBack;
 
 	int					m_nCurrentPage;
 	int					m_nTotalPage;

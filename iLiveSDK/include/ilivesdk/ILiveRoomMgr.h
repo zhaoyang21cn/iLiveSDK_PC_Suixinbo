@@ -11,20 +11,6 @@
 #include <ilivesdk/iLiveRoomOption.h>
 #include <ilivesdk/iLivePushOption.h>
 #include <ilivesdk/iLiveRecordOption.h>
-using imcore::TIMMessage;
-using imcore::TIMCallBack;
-using imcore::TIMStreamRsp;
-using imcore::TIMValueCallBack;
-using tencent::av::AVDevice;
-using tencent::av::AVDeviceMgr;
-using tencent::av::View;
-using tencent::av::DetectedDeviceInfo;
-using tencent::av::AVSupportVideoPreview;
-using tencent::av::AVSupportVideoPreTreatment;
-using tencent::av::VideoFrame;
-using tencent::av::AVAudioCtrl;
-using tencent::av::AVVideoCtrl;
-using tencent::av::AVLocalScreenVideoDevice;
 
 namespace ilivesdk
 {
@@ -38,6 +24,21 @@ namespace ilivesdk
 		E_ScreenShareWnd,	///< 开启了指定窗口的共享
 		E_ScreenShareArea,	///< 开启了指定区域的共享
 	};
+
+	/**
+	@brief 收到群消息回调函数指针类型;
+	@param [in] msg 收到的群消息
+	*/
+	typedef void (*GropuMessageCallback)( const TIMMessage& msg );
+	/**
+	@brief 收到C2C消息回调函数指针类型;
+	@param [in] msg 收到的C2C消息
+	*/
+	typedef void (*C2CMessageCallback)( const TIMMessage& msg );
+	/**
+	@brief 收到系统消息回调函数指针类型;
+	*/
+	typedef void (*SysemMessageCallback)( const TIMMessage& msg );
 
 	/**
 	@brief iLiveRoom管理类。
@@ -118,6 +119,12 @@ namespace ilivesdk
 			virtual void OnError(int code, const std::string &desc);
 		};
 
+		class MessageCallBack : public TIMMessageCallBack
+		{
+		public:
+			virtual void OnNewMessage(const std::vector<TIMMessage> &msgs) override;
+		};
+
 	public:
 		/**
 		@brief 获取单例对象。
@@ -146,6 +153,24 @@ namespace ilivesdk
 		@remark 业务侧实现该回调函数，SDK向该回调函数传入远程视频相关数据，业务侧拿到数据后进行渲染显示;
 		*/
 		void					setRemoteVideoCallBack( AVSupportVideoPreview::PreviewCallback pRemoteVideoCB, void* pCustomData );
+
+		/**
+		@brief 设置收到群消息的回调函数指针。
+		@param [in] cb 群消息的回调函数指针;
+		@note 只会收到当前所在房间的群消息;
+		*/
+		void					setGroupMessageCallBack( GropuMessageCallback cb );
+		/**
+		@brief 设置收到C2C消息的回调函数指针。
+		@param [in] cb C2C消息的回调函数指针;
+		*/
+		void					setC2CMessageCallBack( C2CMessageCallback cb );
+		/**
+		@brief 设置收到系统消息的回调函数指针。
+		@param [in] cb 系统消息的回调函数指针;
+		@remark 在加入群、群解散等情况下，会收到系统消息;
+		*/
+		void					setSysemMessageCallback( SysemMessageCallback cb );
 
 		/**
 		@brief 创建直播房间(主播端调用)。
@@ -450,6 +475,11 @@ namespace ilivesdk
 	private:
 		//IM
 		TIMNewGroupInfoHandle		m_handleTIMNewGroupInfo;
+
+		MessageCallBack				m_messageCallBack;
+		GropuMessageCallback		m_pGropuMessageCallback;
+		C2CMessageCallback			m_pC2CMessageCallback;
+		SysemMessageCallback		m_pSysemMessageCallback;
 
 		TIMCreateGroupCB			m_timCreateGroupCB;
 		TIMCommCB					m_timJoinGroupCB;

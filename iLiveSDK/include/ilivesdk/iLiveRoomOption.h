@@ -5,11 +5,6 @@
 #include <avsdk/av_common.h>
 #include <avsdk/av_room_multi.h>
 
-using tencent::av::AVRoomMulti;
-using tencent::av::AudioCategory;
-using tencent::av::VideoRecvMode;
-using tencent::av::ScreenRecvMode;
-
 namespace ilivesdk
 {
 	/**

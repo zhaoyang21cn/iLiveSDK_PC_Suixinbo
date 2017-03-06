@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "iLiveSDKWrap.h"
-using namespace ilivesdk;
 
 iLiveSDKWrap::iLiveSDKWrap()
 {
@@ -28,14 +27,24 @@ void iLiveSDKWrap::destroy()
 	iLiveSDK::getInstance()->destroy();
 }
 
-void iLiveSDKWrap::SetForceOfflineCallback( TIMForceOfflineCallBack* cb )
+void iLiveSDKWrap::setForceOfflineCallback( ForceOfflineCallback cb )
 {
-	iLiveSDK::getInstance()->SetForceOfflineCallback(cb);
+	iLiveLoginMgr::getInstance()->setForceOfflineCallback(cb);
 }
 
-void iLiveSDKWrap::SetMessageCallBack( TIMMessageCallBack *cb )
+void iLiveSDKWrap::setGroupMessageCallBack( GropuMessageCallback cb )
 {
-	iLiveSDK::getInstance()->SetMessageCallBack(cb);
+	iLiveRoomMgr::getInstance()->setGroupMessageCallBack(cb);
+}
+
+void iLiveSDKWrap::setC2CMessageCallBack( C2CMessageCallback cb )
+{
+	iLiveRoomMgr::getInstance()->setC2CMessageCallBack(cb);
+}
+
+void iLiveSDKWrap::setSysemMessageCallback( SysemMessageCallback cb )
+{
+	iLiveRoomMgr::getInstance()->setSysemMessageCallback(cb);
 }
 
 void iLiveSDKWrap::setLocalVideoCallBack( AVSupportVideoPreview::PreviewCallback pLocalVideoCB, void* pCustomData )

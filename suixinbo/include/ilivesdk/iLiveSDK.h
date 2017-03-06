@@ -5,20 +5,24 @@
 #include <imsdk/tim_comm.h>
 #include <avsdk/av_context.h>
 #include <ilivesdk/iLiveCommon.h>
-using imcore::TIMMessageCallBack;
-using imcore::TIMConnCallBack;
-using imcore::TIMForceOfflineCallBack;
-using imcore::TIMManager;
-using tencent::av::AVContext;
 
 namespace ilivesdk
 {
+	using namespace imcore;
+	using namespace tencent::av;
+
 	/**
 	@brief iLiveSDK对象代表着一个SDK运行实例。
 	@note 使用iLiveSDK前，必须调用initSdk()函数初始化SDK。
 	*/
 	class iLiveAPI iLiveSDK
 	{
+		class ForceOfflineCallBack : public TIMForceOfflineCallBack
+		{
+		public:
+			virtual void OnForceOffline() override;
+		};
+
 	public:
 		/**
 		@brief 获取单例对象。
@@ -26,25 +30,6 @@ namespace ilivesdk
 		*/
 		static iLiveSDK*	getInstance();
 
-		/**
-		@brief 设置收到IM消息时的回调。
-		@details 收到IM消息时，会调用此函数设置的回调。
-		@param [in] cb 回调接口的指针;
-		@note 允许在initSdk()之后再设置此回调;
-		*/
-		void				SetMessageCallBack(TIMMessageCallBack *cb);//收到消息的回调，可以在initSdk之后调用
-		/**
-		@brief 设置IM连接和断开服务器的回调。
-		@param [in] cb 回调接口的指针;
-		@note 如果要设置此回调，必须在initSdk()之前设置此回调，否则无效;
-		*/
-		void				SetConnCallBack(TIMConnCallBack* cb);
-		/**
-		@brief 设置被挤下线的回调。
-		@param [in] cb 回调接口的指针;
-		@note 如果要设置此回调，必须在initSdk()之前设置此回调，否则无效;
-		*/
-		void				SetForceOfflineCallback(TIMForceOfflineCallBack* cb);
 		/**
 		@brief 初始化iLiveSDK。
 		@note 使用iLiveSDK前，必须调用此函数初始化SDK。
@@ -97,6 +82,7 @@ namespace ilivesdk
 		int					m_accountType;
 		AVContext*			m_pAVContext;
 		std::string			m_szVersion;
+		ForceOfflineCallBack m_forceOfflineCB;
 
 		HMODULE							m_hMoude;
 		PROC_AVAPI_GetVersion			m_funcGetVersion;

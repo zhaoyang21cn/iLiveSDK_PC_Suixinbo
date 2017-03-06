@@ -64,8 +64,8 @@ Live::Live( QWidget * parent /*= 0*/, Qt::WindowFlags f /*= 0*/ )
 	m_ui.cbPushDataType->addItem( FromBits("屏幕分享"), QVariant(E_PushScreen) );
 	m_ui.cbPushDataType->setCurrentIndex(0);
 
-	m_ui.cbPushEncodeType->addItem(FromBits("HLS"), QVariant(imcore::HLS) );
-	m_ui.cbPushEncodeType->addItem(FromBits("RTMP"),QVariant(imcore::RTMP) );
+	m_ui.cbPushEncodeType->addItem(FromBits("HLS"), QVariant(HLS) );
+	m_ui.cbPushEncodeType->addItem(FromBits("RTMP"),QVariant(RTMP) );
 	m_ui.cbPushEncodeType->setCurrentIndex(0);
 
 	m_channelId = 0;
@@ -257,7 +257,7 @@ void Live::dealMessage( const TIMMessage& msg )
 	int nCount = msg.GetElemCount();
 	for (int i = 0; i < nCount; ++i)
 	{
-		imcore::TIMElem* pElem = msg.GetElem(i);
+		TIMElem* pElem = msg.GetElem(i);
 		switch( pElem->type() )
 		{
 		case kElemText:
@@ -282,15 +282,8 @@ void Live::dealMessage( const TIMMessage& msg )
 			break;
 		case kElemGroupTips: //群事件消息: TIM_GROUP_TIPS_TYPE_INVITE等类型
 			break;
-		case kElemGroupReport://群系统消息: TIM_GROUP_SYSTEM_ADD_GROUP_REQUEST_TYPE等类型
-			{
-				if ( isVisible() && GetGroupReportType(pElem) == TIM_GROUP_SYSTEM_DELETE_GROUP_TYPE ) //群解散
-				{
-					ShowTips( FromBits("主播退出房间"), FromBits("主播已经退出房间,点击确认退出房间."), this );
-					close();
-				}
-				break;
-			}
+		case kElemGroupReport://群系统消息: TIM_GROUP_SYSTEM_DELETE_GROUP_TYPE(群解散)、TIM_GROUP_SYSTEM_ADD_GROUP_REQUEST_TYPE(申请加群)等类型
+			break;
 		default:
 			break;
 		}
@@ -382,7 +375,8 @@ void Live::dealCusMessage( const std::string& sender, int nUserAction, QString s
 		}
 	case AVIMCMD_ExitLive:
 		{
-			//nothing to do
+			ShowTips( FromBits("主播退出房间"), FromBits("主播已经退出房间,点击确认退出房间."), this );
+			close();
 			break;
 		}
 	case AVIMCMD_Praise:
@@ -750,7 +744,7 @@ void Live::OnBtnSendGroupMsg()
 
 	TIMMessage message;
 	//文字
-	imcore::TIMTextElem textElem;
+	TIMTextElem textElem;
 	textElem.set_content( szText.toStdString() );
 	message.AddElem(&textElem);
 	
@@ -792,7 +786,7 @@ void Live::OnBtnStartPushStream()
 	m_pushOpt.channel_name = g_pMainWindow->getUserId().toStdString();
 	m_pushOpt.channel_desc = g_pMainWindow->getUserId().toStdString();
 	m_pushOpt.push_data_type = (E_PushDataType)m_ui.cbPushDataType->itemData( m_ui.cbPushDataType->currentIndex() ).value<int>();
-	m_pushOpt.encode = (imcore::E_TIMStreamEncode)m_ui.cbPushEncodeType->itemData( m_ui.cbPushEncodeType->currentIndex() ).value<int>();
+	m_pushOpt.encode = (E_TIMStreamEncode)m_ui.cbPushEncodeType->itemData( m_ui.cbPushEncodeType->currentIndex() ).value<int>();
 	iLiveSDKWrap::getInstance()->startPushStream( m_pushOpt, OnStartPushStreamSuc, OnStartPushStreamErr, this );
 }
 

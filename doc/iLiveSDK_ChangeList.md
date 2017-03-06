@@ -4,9 +4,9 @@
 * 错误码优化;
 * 命名空间优化;
 * bug修正: 异常退出房间后，再次登录，会收到之前所在房间的消息;为修正此bug，对接口进行了如下修改: <br/>
-	SetConnCallBack()接口去掉;<br/>
-	SetForceOfflineCallback()接口移动到iLiveLoginMgr类里;<br/>
-	SetMessageCallBack()分解为setGroupMessageCallBack()、setC2CMessageCallBack()、setSysemMessageCallback()三个接口，并放到iLiveRoomMgr里面;
+	(1)SetConnCallBack()接口去掉;<br/>
+	(2)SetForceOfflineCallback()接口移动到iLiveLoginMgr类里;<br/>
+	(3)SetMessageCallBack()分解为setGroupMessageCallBack()、setC2CMessageCallBack()、setSysemMessageCallback()三个接口，并放到iLiveRoomMgr里面;
 
 ###### V1.2.2(2017-02-27)
 * 代码注释修正;

@@ -28,8 +28,8 @@
 	(1) iLiveRoomOption.h: iLiveRoomDisconnectListener 函数指针添加errorinfo字段;<br/>
 	(2) iLiveRoomOption.h: iLiveRoomOption结构体添加字段screen_recv_mode;<br/>
 	(3) iLiveRoomMgr.h: requestViewList、cancelViewList、cancelAllView 接口返回值由int改为void;<br/>
-	(4)	iLiveRoomMgr.h: 增加changeScreenShareSize接口;<br/>
-	(5)	iLiveRoomMgr.h: openScreenShare接口参数改为引用方式;<br/>
+	(4) iLiveRoomMgr.h: 增加changeScreenShareSize接口;<br/>
+	(5) iLiveRoomMgr.h: openScreenShare接口参数改为引用方式;<br/>
 
 ###### V1.0.0(2017-01-16)
 * iLiveSDK第一个版本，实现互动直播主线流程以及主要接口的封装,并与已有的Android、IOS平台实现互通;

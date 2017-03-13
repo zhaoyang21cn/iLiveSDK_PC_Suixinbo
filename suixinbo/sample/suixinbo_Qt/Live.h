@@ -53,6 +53,8 @@ public:
 private slots:
 	void OnBtnOpenCamera();
 	void OnBtnCloseCamera();
+	void OnBtnOpenExternalCapture();
+	void OnBtnCloseExternalCapture();
 	void OnBtnOpenMic();
 	void OnBtnCloseMic();
 	void OnBtnOpenPlayer();
@@ -67,13 +69,18 @@ private slots:
 	void OnBtnStartPushStream();
 	void OnBtnStopPushStream();
 	void OnBtnPraise();
+	void OnHsPlayerVol(int value);
+	void OnSbPlayerVol(int value);
+	void OnHsMicVol(int value);
+	void OnSbMicVol(int value);
 	void OnVsSkinSmoothChanged(int value);
 	void OnSbSkinSmoothChanged(int value);
 	void OnVsSkinWhiteChanged(int value);
 	void OnSbSkinWhiteChanged(int value);
-	void OnTimer();
+	void OnHeartBeatTimer();
 	void OnRequestViewsTimer();
 	void OnDelayUpdateTimer();
+	void OnFillFrameTimer();
 	void OnMemberListMenu(QPoint point);
 	void OnActInviteInteract();
 	void OnActCancelInteract();	
@@ -97,6 +104,8 @@ private:
 
 	void updateMemberList();
 	void updateScreenShareUI();
+	void updatePlayerVol();
+	void updateMicVol();
 
 	//信令层函数
 	void sendInviteInteract();//主播向普通观众发出连线邀请
@@ -175,6 +184,7 @@ private:
 
 	QTimer*			m_pTimer;
 	QTimer*			m_pDelayUpdateTimer;
+	QTimer*			m_pFillFrameTimer;
 	
 	int				m_nCurSelectedMember;
 	QMenu*			m_pMenuInviteInteract;

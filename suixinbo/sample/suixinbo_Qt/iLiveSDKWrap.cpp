@@ -162,6 +162,21 @@ int iLiveSDKWrap::closeCamera()
 	return iLiveRoomMgr::getInstance()->closeCamera();
 }
 
+int iLiveSDKWrap::openExternalCapture()
+{
+	return iLiveRoomMgr::getInstance()->openExternalCapture();
+}
+
+int iLiveSDKWrap::closeExternalCapture()
+{
+	return iLiveRoomMgr::getInstance()->closeExternalCapture();
+}
+
+int iLiveSDKWrap::fillExternalCaptureFrame( const VideoFrame& frame )
+{
+	return iLiveRoomMgr::getInstance()->fillExternalCaptureFrame(frame);
+}
+
 int iLiveSDKWrap::openMic()
 {
 	std::vector< std::pair<std::string/*id*/, std::string/*name*/> > micList;
@@ -172,6 +187,16 @@ int iLiveSDKWrap::openMic()
 		nRet = iLiveRoomMgr::getInstance()->openMic(szMicID);
 	}
 	return nRet;
+}
+
+int iLiveSDKWrap::setMicVolume( uint32 value )
+{
+	return iLiveRoomMgr::getInstance()->setMicVolume(value);
+}
+
+uint32 iLiveSDKWrap::getMicVolume()
+{
+	return iLiveRoomMgr::getInstance()->getMicVolume();
 }
 
 int iLiveSDKWrap::closeMic()
@@ -189,6 +214,16 @@ int iLiveSDKWrap::openPlayer()
 		nRet = iLiveRoomMgr::getInstance()->openPlayer(szPlayerID);
 	}
 	return nRet;
+}
+
+int iLiveSDKWrap::setPlayerVolume( uint32 value )
+{
+	return iLiveRoomMgr::getInstance()->setPlayerVolume(value);
+}
+
+uint32 iLiveSDKWrap::getPlayerVolume()
+{
+	return iLiveRoomMgr::getInstance()->getPlayerVolume();
 }
 
 int iLiveSDKWrap::closePlayer()
@@ -219,6 +254,11 @@ int iLiveSDKWrap::closeScreenShare()
 bool iLiveSDKWrap::getCurCameraState()
 {
 	return iLiveRoomMgr::getInstance()->getCurCameraState();
+}
+
+bool iLiveSDKWrap::getExternalCaptureState()
+{
+	return iLiveRoomMgr::getInstance()->getExternalCaptureState();
 }
 
 bool iLiveSDKWrap::getCurMicState()

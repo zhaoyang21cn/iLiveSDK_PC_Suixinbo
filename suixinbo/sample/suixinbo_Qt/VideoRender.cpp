@@ -3,6 +3,8 @@
 
 #define VIEW_BKG_COLOR 0x60	//默认背景颜色值
 
+#define FPS_Count 10 //每渲染10次，更新一次fps
+
 VideoRender::VideoRender(QWidget* parent/* = 0*/, Qt::WindowFlags f/* = 0*/)
 	:QWidget(parent, f)
 	,m_colorFormat(COLOR_FORMAT_RGB24)
@@ -13,6 +15,9 @@ VideoRender::VideoRender(QWidget* parent/* = 0*/, Qt::WindowFlags f/* = 0*/)
 	,m_pRenderDataBuf(NULL)
 	,m_pParentWidget(parent)
 	,m_bPause(false)
+	,m_lastClock(0)
+	,m_nFpsCounter(FPS_Count)
+	,m_nFps(0)
 {
 	//setFixedSize(200, 150);
 	setStyleSheet("background-color:gray;");
@@ -88,6 +93,7 @@ void VideoRender::Clear()
 	m_frameWidth = width();
 	m_frameHeight = height();
 	paintPic(m_pBkgDataBuf);
+	m_lastClock = 0;
 }
 
 void VideoRender::pauseRender()
@@ -220,6 +226,22 @@ void VideoRender::paintPic( uint8* pData )
 
 	BitBlt(hDC, 0, 0, winWidth, winHeight, hMemDC, 0, 0, SRCCOPY);
 
+	if(m_nFpsCounter > 0)
+	{
+		--m_nFpsCounter;
+	}
+	else
+	{
+		clock_t curClock = clock();
+		time_t nSpace = curClock - m_lastClock;
+		if (nSpace!=0)
+		{
+			m_nFps = 1000*FPS_Count/nSpace;
+		}
+		m_lastClock = curClock;
+		m_nFpsCounter = FPS_Count;
+	}
+
 	QString info;
 	if (m_identifier.empty())
 	{
@@ -228,6 +250,8 @@ void VideoRender::paintPic( uint8* pData )
 	info += FromStdStr(m_identifier);
 	info += ",";
 	info += QString("%1*%2").arg(srcWidth).arg(srcHeight);
+	info += ",";
+	info += QString::number(m_nFps);
 	TextOutA( hDC, 0, 0, info.toLocal8Bit().data(), info.length() );
 
 	DeleteObject(hMemBitmap);

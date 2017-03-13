@@ -55,10 +55,18 @@ public:
 	int	openCamera(std::string szCameraId);
 	int closeCamera();
 
+	int openExternalCapture();
+	int closeExternalCapture();
+	int fillExternalCaptureFrame( const VideoFrame& frame );
+
 	int openMic();
+	int	setMicVolume(uint32 value);
+	uint32 getMicVolume();
 	int closeMic();
 
 	int openPlayer();
+	int setPlayerVolume( uint32 value );
+	uint32 getPlayerVolume();
 	int closePlayer();
 
 	int openScreenShare( HWND hWnd, uint32& fps );
@@ -67,6 +75,7 @@ public:
 	int closeScreenShare();
 
 	bool getCurCameraState();
+	bool getExternalCaptureState();
 	bool getCurMicState();
 	bool getCurPlayerState();
 	E_ScreenShareState getScreenShareState();

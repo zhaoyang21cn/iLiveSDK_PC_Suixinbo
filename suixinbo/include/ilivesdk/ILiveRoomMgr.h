@@ -292,7 +292,9 @@ namespace ilivesdk
 		@brief 打开摄像头。
 		@param [in] szCameraId 通过getCameraList()函数获取的摄像头列表中的某个摄像头id。
 		@return 操作结果，NO_ERR表示无错误;
-		@note 打开摄像头成功，如果用户有上传视频权限，便会自动开始上传摄像头视频;
+		@note 
+		1、打开摄像头成功，如果用户有上传视频权限，便会自动开始上传摄像头视频;<br/>
+		2、打开摄像头操作和打开自定义采集是互斥的操作;如果同时打开，会返回错误AV_ERR_EXCLUSIVE_OPERATION;
 		*/
 		int						openCamera( std::string szCameraId );
 		/**
@@ -300,6 +302,32 @@ namespace ilivesdk
 		@return 操作结果，NO_ERR表示无错误。
 		*/
 		int						closeCamera();
+
+		/**
+		@brief 打开自定义采集。
+		@return 操作结果，NO_ERR表示无错误;
+		@note 
+		1、打开自定义采集成功，如果用户有上传视频权限，用户通过fillExternalCaptureFrame()填入的每一帧画面将会通过sdk上传;<br/>
+		2、打开摄像头操作和打开自定义采集是互斥的操作;如果同时打开，会返回错误AV_ERR_EXCLUSIVE_OPERATION;
+		3、目前版本，打开自定义采集后，美白美颜功能将无效;
+		*/
+		int						openExternalCapture();
+		/**
+		@brief 关闭自定义采集。
+		@return 操作结果，NO_ERR表示无错误;
+		*/
+		int						closeExternalCapture();
+		/**
+		@brief 外部输入视频数据接口。
+		@return 操作结果，NO_ERR表示无错误;
+		@note 
+		1、目前sdk支持的VideoFrame格式只有COLOR_FORMAT_RGB24和COLOR_FORMAT_I420,如果传入的视频帧不是此两种格式，将返回ERR_NOT_SUPPORT;<br/>
+		2、视频帧只能是这些辨率(176*144、192*144、320*240、480*360、640*368、640*480、960*540、1280*720、144*176、144*192、240*320、360*480、368*640、480*640、540*960、720*1280),否则返回AV_ERR_INVALID_ARGUMENT;<br/>
+		3、视频帧率最好在10-15帧左右;
+		4、传入的视频帧分辨率如果大于控制台SPEAR引擎配置的值，视频将会被裁剪到SPEAR配置的分辨率(主播端预览画面和观众端画面大小将会不一致);<br/>
+			如果小于控制台配置的值，将会按照传入的视频帧大小传入到观众端(即不会被放大到控制台配置的值);
+		*/
+		int						fillExternalCaptureFrame(const VideoFrame& frame);
 
 		/**
 		@brief 获取本计算机可用的麦克风列表。
@@ -314,6 +342,18 @@ namespace ilivesdk
 		@note 打开麦克风成功，如果用户有上传语音权限，便会自动开始上传麦克风音频。
 		*/
 		int						openMic( std::string szMicId );
+		/**
+		@brief 设置麦克风音量。
+		@param [in] value 设置麦克风的目标音量,取值范围[0,100].
+		@return 操作结果，NO_ERR表示无错误;
+		@note 只有打开了麦克风才能进行设置,否则返回ERR_WRONG_STATE;
+		*/
+		int						setMicVolume(uint32 value);
+		/**
+		@brief 获取麦克风音量。
+		@return 返回麦克风音量,未打开麦克风则返回0;
+		*/
+		uint32					getMicVolume();
 		/**
 		@brief 关闭当前打开的麦克风。
 		@return 操作结果，NO_ERR表示无错误。
@@ -333,6 +373,18 @@ namespace ilivesdk
 		@note 打开扬声器成功，如果用户有接收音频权限，便会自动开始播放远端音频。
 		*/
 		int						openPlayer( std::string szPlayerId );
+		/**
+		@brief 设置扬声器音量。
+		@param [in] value 设置扬声器的目标音量,取值范围[0,100].
+		@return 操作结果，NO_ERR表示无错误;
+		@note 只有打开了扬声器才能进行设置,否则返回ERR_WRONG_STATE;
+		*/
+		int						setPlayerVolume( uint32 value );
+		/**
+		@brief 获取扬声器音量。
+		@return 返回扬声器音量,未打开扬声器则返回0;
+		*/
+		uint32					getPlayerVolume();
 		/**
 		@brief 关闭当前打开的扬声器。
 		@return 操作结果，NO_ERR表示无错误。
@@ -409,6 +461,11 @@ namespace ilivesdk
 		@return true:打开 false：关闭
 		*/
 		bool					getCurCameraState();
+		/**
+		@brief 获取自定义采集状态。
+		@return true:打开 false：关闭
+		*/
+		bool					getExternalCaptureState();
 		/**
 		@brief 获取当前麦克风状态
 		@return true:打开 false：关闭
@@ -506,6 +563,7 @@ namespace ilivesdk
 		std::string					m_szCurPlayerId;
 
 		bool						m_bCurCameraState;
+		bool						m_bExternalCaptureState;
 		bool						m_bCurMicState;
 		bool						m_bCurPlayerState;
 		E_ScreenShareState			m_eScreenShareState;
@@ -520,6 +578,7 @@ namespace ilivesdk
 		AVAudioCtrl*				m_pAudCtrl;
 		AVVideoCtrl*				m_pVidCtrl;
 		AVLocalScreenVideoDevice*	m_pLocalScreenVideoDevice;
+		AVExternalCapture*			m_pExternalCapture;
 
 		AVSupportVideoPreTreatment::PreTreatmentFun	m_pPreTreatmentFun;
 		void*										m_pPreTreatmentFunData;

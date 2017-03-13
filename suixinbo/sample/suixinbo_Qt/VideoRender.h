@@ -44,6 +44,10 @@ private:
 	QWidget*	m_pParentWidget;
 	QRect		m_Rect;
 	bool		m_bPause;// «∑Ò‘›Õ£‰÷»æ	
+
+	clock_t		m_lastClock;
+	int			m_nFpsCounter;
+	int			m_nFps;
 };
 
 #endif //VideoRender_h_

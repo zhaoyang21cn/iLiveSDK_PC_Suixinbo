@@ -46,6 +46,7 @@ Live::Live( QWidget * parent /*= 0*/, Qt::WindowFlags f /*= 0*/ )
 
 	m_pTimer = new QTimer(this);
 	m_pDelayUpdateTimer = new QTimer(this);
+	m_pFillFrameTimer = new QTimer(this);
 
 	m_nCurSelectedMember = -1;
 
@@ -56,12 +57,12 @@ Live::Live( QWidget * parent /*= 0*/, Qt::WindowFlags f /*= 0*/ )
 	QAction* pActCancelInteract = new QAction( QString::fromLocal8Bit("断开"), m_pMenuInviteInteract );
 	m_pMenuCancelInteract->addAction(pActCancelInteract);
 
-	m_ui.cbRecordDataType->addItem( FromBits("摄像头"), QVariant(E_RecordCamera) );
-	m_ui.cbRecordDataType->addItem( FromBits("屏幕分享"), QVariant(E_RecordScreen) );
+	m_ui.cbRecordDataType->addItem( FromBits("主路(摄像头/自定义采集)"), QVariant(E_RecordCamera) );
+	m_ui.cbRecordDataType->addItem( FromBits("辅路(屏幕分享)"), QVariant(E_RecordScreen) );
 	m_ui.cbRecordDataType->setCurrentIndex(0);
 
-	m_ui.cbPushDataType->addItem( FromBits("摄像头"), QVariant(E_PushCamera) );
-	m_ui.cbPushDataType->addItem( FromBits("屏幕分享"), QVariant(E_PushScreen) );
+	m_ui.cbPushDataType->addItem( FromBits("主路(摄像头/自定义采集)"), QVariant(E_PushCamera) );
+	m_ui.cbPushDataType->addItem( FromBits("辅路(屏幕分享)"), QVariant(E_PushScreen) );
 	m_ui.cbPushDataType->setCurrentIndex(0);
 
 	m_ui.cbPushEncodeType->addItem(FromBits("HLS"), QVariant(HLS) );
@@ -75,6 +76,8 @@ Live::Live( QWidget * parent /*= 0*/, Qt::WindowFlags f /*= 0*/ )
 
 	connect( m_ui.btnOpenCamera, SIGNAL(clicked()), this, SLOT(OnBtnOpenCamera()) );
 	connect( m_ui.btnCloseCamera, SIGNAL(clicked()), this, SLOT(OnBtnCloseCamera()) );
+	connect( m_ui.btnOpenExternalCapture, SIGNAL(clicked()), this, SLOT(OnBtnOpenExternalCapture()) );
+	connect( m_ui.btnCloseExternalCapture, SIGNAL(clicked()), this, SLOT(OnBtnCloseExternalCapture()) );
 	connect( m_ui.btnOpenMic, SIGNAL(clicked()), this, SLOT(OnBtnOpenMic()) );
 	connect( m_ui.btnCloseMic, SIGNAL(clicked()), this, SLOT(OnBtnCloseMic()) );
 	connect( m_ui.btnOpenPlayer, SIGNAL(clicked()), this, SLOT(OnBtnOpenPlayer()) );
@@ -89,12 +92,17 @@ Live::Live( QWidget * parent /*= 0*/, Qt::WindowFlags f /*= 0*/ )
 	connect( m_ui.btnStartPushStream, SIGNAL(clicked()), this, SLOT(OnBtnStartPushStream()) );
 	connect( m_ui.btnStopPushStream, SIGNAL(clicked()), this, SLOT(OnBtnStopPushStream()) );
 	connect( m_ui.btnPraise, SIGNAL(clicked()), this, SLOT(OnBtnPraise()) );
+	connect( m_ui.hsPlayerVol, SIGNAL(valueChanged(int)), this, SLOT(OnHsPlayerVol(int)) );
+	connect( m_ui.sbPlayerVol, SIGNAL(valueChanged(int)), this, SLOT(OnSbPlayerVol(int)) );
+	connect( m_ui.hsMicVol, SIGNAL(valueChanged(int)), this, SLOT(OnHsMicVol(int)) );
+	connect( m_ui.sbMicVol, SIGNAL(valueChanged(int)), this, SLOT(OnSbMicVol(int)) );
 	connect( m_ui.vsSkinSmooth, SIGNAL(valueChanged(int)), this, SLOT(OnVsSkinSmoothChanged(int)) );
 	connect( m_ui.sbSkinSmooth, SIGNAL(valueChanged(int)), this, SLOT(OnSbSkinSmoothChanged(int)) );
 	connect( m_ui.vsSkinWhite, SIGNAL(valueChanged(int)), this, SLOT(OnVsSkinWhiteChanged(int)) );
 	connect( m_ui.sbSkinWhite, SIGNAL(valueChanged(int)), this, SLOT(OnSbSkinWhiteChanged(int)) );
-	connect( m_pTimer, SIGNAL(timeout()), this, SLOT(OnTimer()) );
+	connect( m_pTimer, SIGNAL(timeout()), this, SLOT(OnHeartBeatTimer()) );
 	connect( m_pDelayUpdateTimer, SIGNAL(timeout()), this, SLOT(OnDelayUpdateTimer()) );
+	connect( m_pFillFrameTimer, SIGNAL(timeout()), this, SLOT(OnFillFrameTimer()) );
 	connect( pActInviteInteract, SIGNAL(triggered()), this, SLOT(OnActInviteInteract()) );
 	connect( pActCancelInteract, SIGNAL(triggered()), this, SLOT(OnActCancelInteract()) );
 	connect( m_pRequestViewsTimer, SIGNAL(timeout()), this, SLOT(OnRequestViewsTimer()) );
@@ -111,6 +119,10 @@ void Live::setRoomUserType( E_RoomUserType userType )
 	m_ui.SkinGB->setVisible(false);
 	m_ui.btnOpenPlayer->setEnabled(true);
 	m_ui.btnClosePlayer->setEnabled(false);
+	m_ui.cameraGB->setEnabled(true);
+	m_ui.externalCaptureGB->setEnabled(true);
+	updatePlayerVol();
+	updateMicVol();
 	switch(m_userType)
 	{
 	case E_RoomUserCreator:
@@ -119,6 +131,10 @@ void Live::setRoomUserType( E_RoomUserType userType )
 			m_ui.btnOpenCamera->setEnabled(true);
 			m_ui.btnCloseCamera->setEnabled(false);
 			updateCameraList();
+
+			m_ui.externalCaptureGB->setVisible(true);
+			m_ui.btnOpenExternalCapture->setEnabled(true);
+			m_ui.btnCloseExternalCapture->setEnabled(false);
 
 			m_ui.microphoneGB->setVisible(true);
 			m_ui.btnOpenMic->setEnabled(true);
@@ -147,6 +163,10 @@ void Live::setRoomUserType( E_RoomUserType userType )
 			m_ui.btnCloseCamera->setEnabled(false);
 			updateCameraList();
 
+			m_ui.externalCaptureGB->setVisible(true);
+			m_ui.btnOpenExternalCapture->setEnabled(true);
+			m_ui.btnCloseExternalCapture->setEnabled(false);
+
 			m_ui.microphoneGB->setVisible(true);
 			m_ui.btnOpenMic->setEnabled(true);
 			m_ui.btnCloseMic->setEnabled(false);
@@ -169,6 +189,7 @@ void Live::setRoomUserType( E_RoomUserType userType )
 	case E_RoomUserWatcher:
 		{
 			m_ui.cameraGB->setVisible(false);
+			m_ui.externalCaptureGB->setVisible(false);
 			m_ui.microphoneGB->setVisible(false);
 			m_ui.screenShareGB->setVisible(false);
 			this->setWindowTitle( QString::fromLocal8Bit("观众") );
@@ -195,18 +216,18 @@ void Live::ChangeRoomUserType()
 
 void Live::updatePushAndRecordStateUI()
 {
-	if ( iLiveSDKWrap::getInstance()->getCurCameraState() || iLiveSDKWrap::getInstance()->getScreenShareState() )
+	if ( iLiveSDKWrap::getInstance()->getCurCameraState() || iLiveSDKWrap::getInstance()->getExternalCaptureState() || iLiveSDKWrap::getInstance()->getScreenShareState() )
 	{
 		m_ui.pushStreamGB->setEnabled(true);
 		m_ui.recordGB->setEnabled(true);
 	}
 	else
 	{
-		if ( m_ui.btnStopRecord->isEnabled() )
+		if ( iLiveSDKWrap::getInstance()->getRecordState() )
 		{
 			OnBtnStopRecord();
 		}
-		if ( m_ui.btnStopPushStream->isEnabled() )
+		if ( iLiveSDKWrap::getInstance()->getPushStreamState() )
 		{
 			OnBtnStopPushStream();
 		}
@@ -520,9 +541,8 @@ void Live::OnRemoteVideo( VideoFrame* video_frame, void* custom_data )
 void Live::OnBtnOpenCamera()
 {
 	//////////////////////////////////////////////////
-	//PC端SDK本可以支持摄像头和屏幕分享同时打开,为了Android和ios端随心播的显示方便，
-	//限制每个PC端用户只允许打开摄像头和屏幕分享之一,需要同时打开屏幕分享和摄像头
-	//的用户请注释掉本段代码;
+	//PC端SDK本可以支持主路视频(摄像头、自定义采集)和辅路视频(屏幕分享)同时打开,为了Android和ios端随心播的显示方便，
+	//限制每个PC端用户只允许打开主路视频和辅路视频之一,需要同时打开屏的用户请注释掉本段代码;
 	if ( iLiveSDKWrap::getInstance()->getScreenShareState() )
 	{
 		ShowTips( FromBits("提示"), FromBits("请先关闭屏幕分享"), this );
@@ -538,16 +558,17 @@ void Live::OnBtnOpenCamera()
 	m_ui.btnOpenCamera->setEnabled(false);
 	int ndx = m_ui.cbCamera->currentIndex();
 	int nRet = iLiveSDKWrap::getInstance()->openCamera(m_cameraList[ndx].first);
-	if (nRet==0)
+	if (nRet==NO_ERR)
 	{
 		m_ui.SkinGB->setVisible(true);
 		m_ui.btnCloseCamera->setEnabled(true);
+		m_ui.externalCaptureGB->setEnabled(false);
 		updatePushAndRecordStateUI();
 	}
 	else
 	{
 		m_ui.btnOpenCamera->setEnabled(true);
-		ShowErrorTips( "Open Camera Failed.", this );
+		ShowCodeErrorTips( nRet, "Open Camera Failed.", this );
 	}
 }
 
@@ -559,6 +580,7 @@ void Live::OnBtnCloseCamera()
 	{
 		m_ui.SkinGB->setVisible(false);
 		m_ui.btnOpenCamera->setEnabled(true);
+		m_ui.externalCaptureGB->setEnabled(true);
 		m_pLocalCameraRender->update();
 		updatePushAndRecordStateUI();
 	}
@@ -569,6 +591,57 @@ void Live::OnBtnCloseCamera()
 	}
 }
 
+void Live::OnBtnOpenExternalCapture()
+{
+	//////////////////////////////////////////////////
+	//PC端SDK本可以支持主路视频(摄像头、自定义采集)和辅路视频(屏幕分享)同时打开,为了Android和ios端随心播的显示方便，
+	//限制每个PC端用户只允许打开主路视频和辅路视频之一,需要同时打开屏的用户请注释掉本段代码;
+	if ( iLiveSDKWrap::getInstance()->getScreenShareState() )
+	{
+		ShowTips( FromBits("提示"), FromBits("请先关闭屏幕分享"), this );
+		return;
+	}
+	//////////////////////////////////////////////////
+
+	m_ui.btnOpenExternalCapture->setEnabled(false);
+	m_ui.btnCloseExternalCapture->setEnabled(true);
+	int nRet = iLiveSDKWrap::getInstance()->openExternalCapture();
+	if (nRet == NO_ERR )
+	{
+		m_pFillFrameTimer->start(66); // 帧率1000/66约等于15
+		m_ui.cameraGB->setEnabled(false);
+		updatePushAndRecordStateUI();
+	}
+	else
+	{
+		m_ui.btnOpenExternalCapture->setEnabled(true);
+		m_ui.btnCloseExternalCapture->setEnabled(false);
+		ShowCodeErrorTips(nRet, FromBits("打开自定义采集失败"), this );
+	}
+	return;
+}
+
+void Live::OnBtnCloseExternalCapture()
+{
+	m_ui.btnOpenExternalCapture->setEnabled(true);
+	m_ui.btnCloseExternalCapture->setEnabled(false);
+	int nRet = iLiveSDKWrap::getInstance()->closeExternalCapture();
+	if (nRet == NO_ERR )
+	{
+		m_pFillFrameTimer->stop();
+		m_pLocalCameraRender->update();
+		m_ui.cameraGB->setEnabled(true);
+		updatePushAndRecordStateUI();
+	}
+	else
+	{
+		m_ui.btnOpenExternalCapture->setEnabled(false);
+		m_ui.btnCloseExternalCapture->setEnabled(true);
+		ShowCodeErrorTips(nRet, FromBits("关闭自定义采集失败"), this );
+	}
+	return;
+}
+
 void Live::OnBtnOpenMic()
 {
 	m_ui.btnOpenMic->setEnabled(false);
@@ -576,6 +649,7 @@ void Live::OnBtnOpenMic()
 	if (nRet==0)
 	{		
 		m_ui.btnCloseMic->setEnabled(true);
+		updateMicVol();
 	}
 	else
 	{
@@ -591,6 +665,7 @@ void Live::OnBtnCloseMic()
 	if (nRet==0)
 	{
 		m_ui.btnOpenMic->setEnabled(true);
+		updateMicVol();
 	}
 	else
 	{
@@ -606,6 +681,7 @@ void Live::OnBtnOpenPlayer()
 	if (nRet==0)
 	{		
 		m_ui.btnClosePlayer->setEnabled(true);
+		updatePlayerVol();
 	}
 	else
 	{
@@ -621,6 +697,7 @@ void Live::OnBtnClosePlayer()
 	if (nRet==0)
 	{		
 		m_ui.btnOpenPlayer->setEnabled(true);
+		updatePlayerVol();
 	}
 	else
 	{
@@ -632,12 +709,11 @@ void Live::OnBtnClosePlayer()
 void Live::OnBtnOpenScreenShareArea()
 {
 	//////////////////////////////////////////////////
-	//PC端SDK本可以支持摄像头和屏幕分享同时打开,为了Android和ios端随心播的显示方便，
-	//限制每个PC端用户只允许打开摄像头和屏幕分享之一,需要同时打开屏幕分享和摄像头
-	//的用户请注释掉本段代码;
-	if ( iLiveSDKWrap::getInstance()->getCurCameraState() )
+	//PC端SDK本可以支持主路视频(摄像头、自定义采集)和辅路视频(屏幕分享)同时打开,为了Android和ios端随心播的显示方便，
+	//限制每个PC端用户只允许打开主路视频和辅路视频之一,需要同时打开屏的用户请注释掉本段代码;
+	if ( iLiveSDKWrap::getInstance()->getCurCameraState() || iLiveSDKWrap::getInstance()->getExternalCaptureState() )
 	{
-		ShowTips( FromBits("提示"), FromBits("请先关闭摄像头"), this );
+		ShowTips( FromBits("提示"), FromBits("请先关闭摄像头或自定采集"), this );
 		return;
 	}
 	//////////////////////////////////////////////////
@@ -669,12 +745,11 @@ void Live::OnBtnOpenScreenShareArea()
 void Live::OnBtnOpenScreenShareWnd()
 {
 	//////////////////////////////////////////////////
-	//PC端SDK本可以支持摄像头和屏幕分享同时打开,为了Android和ios端随心播的显示方便，
-	//限制每个PC端用户只允许打开摄像头和屏幕分享之一,需要同时打开屏幕分享和摄像头
-	//的用户请注释掉本段代码;
-	if ( iLiveSDKWrap::getInstance()->getCurCameraState() )
+	//PC端SDK本可以支持主路视频(摄像头、自定义采集)和辅路视频(屏幕分享)同时打开,为了Android和ios端随心播的显示方便，
+	//限制每个PC端用户只允许打开主路视频和辅路视频之一,需要同时打开屏的用户请注释掉本段代码;
+	if ( iLiveSDKWrap::getInstance()->getCurCameraState() || iLiveSDKWrap::getInstance()->getExternalCaptureState() )
 	{
-		ShowTips( FromBits("提示"), FromBits("请先关闭摄像头"), this );
+		ShowTips( FromBits("提示"), FromBits("请先关闭摄像头或自定采集"), this );
 		return;
 	}
 	//////////////////////////////////////////////////
@@ -801,6 +876,42 @@ void Live::OnBtnPraise()
 	addMsgLab( g_pMainWindow->getUserId()+FromBits("点赞") );
 }
 
+void Live::OnHsPlayerVol( int value )
+{
+	m_ui.sbPlayerVol->blockSignals(true);
+	m_ui.sbPlayerVol->setValue(value);
+	m_ui.sbPlayerVol->blockSignals(false);
+
+	iLiveSDKWrap::getInstance()->setPlayerVolume(value);
+}
+
+void Live::OnSbPlayerVol( int value )
+{
+	m_ui.hsPlayerVol->blockSignals(true);
+	m_ui.hsPlayerVol->setValue(value);
+	m_ui.hsPlayerVol->blockSignals(false);
+
+	iLiveSDKWrap::getInstance()->setPlayerVolume(value);
+}
+
+void Live::OnHsMicVol( int value )
+{
+	m_ui.sbMicVol->blockSignals(true);
+	m_ui.sbMicVol->setValue(value);
+	m_ui.sbMicVol->blockSignals(false);
+
+	iLiveSDKWrap::getInstance()->setMicVolume(value);
+}
+
+void Live::OnSbMicVol( int value )
+{
+	m_ui.hsMicVol->blockSignals(true);
+	m_ui.hsMicVol->setValue(value);
+	m_ui.hsMicVol->blockSignals(false);
+
+	iLiveSDKWrap::getInstance()->setMicVolume(value);
+}
+
 void Live::OnVsSkinSmoothChanged( int value )
 {
 	m_ui.sbSkinSmooth->blockSignals(true);
@@ -833,7 +944,7 @@ void Live::OnSbSkinWhiteChanged( int value )
 	iLiveSetSkinWhitenessGrade(value);
 }
 
-void Live::OnTimer()
+void Live::OnHeartBeatTimer()
 {
 	sxbHeartBeat();
 	sxbRoomIdList();
@@ -857,11 +968,65 @@ void Live::OnDelayUpdateTimer()
 	this->update();
 }
 
+void Live::OnFillFrameTimer()
+{
+	//////////////////////////////////////////////////
+	//这里演示自定义采集，读取一张本地图片，每一帧都传入此图片作为输入数据
+	HBITMAP hbitmap = (HBITMAP)LoadImageA(NULL, "ExternalCapture.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE | LR_CREATEDIBSECTION );
+	if (!hbitmap)
+	{
+		return;
+	}
+
+	BITMAP bitmap;
+	GetObject(hbitmap, sizeof(BITMAP), &bitmap );
+
+	/////////////////输出文字到图片上start////////////////
+	HDC hDC = GetDC( (HWND)(this->winId()) );
+	HDC hMemDC = CreateCompatibleDC(hDC);
+	SelectObject(hMemDC, hbitmap);
+
+	char chFont[20];
+	HFONT hfont = CreateFontA( 100, 0, 0, 0, 400, 0, 0, 0, GB2312_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS,	DEFAULT_QUALITY, DEFAULT_PITCH|FF_DONTCARE, chFont);
+	
+	SelectObject(hMemDC, hfont);
+	TextOutA( hMemDC, 0, 0, "这是自定义采集的画面", strlen("这是自定义采集的画面") );
+
+	DeleteObject(hfont);
+	DeleteObject(hMemDC);
+	ReleaseDC( (HWND)(this->winId()), hDC );
+	/////////////////输出文字到图片上end////////////////
+
+	VideoFrame frame;
+	frame.data = (uint8*)bitmap.bmBits;	
+	frame.data_size = bitmap.bmWidth * bitmap.bmHeight * 3;
+	frame.desc.color_format = COLOR_FORMAT_RGB24;
+	frame.desc.width = bitmap.bmWidth;
+	frame.desc.height = bitmap.bmHeight;
+	frame.desc.rotate = 0;
+
+	int nRet = iLiveSDKWrap::getInstance()->fillExternalCaptureFrame(frame);
+	if (nRet!=NO_ERR)
+	{
+		m_pFillFrameTimer->stop();
+		if (nRet != NO_ERR)
+		{
+			ShowCodeErrorTips( nRet, FromBits("自定义采集视频输入出错"), this );
+		}
+	}
+
+	DeleteObject(hbitmap);
+}
+
 void Live::closeEvent( QCloseEvent* event )
 {
 	m_ui.liMsgs->clear();
 	freeAllCameraVideoRender();	
 	stopTimer();
+	if ( m_pFillFrameTimer->isActive() )
+	{
+		m_pFillFrameTimer->stop();
+	}
 	if (m_userType==E_RoomUserCreator)//主播退出房间需要向随心播服务器上报退出房间
 	{
 		sendQuitRoom();
@@ -1055,6 +1220,54 @@ void Live::updateScreenShareUI()
 		{
 			break;
 		}
+	}
+}
+
+void Live::updatePlayerVol()
+{
+	m_ui.sbPlayerVol->blockSignals(true);
+	m_ui.hsPlayerVol->blockSignals(true);
+
+	uint32 uVol = iLiveSDKWrap::getInstance()->getPlayerVolume();
+	m_ui.sbPlayerVol->setValue(uVol);
+	m_ui.hsPlayerVol->setValue(uVol);
+
+	m_ui.sbPlayerVol->blockSignals(false);
+	m_ui.hsPlayerVol->blockSignals(false);
+
+	if ( iLiveSDKWrap::getInstance()->getCurPlayerState() )
+	{
+		m_ui.sbPlayerVol->setEnabled(true);
+		m_ui.hsPlayerVol->setEnabled(true);
+	}
+	else
+	{
+		m_ui.sbPlayerVol->setEnabled(false);
+		m_ui.hsPlayerVol->setEnabled(false);
+	}	
+}
+
+void Live::updateMicVol()
+{
+	m_ui.sbMicVol->blockSignals(true);
+	m_ui.hsMicVol->blockSignals(true);
+
+	uint32 uVol = iLiveSDKWrap::getInstance()->getMicVolume();
+	m_ui.sbMicVol->setValue(uVol);
+	m_ui.hsMicVol->setValue(uVol);
+
+	m_ui.sbMicVol->blockSignals(false);
+	m_ui.hsMicVol->blockSignals(false);
+
+	if ( iLiveSDKWrap::getInstance()->getCurMicState() )
+	{
+		m_ui.sbMicVol->setEnabled(true);
+		m_ui.hsMicVol->setEnabled(true);
+	}
+	else
+	{
+		m_ui.sbMicVol->setEnabled(false);
+		m_ui.hsMicVol->setEnabled(false);
 	}
 }
 

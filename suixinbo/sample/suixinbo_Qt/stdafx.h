@@ -2,6 +2,7 @@
 #define stdafx_h_
 
 #include <set>
+#include <time.h>
 
 #include <QtWidgets>
 #include <QtCore/QSettings>

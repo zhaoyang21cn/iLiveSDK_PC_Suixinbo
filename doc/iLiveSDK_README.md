@@ -55,70 +55,77 @@ iLiveSDK::getInstance()->setRemoteVideoCallBack(OnRemoteVideo, NULL); //设置�
 ```
 
 ### 初始化
+
 ```c++
-	int nRet = iLiveSDK::getInstance()->initSdk(appid, AccountType);
-	if (nRet != ilivesdk::NO_ERR)
-	{
-		//初始化失败
-	}
+int nRet = iLiveSDK::getInstance()->initSdk(appid, AccountType);
+if (nRet != ilivesdk::NO_ERR)
+{
+	//初始化失败
+}
 ```
+
 ### 登录
+
 ```c++
-	void OniLiveLoginSuccess( void* data )
-	{
-		//登录成功
-	}
-	void OniLiveLoginError( int code, const std::string& desc, void* data )
-	{
-		//登录失败
-	}
-	iLiveSDK::getInstance()->LiveLogin(userId, userSig, OniLiveLoginSuccess, OniLiveLoginError, NULL);
+void OniLiveLoginSuccess( void* data )
+{
+	//登录成功
+}
+void OniLiveLoginError( int code, const std::string& desc, void* data )
+{
+	//登录失败
+}
+iLiveSDK::getInstance()->LiveLogin(userId, userSig, OniLiveLoginSuccess, OniLiveLoginError, NULL);
 ```
+
 ### 创建房间(主播)
+
 ```c++
-	void OniLiveCreateRoomSuc( void* data )
-	{
-		//创建房间成功
-	}
-	void OniLiveCreateRoomErr( int code, const std::string& desc, void* data )
-	{
-		//创建房间失败
-	}
-	
-	iLiveRoomOption roomOption;
-	roomOption.roomId = roomnum;//业务侧许保证房间id唯一性
-	roomOption.auth_buffer = "";
-	roomOption.control_role = "";//留空表示使用默认角色
-	roomOption.audio_category = AUDIO_CATEGORY_MEDIA_PLAY_AND_RECORD;//直播场景
-	roomOption.video_recv_mode = VIDEO_RECV_MODE_SEMI_AUTO_RECV_CAMERA_VIDEO; //半自动模式
-	roomOption.m_roomDisconnectListener = OnRoomDisconnect;
-	roomOption.m_memberStatusListener = OnMemStatusChange;
-	roomOption.m_autoRecvListener = OnSemiAutoRecvCameraVideo;
-	roomOption.data = NULL;
-	iLiveSDK::getInstance()->createRoom( roomOption, OniLiveCreateRoomSuc, OniLiveCreateRoomErr, NULL );
+void OniLiveCreateRoomSuc( void* data )
+{
+	//创建房间成功
+}
+void OniLiveCreateRoomErr( int code, const std::string& desc, void* data )
+{
+	//创建房间失败
+}
+
+iLiveRoomOption roomOption;
+roomOption.roomId = roomnum;//业务侧许保证房间id唯一性
+roomOption.auth_buffer = "";
+roomOption.control_role = "";//留空表示使用默认角色
+roomOption.audio_category = AUDIO_CATEGORY_MEDIA_PLAY_AND_RECORD;//直播场景
+roomOption.video_recv_mode = VIDEO_RECV_MODE_SEMI_AUTO_RECV_CAMERA_VIDEO; //半自动模式
+roomOption.m_roomDisconnectListener = OnRoomDisconnect;
+roomOption.m_memberStatusListener = OnMemStatusChange;
+roomOption.m_autoRecvListener = OnSemiAutoRecvCameraVideo;
+roomOption.data = NULL;
+iLiveSDK::getInstance()->createRoom( roomOption, OniLiveCreateRoomSuc, OniLiveCreateRoomErr, NULL );
 ```
+
 ### 加入房间(观众)
+
 ```c++
-	void OniLiveJoinRoomSuc( void* data )
-	{
-		//加入房间成功
-	}
-	void OniLiveJoinRoomErr( int code, const std::string& desc, void* data )
-	{
-		//加入房间失败
-	}
-	
-	iLiveRoomOption roomOption;
-	roomOption.roomId = roomnum;//要加入的房间ID	
-	roomOption.auth_buffer = "";
-	roomOption.control_role = "";
-	roomOption.audio_category = AUDIO_CATEGORY_MEDIA_PLAY_AND_RECORD;//直播场景
-	roomOption.video_recv_mode = VIDEO_RECV_MODE_SEMI_AUTO_RECV_CAMERA_VIDEO; //半自动模式
-	roomOption.m_autoRecvListener = OnSemiAutoRecvCameraVideo;
-	roomOption.m_memberStatusListener = OnMemStatusChange;
-	roomOption.m_roomDisconnectListener = OnRoomDisconnect;
-	roomOption.data = NULL;
-	iLiveSDK::getInstance()->joinRoom( roomOption, OniLiveJoinRoomSuc, OniLiveJoinRoomErr, NULL );
+void OniLiveJoinRoomSuc( void* data )
+{
+	//加入房间成功
+}
+void OniLiveJoinRoomErr( int code, const std::string& desc, void* data )
+{
+	//加入房间失败
+}
+
+iLiveRoomOption roomOption;
+roomOption.roomId = roomnum;//要加入的房间ID	
+roomOption.auth_buffer = "";
+roomOption.control_role = "";
+roomOption.audio_category = AUDIO_CATEGORY_MEDIA_PLAY_AND_RECORD;//直播场景
+roomOption.video_recv_mode = VIDEO_RECV_MODE_SEMI_AUTO_RECV_CAMERA_VIDEO; //半自动模式
+roomOption.m_autoRecvListener = OnSemiAutoRecvCameraVideo;
+roomOption.m_memberStatusListener = OnMemStatusChange;
+roomOption.m_roomDisconnectListener = OnRoomDisconnect;
+roomOption.data = NULL;
+iLiveSDK::getInstance()->joinRoom( roomOption, OniLiveJoinRoomSuc, OniLiveJoinRoomErr, NULL );
 ```
 
 

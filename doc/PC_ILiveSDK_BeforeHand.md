@@ -12,7 +12,7 @@
 如果没有任何可用版本，点击add添加前面安装的Qt目录即可;至此，Qt安装完成;
 
 ## 三 运行
-suixinbo_run.zip为已经编译好的可执行包，解压后，直接双击suixinbo_Qt.exe即可运行;如果用户需要自己编译，需要按照上面第二步所示先安装vs2010及Qt环境;
+[suixinbo_run.zip](https://github.com/zhaoyang21cn/iLiveSDK_PC_Demos/blob/master/suixinbo_run.zip)为已经编译好的可执行包，解压后，直接双击suixinbo_Qt.exe即可运行;如果用户需要自己编译，需要按照上面第二步所示先安装vs2010及Qt环境;
 * 直播房间列表<br/>
 ![直播列表](https://mc.qcloudimg.com/static/img/170ae5e7bbaf52943c975a8ad79b2fdd/2.png)
 * 直播界面<br/>
@@ -32,8 +32,6 @@ suixinbo_run.zip为已经编译好的可执行包，解压后，直接双击suix
 ```C++
 	#include <ilivesdk/ilivesdk.h>
 	#pragma comment(lib, "ilivesdk.lib")
-	using namespace imcore;
-	using namespace tencent::av;
 	using namespace ilivesdk;
 ```
 
@@ -41,7 +39,7 @@ suixinbo_run.zip为已经编译好的可执行包，解压后，直接双击suix
 	将libs\Debug目录下的所有dll文件复制到项目的Debug版本运行目录下，libs\Release目录下的所有dll文件复制到项目的Release版本运行目录下;
 
 - 验证是否配置成功:<br/>
-	调用iLiveSDK::getInstance()->getVersion(),输出返回值，查看当前iLiveSDK的版本号;
+	调用iLiveSDK::getInstance()->getVersion(),返回当前iLiveSDK的版本号;
   
 	
 	

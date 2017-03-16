@@ -7,7 +7,17 @@
 
 * 示例:
 ```c++
-void :OnLocalVideo( VideoFrame* video_frame, void* custom_data )
+void onForceOffline()
+{
+//账号已经在其他地方登陆
+}
+void OnGropuMessage( const TIMMessage& msg )
+{
+}
+void OnC2CMessage( const TIMMessage& msg )
+{
+}
+void OnLocalVideo( VideoFrame* video_frame, void* custom_data )
 {
 	//video_frame是本地画面每一帧的数据,用户需要显示本地画面时，在此回调函数中做渲染，渲染代码可参考随心播;
 }
@@ -15,7 +25,9 @@ void OnRemoteVideo( VideoFrame* video_frame, void* custom_data )
 {
 	//video_frame是远程画面每一帧的数据,用户需要显示远程画面时，在此回调函数中做渲染，渲染代码可参考随心播;
 }
-iLiveSDK::getInstance()->SetMessageCallBack(&messageCallBack); //收到IM消息的回调;
+iLiveSDK::getInstance()->setForceOfflineCallback(onForceOffline); //设置被挤下线的通知函数;
+iLiveSDK::getInstance()->setGroupMessageCallBack(OnGropuMessage); //设置收到房间内的群消息的处理函数;
+iLiveSDK::getInstance()->setC2CMessageCallBack(OnC2CMessage); //设置收到C2C消息的处理函数;
 iLiveSDK::getInstance()->setLocalVideoCallBack(OnLocalVideo, NULL); //设置本地视频的回调函数;
 iLiveSDK::getInstance()->setRemoteVideoCallBack(OnRemoteVideo, NULL); //设置远程视频的回调函数;
 ```
@@ -83,6 +95,7 @@ iLiveSDK::getInstance()->LiveLogin(userId, userSig, OniLiveLoginSuccess, OniLive
 | void * |data |用户自定义的数据的指针，在成功和失败的回调函数中原封不动地返回|
 
 * 示例：
+
 ```c++
 void OniLiveCreateRoomSuc( void* data )
 {
@@ -106,6 +119,7 @@ roomOption.data = NULL;
 iLiveSDK::getInstance()->createRoom( roomOption, OniLiveCreateRoomSuc, OniLiveCreateRoomErr, NULL );
 ```
 
+
 # 5 加入房间(观众)
 
 |接口名|接口描述|
@@ -120,6 +134,7 @@ iLiveSDK::getInstance()->createRoom( roomOption, OniLiveCreateRoomSuc, OniLiveCr
 | void * |data |用户自定义的数据的指针，在成功和失败的回调函数中原封不动地返回|
 
 * 示例：
+
 ```c++
 void OniLiveJoinRoomSuc( void* data )
 {

@@ -67,26 +67,29 @@ iLiveSDK::getInstance()->sendGroupMessage(  message, OnSendGroupMsgSuc, OnSendGr
 ```
 ## 2 解析消息
 - 初始化时，设置接收消息的回调函数:
+
 ```c++
-class MessageCallBack : public imcore::TIMMessageCallBack
+void OnC2CMessage( const TIMMessage& msg )
 {
-public:
-	virtual void OnNewMessage(const std::vector<TIMMessage> &msgs)
-	{
- 		//在这里解析收到的消息
- 	}
-};
-MessageCallBack m_messageCallBack;
-iLiveSDK::getInstance()->SetMessageCallBack(&m_messageCallBack);
+//处理C2C消息
+}
+void OnGropuMessage( const TIMMessage& msg )
+{
+//处理群消息
+}
+iLiveSDK::getInstance()->setC2CMessageCallBack(OnC2CMessage); //设置收到C2C消息的处理函数;
+iLiveSDK::getInstance()->setGroupMessageCallBack(OnGropuMessage); //设置收到房间内的群消息处理函数;
 ```
+
 - 解析收到消息:
+
 ```c++
-void OnNewMessage(const std::vector<TIMMessage> &msgs)
+void OnC2CMessage(const TIMMessage& msg)
 {
 	int nCount = msg.GetElemCount();
 	for (int i = 0; i < nCount; ++i)
 	{
-		imcore::TIMElem* pElem = msg.GetElem(i);
+		TIMElem* pElem = msg.GetElem(i);
 		switch( pElem->type() )
 		{
 			case kElemText://文本消息
@@ -100,6 +103,10 @@ void OnNewMessage(const std::vector<TIMMessage> &msgs)
 			//其他消息类型...
 		}
 	}
+}
+void OnGropuMessage( const TIMMessage& msg )
+{
+//与解析C2C消息一样
 }
 ```
 
@@ -155,6 +162,7 @@ iLiveSDK::getInstance()->changeRole(Role, OnChangeRoleSuc, OnChangeRoleErr, NULL
 |void* |data | 用户自定义数据的指针，在成功和失败的回调函数中原封不动地返回|
 
 示例:
+
 ```c++
 void Live::OnChangeAuthoritySuc( void* data )
 {

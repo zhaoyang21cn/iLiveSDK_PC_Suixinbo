@@ -14,9 +14,9 @@
 	在项目中包含头文件(通常是预编译头中),并使用相关命名空间，加载动态库的lib文件,代码如下，
 
 ```C++
-	#include <ilivesdk/ilivesdk.h>
-	#pragma comment(lib, "ilivesdk.lib")
-	using namespace ilivesdk;
+#include <ilivesdk/ilivesdk.h>
+#pragma comment(lib, "ilivesdk.lib")
+using namespace ilivesdk;
 ```
 
 - 拷贝dll文件到exe所在目录:<br/>

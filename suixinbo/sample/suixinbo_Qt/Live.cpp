@@ -540,16 +540,6 @@ void Live::OnRemoteVideo( VideoFrame* video_frame, void* custom_data )
 
 void Live::OnBtnOpenCamera()
 {
-	//////////////////////////////////////////////////
-	//PC端SDK本可以支持主路视频(摄像头、自定义采集)和辅路视频(屏幕分享)同时打开,为了Android和ios端随心播的显示方便，
-	//限制每个PC端用户只允许打开主路视频和辅路视频之一,需要同时打开屏的用户请注释掉本段代码;
-	if ( iLiveSDKWrap::getInstance()->getScreenShareState() )
-	{
-		ShowTips( FromBits("提示"), FromBits("请先关闭屏幕分享"), this );
-		return;
-	}
-	//////////////////////////////////////////////////
-
 	if (m_cameraList.size()==0)
 	{
 		ShowErrorTips( FromBits("无可用的摄像头."), this );
@@ -593,16 +583,6 @@ void Live::OnBtnCloseCamera()
 
 void Live::OnBtnOpenExternalCapture()
 {
-	//////////////////////////////////////////////////
-	//PC端SDK本可以支持主路视频(摄像头、自定义采集)和辅路视频(屏幕分享)同时打开,为了Android和ios端随心播的显示方便，
-	//限制每个PC端用户只允许打开主路视频和辅路视频之一,需要同时打开屏的用户请注释掉本段代码;
-	if ( iLiveSDKWrap::getInstance()->getScreenShareState() )
-	{
-		ShowTips( FromBits("提示"), FromBits("请先关闭屏幕分享"), this );
-		return;
-	}
-	//////////////////////////////////////////////////
-
 	m_ui.btnOpenExternalCapture->setEnabled(false);
 	m_ui.btnCloseExternalCapture->setEnabled(true);
 	int nRet = iLiveSDKWrap::getInstance()->openExternalCapture();
@@ -708,16 +688,6 @@ void Live::OnBtnClosePlayer()
 
 void Live::OnBtnOpenScreenShareArea()
 {
-	//////////////////////////////////////////////////
-	//PC端SDK本可以支持主路视频(摄像头、自定义采集)和辅路视频(屏幕分享)同时打开,为了Android和ios端随心播的显示方便，
-	//限制每个PC端用户只允许打开主路视频和辅路视频之一,需要同时打开屏的用户请注释掉本段代码;
-	if ( iLiveSDKWrap::getInstance()->getCurCameraState() || iLiveSDKWrap::getInstance()->getExternalCaptureState() )
-	{
-		ShowTips( FromBits("提示"), FromBits("请先关闭摄像头或自定采集"), this );
-		return;
-	}
-	//////////////////////////////////////////////////
-
 	m_x0 = m_ui.sbX0->value();
 	m_y0 = m_ui.sbY0->value();
 	m_x1 = m_ui.sbX1->value();
@@ -744,16 +714,6 @@ void Live::OnBtnOpenScreenShareArea()
 
 void Live::OnBtnOpenScreenShareWnd()
 {
-	//////////////////////////////////////////////////
-	//PC端SDK本可以支持主路视频(摄像头、自定义采集)和辅路视频(屏幕分享)同时打开,为了Android和ios端随心播的显示方便，
-	//限制每个PC端用户只允许打开主路视频和辅路视频之一,需要同时打开屏的用户请注释掉本段代码;
-	if ( iLiveSDKWrap::getInstance()->getCurCameraState() || iLiveSDKWrap::getInstance()->getExternalCaptureState() )
-	{
-		ShowTips( FromBits("提示"), FromBits("请先关闭摄像头或自定采集"), this );
-		return;
-	}
-	//////////////////////////////////////////////////
-
 	m_fps= m_ui.sbFPS->value();
 	int nRet = iLiveSDKWrap::getInstance()->openScreenShare( (HWND)this->winId(), m_fps );//这里演示分享直播界面窗口
 	if (nRet==0)

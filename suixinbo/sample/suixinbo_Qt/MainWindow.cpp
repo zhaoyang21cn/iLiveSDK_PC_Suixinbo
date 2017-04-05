@@ -116,8 +116,8 @@ void MainWindow::readConfig()
 	}
 	else
 	{
-		m_nAppId = 1400019352;
-		m_nAccountType = 8970;
+		m_nAppId = 1400027849;
+		m_nAccountType = 11656;
 	}
 
 	if ( m_pSetting->contains("serverUrl") )
@@ -127,7 +127,7 @@ void MainWindow::readConfig()
 	}
 	else
 	{
-		m_szServerUrl = "http://182.254.234.225/sxb/index.php";
+		m_szServerUrl = "http://182.254.234.225/sxb_new/index.php";
 	}
 
 	if ( m_pSetting->contains("userId") )

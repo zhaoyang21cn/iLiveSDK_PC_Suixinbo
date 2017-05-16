@@ -127,7 +127,7 @@ void MainWindow::readConfig()
 	}
 	else
 	{
-		m_szServerUrl = "http://182.254.234.225/sxb_new/index.php";
+		m_szServerUrl = "http://123.206.118.43/sxb_new/index.php";
 	}
 
 	if ( m_pSetting->contains("userId") )

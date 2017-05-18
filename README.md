@@ -1,5 +1,5 @@
 # iLiveSDK
-iLiveSDK 提供了账号登录，音视频互动，文本互动等基础功能，可快速集成音视频能力。
+iLiveSDK 提供了账号登录，音视频互动，屏幕共享，文本互动等功能，可快速集成音视频能力。
 
 ## iLiveSDK导入
 [iLiveSDK导入参考](https://github.com/zhaoyang21cn/iLiveSDK_PC_Demos/blob/master/doc/iLiveSDK_README.md)<br/>

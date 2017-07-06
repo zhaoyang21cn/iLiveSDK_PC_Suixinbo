@@ -1,5 +1,5 @@
 # iLiveSDK
-iLiveSDK 提供了账号登录，音视频互动，屏幕共享，文本互动等功能，可快速集成音视频能力。
+iLiveSDK(全称:Interactive Live SDK)整合了互动直播SDK(AVSDK)、即时通讯SDK(IMSDK)两大模块，致力于提供一套完整的音视频即时通讯解决方案，打造跨平台的直播场景。iLiveSDK 提供了账号登录，音视频互动，屏幕共享，收发消息等功能。旨在无限可能地降低用户接入成本，全方位考虑用户接入体验，并提供接入服务技术支持。
 
 ## iLiveSDK导入
 [iLiveSDK导入参考](https://github.com/zhaoyang21cn/iLiveSDK_PC_Demos/blob/master/doc/iLiveSDK_README.md)<br/>
@@ -17,6 +17,9 @@ iLiveSDK 提供了账号登录，音视频互动，屏幕共享，文本互动�
 
 ## 关键路径LOG
 [关键路径LOG 请遇到问题先自行对比](https://github.com/zhaoyang21cn/suixinbo_doc/blob/master/doc2/log.md)
+
+## 常见问题
+[常见问题](https://github.com/zhaoyang21cn/iLiveSDK_PC_Demos/blob/master/doc/iLiveSDK_QA.md)
 
 ## 技术交流群
 QQ群: 594923937

@@ -53,9 +53,6 @@
     <ClCompile Include="Live.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Event.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="VideoRender.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -67,9 +64,6 @@
     </ClCompile>
     <ClCompile Include="GeneratedFiles\Release\moc_Live.cpp">
       <Filter>Generated Files\Release</Filter>
-    </ClCompile>
-    <ClCompile Include="MessageCallBack.cpp">
-      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Register.cpp">
       <Filter>Source Files</Filter>
@@ -113,9 +107,6 @@
     <ClCompile Include="GeneratedFiles\Release\moc_NetworkHelper.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
-    <ClCompile Include="iLiveSDKWrap.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -127,13 +118,7 @@
     <ClInclude Include="GeneratedFiles\ui_Live.h">
       <Filter>Generated Files</Filter>
     </ClInclude>
-    <ClInclude Include="Event.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Util.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MessageCallBack.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GeneratedFiles\ui_Register.h">
@@ -146,9 +131,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="PicDownHelper.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="iLiveSDKWrap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

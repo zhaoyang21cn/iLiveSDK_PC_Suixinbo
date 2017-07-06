@@ -36,7 +36,7 @@ private:
 
 	void iLiveJoinRoom();
 	static void OniLiveJoinRoomSuc(void* data);
-	static void OniLiveJoinRoomErr(int code, const std::string& desc, void* data);
+	static void OniLiveJoinRoomErr(int code, const char *desc, void* data);
 	
 	void sendWatcherJoinRoom();
 

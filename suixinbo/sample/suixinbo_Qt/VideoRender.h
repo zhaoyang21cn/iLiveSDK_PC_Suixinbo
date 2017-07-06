@@ -1,14 +1,13 @@
 #ifndef VideoRender_h_
 #define VideoRender_h_
 
-#include <avsdk/av_common.h>
-
 class VideoRender : public QWidget
 {
 	Q_OBJECT
 public:
 	VideoRender(QWidget* parent = 0, Qt::WindowFlags f = 0);
-	void	DoRender(VideoFrame *pFrameData);
+	~VideoRender();
+	void	DoRender(const LiveVideoFrame *pFrameData);
 	void	Clear();
 
 	void	pauseRender();
@@ -30,7 +29,7 @@ private:
 
 private:
 	std::string	m_identifier;
-	ColorFormat m_colorFormat;
+	E_ColorFormat m_colorFormat;
 	uint32		m_frameDataBufLen;	//帧数据长度
 	uint8*		m_pFrameDataBuf;	//帧数据缓存
 	uint8*		m_pBkgDataBuf;		//背景缓存

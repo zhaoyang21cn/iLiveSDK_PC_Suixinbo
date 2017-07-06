@@ -199,6 +199,9 @@
      <property name="text">
       <string/>
      </property>
+     <property name="maxLength">
+      <number>16</number>
+     </property>
      <property name="echoMode">
       <enum>QLineEdit::PasswordEchoOnEdit</enum>
      </property>
@@ -231,6 +234,9 @@
      <property name="text">
       <string/>
      </property>
+     <property name="maxLength">
+      <number>16</number>
+     </property>
     </widget>
     <widget class="QLabel" name="lbUserName">
      <property name="geometry">
@@ -261,6 +267,19 @@
       <string>注册</string>
      </property>
     </widget>
+   </widget>
+   <widget class="QLabel" name="lbVersion">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>20</y>
+      <width>221</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>TextLabel</string>
+    </property>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">

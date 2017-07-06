@@ -2,15 +2,11 @@
 #include "Register.h"
 
 Register::Register( QWidget * parent /*= 0*/, Qt::WindowFlags f /*= 0*/ )
+	:QDialog(parent, f)
 {
 	m_ui.setupUi(this);
 
 	connect( m_ui.btnRegister, SIGNAL(clicked()), this, SLOT(onBtnRegister()) );
-}
-
-Register::~Register()
-{
-
 }
 
 void Register::onBtnRegister()

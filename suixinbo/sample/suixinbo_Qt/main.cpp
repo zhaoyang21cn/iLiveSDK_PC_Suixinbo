@@ -6,7 +6,10 @@ MainWindow* g_pMainWindow = NULL;
 int main(int argc, char *argv[])
 {
 	QApplication a(argc, argv);
-	g_pMainWindow = MainWindow::getInstance();
-	g_pMainWindow->show();
+
+	MainWindow w;
+	g_pMainWindow = &w;
+	w.show();
+
 	return a.exec();
 }

@@ -303,7 +303,7 @@
     </rect>
    </property>
    <property name="title">
-    <string>麦克风</string>
+    <string>麦克风增强</string>
    </property>
    <widget class="QPushButton" name="btnOpenMic">
     <property name="geometry">
@@ -604,9 +604,9 @@
    <property name="geometry">
     <rect>
      <x>350</x>
-     <y>50</y>
+     <y>80</y>
      <width>131</width>
-     <height>321</height>
+     <height>291</height>
     </rect>
    </property>
    <property name="contextMenuPolicy">
@@ -617,7 +617,7 @@
    <property name="geometry">
     <rect>
      <x>350</x>
-     <y>20</y>
+     <y>50</y>
      <width>61</width>
      <height>21</height>
     </rect>
@@ -630,7 +630,7 @@
    <property name="geometry">
     <rect>
      <x>420</x>
-     <y>20</y>
+     <y>50</y>
      <width>61</width>
      <height>22</height>
     </rect>
@@ -640,6 +640,9 @@
    </property>
    <property name="buttonSymbols">
     <enum>QAbstractSpinBox::NoButtons</enum>
+   </property>
+   <property name="maximum">
+    <number>999999999</number>
    </property>
   </widget>
   <widget class="QGroupBox" name="pushStreamGB">
@@ -998,6 +1001,38 @@
      <string>关闭</string>
     </property>
    </widget>
+  </widget>
+  <widget class="QLabel" name="lbRoomID">
+   <property name="geometry">
+    <rect>
+     <x>350</x>
+     <y>15</y>
+     <width>61</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>房间号:</string>
+   </property>
+  </widget>
+  <widget class="QSpinBox" name="sbRoomID">
+   <property name="geometry">
+    <rect>
+     <x>420</x>
+     <y>15</y>
+     <width>61</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <property name="readOnly">
+    <bool>true</bool>
+   </property>
+   <property name="buttonSymbols">
+    <enum>QAbstractSpinBox::NoButtons</enum>
+   </property>
+   <property name="maximum">
+    <number>999999999</number>
+   </property>
   </widget>
  </widget>
  <resources/>

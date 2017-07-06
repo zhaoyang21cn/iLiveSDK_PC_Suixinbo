@@ -8,7 +8,6 @@ class Register : public QDialog
 	Q_OBJECT
 public:
 	Register(QWidget * parent = 0, Qt::WindowFlags f = 0);
-	virtual ~Register();
 
 private slots:
 	void onBtnRegister();

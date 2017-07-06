@@ -71,38 +71,39 @@ void RoomListItem::OnSxbWatcherJoinRoom( int errorCode, QString errorInfo, QVari
 
 void RoomListItem::iLiveJoinRoom()
 {
-	ilivesdk::iLiveRoomOption roomOption;
+	iLiveRoomOption roomOption;
+	roomOption.audioCategory = AUDIO_CATEGORY_MEDIA_PLAY_AND_RECORD;//互动直播场景
 	roomOption.roomId = m_room.info.roomnum;
-	roomOption.audio_category = AUDIO_CATEGORY_MEDIA_PLAY_AND_RECORD;//直播场景
-	roomOption.auth_buffer = "";
-	roomOption.control_role = Guest;
-	roomOption.video_recv_mode = VIDEO_RECV_MODE_SEMI_AUTO_RECV_CAMERA_VIDEO; //半自动模式
-	roomOption.screen_recv_mode = SCREEN_RECV_MODE_SEMI_AUTO_RECV_SCREEN_VIDEO; //半自动模式
-	roomOption.m_autoRecvCameraListener = Live::OnSemiAutoRecvCameraVideo;
-	roomOption.m_autoRecvScreenListener = Live::OnSemiAutoRecvScreenVideo;
-	roomOption.m_autoRecvMediaFileListener = Live::OnSemiAutoRecvMediaFileVideo;
-	roomOption.m_memberStatusListener = Live::OnMemStatusChange;
-	roomOption.m_roomDisconnectListener = Live::OnRoomDisconnect;
+	roomOption.controlRole = Guest;
+	roomOption.authBits = AUTH_BITS_JOIN_ROOM|AUTH_BITS_RECV_AUDIO|AUTH_BITS_RECV_CAMERA_VIDEO|AUTH_BITS_RECV_SCREEN_VIDEO;
+	roomOption.memberStatusListener = Live::OnMemStatusChange;
+	roomOption.roomDisconnectListener = Live::OnRoomDisconnect;
 	roomOption.data = g_pMainWindow->getLiveView();
-	iLiveSDKWrap::getInstance()->joinRoom( roomOption, OniLiveJoinRoomSuc, OniLiveJoinRoomErr, this );
+	GetILive()->joinRoom( roomOption, OniLiveJoinRoomSuc, OniLiveJoinRoomErr, this );
 }
 
 void RoomListItem::OniLiveJoinRoomSuc( void* data )
 {
 	RoomListItem* pRoomListItem = reinterpret_cast<RoomListItem*>(data);
 	g_pMainWindow->setCurRoomIdfo(pRoomListItem->m_room);
-	postCusEvent( g_pMainWindow, new Event(E_CEJoinRoom, 0, "") );
-
 	pRoomListItem->sendWatcherJoinRoom();
+
+	Live* pLive = g_pMainWindow->getLiveView();
+	pLive->setRoomID(pRoomListItem->m_room.info.roomnum);
+	pLive->setRoomUserType(E_RoomUserWatcher);
+	pLive->startTimer();
+	pLive->show();
 }
 
-void RoomListItem::OniLiveJoinRoomErr( int code, const std::string& desc, void* data )
+void RoomListItem::OniLiveJoinRoomErr( int code, const char *desc, void* data )
 {
-	postCusEvent( g_pMainWindow, new Event(E_CEJoinRoom, code, desc) );
+	RoomListItem* pThis = reinterpret_cast<RoomListItem*>(data);
+	ShowCodeErrorTips(code, desc, pThis, "Join iLive Room Error.");
+	g_pMainWindow->setUseable(true);
 }
 
 
 void RoomListItem::sendWatcherJoinRoom()
 {
-	sendGroupCustomCmd( AVIMCMD_EnterLive, g_pMainWindow->getUserId() );
+	g_sendGroupCustomCmd( AVIMCMD_EnterLive, g_pMainWindow->getUserId() );
 }

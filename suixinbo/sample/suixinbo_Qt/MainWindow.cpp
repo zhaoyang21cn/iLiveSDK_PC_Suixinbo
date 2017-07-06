@@ -1,8 +1,6 @@
 #include "stdafx.h"
 #include "MainWindow.h"
 
-MainWindow* MainWindow::ms_pInstance = NULL;
-
 MainWindow::MainWindow( QWidget * parent /*= 0*/, Qt::WindowFlags flags /*= 0 */ )
 {
 	m_ui.setupUi(this);
@@ -32,15 +30,9 @@ MainWindow::MainWindow( QWidget * parent /*= 0*/, Qt::WindowFlags flags /*= 0 */
 	readConfig();
 	initSDK();
 	connectSignals();
-}
 
-MainWindow* MainWindow::getInstance()
-{
-	if (!ms_pInstance)
-	{
-		ms_pInstance = new MainWindow();
-	}
-	return ms_pInstance;
+	m_ui.lbVersion->setText(QString("iLive SDK version: ") + 
+		                    QString(GetILive()->getVersion()));
 }
 
 QString MainWindow::getUserId()
@@ -91,14 +83,13 @@ void MainWindow::setUseable( bool bUseable )
 
 void MainWindow::initSDK()
 {
-	iLiveSDKWrap::getInstance()->setGroupMessageCallBack(MessageCallBack::OnGropuMessage);
-	iLiveSDKWrap::getInstance()->setC2CMessageCallBack(MessageCallBack::OnC2CMessage);
-	iLiveSDKWrap::getInstance()->setForceOfflineCallback(onForceOffline);
-	iLiveSDKWrap::getInstance()->setLocalVideoCallBack(Live::OnLocalVideo, m_pLive);
-	iLiveSDKWrap::getInstance()->setRemoteVideoCallBack(Live::OnRemoteVideo, m_pLive);
+	GetILive()->setMessageCallBack(Live::OnMessage, m_pLive);
+	GetILive()->setForceOfflineCallback(onForceOffline);
+	GetILive()->setLocalVideoCallBack(Live::OnLocalVideo, m_pLive);
+	GetILive()->setRemoteVideoCallBack(Live::OnRemoteVideo, m_pLive);
 
-	int nRet = iLiveSDKWrap::getInstance()->initSdk(m_nAppId, m_nAccountType);
-	if (nRet != ilivesdk::NO_ERR)
+	int nRet = GetILive()->init(m_nAppId, m_nAccountType);
+	if (nRet != NO_ERR)
 	{
 		ShowErrorTips( "init sdk failed.",this );
 		exit(0);
@@ -192,24 +183,11 @@ void MainWindow::switchLoginState( E_LoginState state )
 	}
 }
 
-void MainWindow::dealMessages()
-{
-	QQueue<TIMMessage>&	msgs = MessageCallBack::ms_messageQueue;
-	while( !msgs.empty() )
-	{
-		const TIMMessage& msg = msgs.first();
-		if ( m_pLive->isVisible() )
-		{
-			m_pLive->dealMessage(msg);
-		}
-
-		MessageCallBack::ms_messageQueue.pop_front();
-	}
-}
-
 void MainWindow::onForceOffline()
 {
-	postCusEvent( g_pMainWindow, new Event(E_CEForceOffline, 0, "") );
+	ShowTips( FromBits("被踢下线"), FromBits("你的账号在其他地方登陆,点击确认后关闭!"), g_pMainWindow );
+	g_pMainWindow->saveConfig();
+	TerminateProcess(GetCurrentProcess(), 0);
 }
 
 void MainWindow::clearShowRoomList()
@@ -272,6 +250,7 @@ void MainWindow::sxbLogin()
 	QVariantMap varmap;
 	varmap.insert("id", m_szUserId);
 	varmap.insert("pwd", m_szUserPassword);
+	varmap.insert("appid", QString::number(m_nAppId));
 	SxbServerHelper::request(varmap, "account", "login", OnSxbLogin, this);
 }
 
@@ -430,7 +409,7 @@ void MainWindow::OnSxbRoomList( int errorCode, QString errorInfo, QVariantMap da
 
 	if (errorCode!=E_SxbOK)
 	{
-		iLiveLog_e("suixinbo", "SxbRoomList Failed.");
+		//iLiveLog_e("suixinbo", "SxbRoomList Failed.");
 		return;
 	}
 
@@ -522,66 +501,69 @@ void MainWindow::OnPicDown( int errorCode, QString errorInfo, QString picPath, v
 
 void MainWindow::iLiveLogin()
 {
-	iLiveSDKWrap::getInstance()->LiveLogin(m_szUserId.toStdString(), m_szUserSig.toStdString(), OniLiveLoginSuccess, OniLiveLoginError, this);
+	GetILive()->login(m_szUserId.toStdString().c_str(), m_szUserSig.toStdString().c_str(), OniLiveLoginSuccess, OniLiveLoginError, this);
 }
 
 void MainWindow::iLiveLogout()
 {
-	iLiveSDKWrap::getInstance()->LiveLogout(OniLiveLogoutSuccess, OniLiveLogoutError, this);
+	GetILive()->logout(OniLiveLogoutSuccess, OniLiveLogoutError, this);
 }
 
 void MainWindow::iLiveCreateRoom()
 {
-	ilivesdk::iLiveRoomOption roomOption;
+	iLiveRoomOption roomOption;
+	roomOption.audioCategory = AUDIO_CATEGORY_MEDIA_PLAY_AND_RECORD;//互动直播场景
 	roomOption.roomId = m_curRoomInfo.info.roomnum;
-	roomOption.auth_buffer = "";
-	roomOption.control_role = LiveMaster;
-	roomOption.audio_category = AUDIO_CATEGORY_MEDIA_PLAY_AND_RECORD;//互动直播场景
-	roomOption.video_recv_mode = VIDEO_RECV_MODE_SEMI_AUTO_RECV_CAMERA_VIDEO; //半自动模式
-	roomOption.screen_recv_mode = SCREEN_RECV_MODE_SEMI_AUTO_RECV_SCREEN_VIDEO;//半自动模式
-	roomOption.m_roomDisconnectListener = Live::OnRoomDisconnect;
-	roomOption.m_memberStatusListener = Live::OnMemStatusChange;
-	roomOption.m_autoRecvCameraListener = Live::OnSemiAutoRecvCameraVideo;
-	roomOption.m_autoRecvScreenListener = Live::OnSemiAutoRecvScreenVideo;
-	roomOption.m_autoRecvMediaFileListener = Live::OnSemiAutoRecvMediaFileVideo;
+	roomOption.controlRole = LiveMaster;
+	roomOption.authBits = AUTH_BITS_DEFAULT;
+	roomOption.roomDisconnectListener = Live::OnRoomDisconnect;
+	roomOption.memberStatusListener = Live::OnMemStatusChange;
 	roomOption.data = m_pLive;
-	iLiveSDKWrap::getInstance()->createRoom( roomOption, OniLiveCreateRoomSuc, OniLiveCreateRoomErr, this );
+	GetILive()->createRoom( roomOption, OniLiveCreateRoomSuc, OniLiveCreateRoomErr, this );
 }
 
 void MainWindow::OniLiveLoginSuccess( void* data )
 {
-	MainWindow* pMainWindow = reinterpret_cast<MainWindow*>(data);
-	postCusEvent( pMainWindow, new Event(E_CELogin, 0, "") );
+	MainWindow* pThis = reinterpret_cast<MainWindow*>(data);
+	pThis->switchLoginState(E_Login);
 }
 
-void MainWindow::OniLiveLoginError( int code, const std::string& desc, void* data )
+void MainWindow::OniLiveLoginError( int code, const char *desc, void* data )
 {
-	MainWindow* pMainWindow = reinterpret_cast<MainWindow*>(data);
-	postCusEvent( pMainWindow, new Event(E_CELogin, code, desc) );
+	MainWindow* pThis = reinterpret_cast<MainWindow*>(data);
+	pThis->switchLoginState(E_Logout);
+	ShowCodeErrorTips(code, desc , pThis, "iLive Login Error");
 }
 
 void MainWindow::OniLiveLogoutSuccess( void* data )
 {
-	MainWindow* pMainWindow = reinterpret_cast<MainWindow*>(data);
-	postCusEvent( pMainWindow, new Event(E_CELogout, 0, "") );
+	MainWindow* pThis = reinterpret_cast<MainWindow*>(data);
+	pThis->switchLoginState(E_Logout);
 }
 
-void MainWindow::OniLiveLogoutError( int code, const std::string& desc, void* data )
+void MainWindow::OniLiveLogoutError( int code, const char *desc, void* data )
 {
-	MainWindow* pMainWindow = reinterpret_cast<MainWindow*>(data);
-	postCusEvent( pMainWindow, new Event(E_CELogout, code, desc) );
+	MainWindow* pThis = reinterpret_cast<MainWindow*>(data);
+	pThis->switchLoginState(E_Login);
+	ShowCodeErrorTips(code, desc, pThis, "iLive Logout Error");
 }
 
 void MainWindow::OniLiveCreateRoomSuc( void* data )
 {
-	MainWindow* pMainWindow = reinterpret_cast<MainWindow*>(data);
-	postCusEvent( pMainWindow, new Event(E_CECreateRoom, 0, "") );
+	MainWindow* pThis = reinterpret_cast<MainWindow*>(data);
+	pThis->m_pLive->setRoomID(pThis->m_curRoomInfo.info.roomnum);
+	pThis->m_pLive->setRoomUserType(E_RoomUserCreator);
+	pThis->m_pLive->show();
+	pThis->m_curRoomInfo.szId = pThis->m_szUserId;
+	pThis->m_curRoomInfo.info.thumbup = 0;
+	pThis->sxbReportroom();//上报房间信息给随心播业务侧服务器
 }
 
-void MainWindow::OniLiveCreateRoomErr( int code, const std::string& desc, void* data )
+void MainWindow::OniLiveCreateRoomErr( int code, const char *desc, void* data )
 {
-	MainWindow* pMainWindow = reinterpret_cast<MainWindow*>(data);
-	postCusEvent( pMainWindow, new Event(E_CECreateRoom, code, desc) );
+	MainWindow* pThis = reinterpret_cast<MainWindow*>(data);
+	ShowCodeErrorTips(code, desc, pThis, "Create iLive Room Error.");
+	pThis->setUseable(true);
 }
 
 void MainWindow::closeEvent( QCloseEvent* event )
@@ -595,202 +577,13 @@ void MainWindow::closeEvent( QCloseEvent* event )
 	{
 		event->accept();
 		saveConfig();
-		iLiveSDKWrap::getInstance()->destroy();
+		GetILive()->release();
 	}
 	if (m_pRegister->isVisible())
 	{
 		m_pRegister->close();
 	}
 	PicDownHelper::clearPicCache();
-}
-
-void MainWindow::customEvent( QEvent * event )
-{
-	Event* e = dynamic_cast<Event*>(event); 
-	switch(e->type())
-	{
-	case E_CELogin:
-		{
-			if (e->code==0)
-			{
-				switchLoginState(E_Login);
-			}
-			else
-			{
-				switchLoginState(E_Logout);
-				ShowCodeErrorTips(e->code, FromStdStr(e->desc), this, "iLive Login Error");
-			}
-			break;
-		}
-	case E_CELogout:
-		{
-			if(e->code==0)
-			{
-				switchLoginState(E_Logout);
-			}
-			else
-			{
-				switchLoginState(E_Login);
-				ShowCodeErrorTips(e->code, FromStdStr(e->desc), this, "iLive Logout Error");
-			}
-			break;
-		}
-	case E_CECreateRoom:
-		{
-			if(e->code==0)
-			{
-				m_pLive->setRoomUserType(E_RoomUserCreator);
-				m_pLive->show();
-				m_curRoomInfo.szId = m_szUserId;
-				m_curRoomInfo.info.thumbup = 0;
-				sxbReportroom();//上报房间信息给随心播业务侧服务器
-			}
-			else
-			{
-				ShowCodeErrorTips(e->code, FromStdStr(e->desc), this, "Create iLive Room Error.");
-				this->setUseable(true);
-			}
-			break;
-		}
-	case E_CEJoinRoom:
-		{
-			if (e->code==0)
-			{
-				m_pLive->setRoomUserType(E_RoomUserWatcher);
-				m_pLive->startTimer();
-				m_pLive->show();
-			}
-			else
-			{
-				ShowCodeErrorTips(e->code, FromStdStr(e->desc), this, "Join iLive Room Error.");
-				this->setUseable(true);
-			}
-			break;
-		}
-	case E_CEQuitRoom:
-		{
-			if (e->code==0)
-			{
-				m_curRoomInfo.szId = "";
-				m_curRoomInfo.info.thumbup = 0;
-			}
-			else
-			{
-				ShowCodeErrorTips(e->code, FromStdStr(e->desc), this, "Quit iLive Room Error.");
-			}
-			break;
-		}
-	case E_CERequestViewList:
-		{
-			if (e->code!=0)
-			{
-				ShowCodeErrorTips(e->code, FromStdStr(e->desc), this, "Request View List Error.");
-			}
-			break;
-		}
-	case E_CECancelViewList:
-		{
-			if (e->code!=0)
-			{
-				ShowCodeErrorTips(e->code, FromStdStr(e->desc), this, "Cancel View List Error.");
-			}
-			break;
-		}
-	case E_CESendGroupMsg:
-		{
-			if (e->code!=0)
-			{
-				ShowCodeErrorTips(e->code, FromStdStr(e->desc), this, "Send Group Message Error.");
-			}
-			break;
-		}
-	case E_CERecMsg:
-		{
-			dealMessages();
-			break;
-		}
-	case E_CEChangeAuth:
-		{
-			if (e->code==0)
-			{
-				m_pLive->ChangeRoomUserType();
-			}
-			else
-			{
-				ShowCodeErrorTips(e->code, FromStdStr(e->desc), this, "Change Authority Error.");
-			}
-			break;
-		}
-	case E_CESendInviteInteract:
-		{
-			if (e->code==0)
-			{
-				//ShowTips( FromBits("邀请成功"), FromBits("成功发出邀请，等待观众接受上麦."), m_pLive );
-			}
-			else
-			{
-				ShowCodeErrorTips(e->code, FromStdStr(e->desc), this, "Send Invite Interact Error.");
-			}
-			break;
-		}
-	case E_CEStartRecordVideo:
-		{
-			if (e->code==0)
-			{
-				m_pLive->updatePushAndRecordStateUI();
-			}
-			else
-			{
-				ShowCodeErrorTips(e->code, FromStdStr(e->desc), this, "Start Record Video Error.");
-			}
-			break;
-		}
-	case E_CEStopRecordVideo:
-		{
-			if (e->code==0)
-			{
-				m_pLive->updatePushAndRecordStateUI();
-			}
-			else
-			{
-				ShowCodeErrorTips(e->code, FromStdStr(e->desc), this, "Stop Record Video Error.");
-			}
-			break;
-		}
-	case E_CEStartPushStream:
-		{
-			if (e->code==0)
-			{
-				m_pLive->updatePushAndRecordStateUI();
-			}
-			else
-			{
-				ShowCodeErrorTips(e->code, FromStdStr(e->desc), this, "Start Push Stream Error.");
-			}
-			break;
-		}
-	case E_CEStopPushStream:
-		{
-			if (e->code==0)
-			{
-				m_pLive->updatePushAndRecordStateUI();
-			}
-			else
-			{
-				ShowCodeErrorTips(e->code, FromStdStr(e->desc), this, "Stop Push Stream Error.");
-			}
-			break;
-		}
-	case E_CEForceOffline:
-		{
-			ShowTips( FromBits("被踢下线"), FromBits("你的账号在其他地方登陆,点击确认后关闭!"), this );
-			saveConfig();
-			TerminateProcess(GetCurrentProcess(), 0);
-			break;
-		}
-	default:
-		break;
-	}
 }
 
 void MainWindow::onBtnLogin()

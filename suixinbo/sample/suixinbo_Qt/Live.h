@@ -7,6 +7,9 @@
 #define MaxVideoRender 3
 #define MaxShowMembers 50
 
+static bool isPushing;
+static bool isRecording;
+
 enum E_RoomUserType
 {
 	E_RoomUserInvalid = -1,
@@ -26,13 +29,13 @@ class Live : public QDialog
 	Q_OBJECT
 public:
 	Live(QWidget * parent = 0, Qt::WindowFlags f = 0);
-	virtual ~Live();
 
+	void setRoomID(int roomID);
 	void setRoomUserType(E_RoomUserType userType);
 	void ChangeRoomUserType();
 	void updatePushAndRecordStateUI();
 
-	void dealMessage(const TIMMessage& msg);
+	void dealMessage(const Message& message);
 	void parseCusMessage(const std::string& sender,std::string msg);
 	void dealCusMessage(const std::string& sender, int nUserAction, QString szActionParam);
 	
@@ -41,15 +44,12 @@ public:
 
 	void updateLater(int msec = 2000);
 
-	static void OnMemStatusChange(AVRoomMulti::EndpointEventId event_id, std::vector<std::string> identifier_list, void* data);
-	static void OnSemiAutoRecvCameraVideo(std::vector<std::string> identifier_list, void* data);
-	static void OnSemiAutoRecvScreenVideo(std::vector<std::string> identifier_list, void* data);
-	static void OnSemiAutoRecvMediaFileVideo(std::vector<std::string> identifier_list, void* data);
-	static void OnRoomDisconnect(int32 reason, std::string errorinfo, void* data);
-
-	static void OnLocalVideo(VideoFrame* video_frame, void* custom_data);
-	static void OnRemoteVideo(VideoFrame* video_frame, void* custom_data);
-
+	static void OnMemStatusChange(E_EndpointEventId event_id, const Vector<String> &ids, void* data);
+	static void OnRoomDisconnect(int reason, const char *errorinfo, void* data);
+	static void OnLocalVideo(const LiveVideoFrame* video_frame, void* custom_data);
+	static void OnRemoteVideo(const LiveVideoFrame* video_frame, void* custom_data);
+	static void OnMessage( const Message& msg, void* data );
+	
 private slots:
 	void OnBtnOpenCamera();
 	void OnBtnCloseCamera();
@@ -78,7 +78,6 @@ private slots:
 	void OnVsSkinWhiteChanged(int value);
 	void OnSbSkinWhiteChanged(int value);
 	void OnHeartBeatTimer();
-	void OnRequestViewsTimer();
 	void OnDelayUpdateTimer();
 	void OnFillFrameTimer();
 	void OnMemberListMenu(QPoint point);
@@ -100,7 +99,7 @@ private:
 
 	void addMsgLab(QString msg);
 
-	void addRequestViews(const std::vector<std::string>& identifiers, const std::vector<View>& views);
+	void addRequestViews( const std::vector<AVStream> &views );
 
 	void updateMemberList();
 	void updateScreenShareUI();
@@ -108,13 +107,13 @@ private:
 	void updateMicVol();
 
 	//信令层函数
-	void sendInviteInteract();//主播向普通观众发出连线邀请
-	void sendCancelInteract();//主播向连线中的观众发出断线命令
+	void sendInviteInteract();//主播向普通观众发出连麦邀请
+	void sendCancelInteract();//主播向连麦中的观众发出断线命令
 	static void OnSendInviteInteractSuc(void* data);
-	static void OnSendInviteInteractErr(int code, const std::string& desc, void* data);
+	static void OnSendInviteInteractErr(const int code, const char *desc, void* data);
 
-	void acceptInteract();//普通观众接受连线邀请
-	void refuseInteract();//普通观众拒绝连线邀请
+	void acceptInteract();//普通观众接受连麦邀请
+	void refuseInteract();//普通观众拒绝连麦邀请
 	void OnAcceptInteract();
 
 	void exitInteract();//连麦观众执行主播发出的断线命令
@@ -136,35 +135,29 @@ private:
 
 	//iLiveSDK相关函数
 	void iLiveQuitRoom();
-	void iLiveChangeAuthority(uint64 authBits, const std::string& authBuffer);
 	void iLiveChangeRole(const std::string& szControlRole);
 	int iLiveSetSkinSmoothGrade(int grade);
 	int iLiveSetSkinWhitenessGrade(int grade);
 	static void OnQuitRoomSuc(void* data);
-	static void OnQuitRoomErr(int code, const std::string& desc, void* data);
-	static void OnChangeAuthoritySuc(void* data);
-	static void OnChangeAuthorityErr(int code, const std::string& desc, void* data);
+	static void OnQuitRoomErr(int code, const char *desc, void* data);
 	static void OnChangeRoleSuc(void* data);
-	static void OnChangeRoleErr(int code, const std::string& desc, void* data);
-
-	static void OnRequestViewListSuc(void* data);
-	static void OnRequestViewListErr(int code, const std::string& desc, void* data);
+	static void OnChangeRoleErr(int code, const char *desc, void* data);
 
 	static void OnSendGroupMsgSuc(void* data);
-	static void OnSendGroupMsgErr(int code, const std::string& desc, void* data);
+	static void OnSendGroupMsgErr(int code, const char *desc, void* data);
 
 	static void OnStartRecordVideoSuc(void* data);
-	static void OnStartRecordVideoErr(int code, const std::string& desc, void* data);
+	static void OnStartRecordVideoErr(int code, const char *desc, void* data);
 
-	static void OnStopRecordSuc(std::list<std::string>& value, void* data);
-	static void OnStopRecordVideoErr(int code, const std::string& desc, void* data);
+	static void OnStopRecordSuc(Vector<String>& value, void* data);
+	static void OnStopRecordVideoErr(int code, const char *desc, void* data);
 
-	static void OnStartPushStreamSuc(TIMStreamRsp& value, void* data);
-	static void OnStartPushStreamErr(int code, const std::string& desc, void* data);
+	static void OnStartPushStreamSuc(PushStreamRsp &value, void *data);
+	static void OnStartPushStreamErr(int code, const char * desc, void* data);
 
 	static void OnStopPushStreamSuc(void* data);
-	static void OnStopPushStreamErr(int code, const std::string& desc, void* data);
-
+	static void OnStopPushStreamErr(int code, const char *desc, void* data);
+	
 private:
 	Ui::Live		m_ui;
 	
@@ -173,7 +166,7 @@ private:
 	VideoRender*	m_pLocalCameraRender;
 	VideoRender*	m_pScreenShareRender;
 
-	std::vector< std::pair<std::string/*id*/, std::string/*name*/> > m_cameraList;
+	Vector< Pair<String/*id*/, String/*name*/> > m_cameraList;
 
 	std::vector<std::string> m_arrRemoteIdentifiers;
 	VideoRender*			 m_pRemoteVideoRenders[MaxVideoRender];	
@@ -191,21 +184,18 @@ private:
 	QMenu*			m_pMenuCancelInteract;
 
 	QString					m_inputRecordName;
-	iLiveRecordOption		m_recordOpt;
-	iLivePushOption			m_pushOpt;
+	RecordOption		m_recordOpt;
+	PushStreamOption			m_pushOpt;
 	uint64					m_channelId;
-	std::list<TIMLiveUrl>	m_pushUrls;
-
-	QTimer*						m_pRequestViewsTimer;
-	bool						m_bIsRequesting;
-	std::vector<std::string>	m_toRequestIdentifiers;
-	std::vector<View>			m_toRequestViews;
+	std::list<LiveUrl>	m_pushUrls;
 
 	uint32	m_x0;
 	uint32	m_y0;
 	uint32	m_x1;
 	uint32	m_y1;
 	uint32	m_fps;
+
+	
 };
 
 #endif//Live_h_

@@ -23,22 +23,29 @@ VideoRender::VideoRender(QWidget* parent/* = 0*/, Qt::WindowFlags f/* = 0*/)
 	setStyleSheet("background-color:gray;");
 }
 
-void VideoRender::DoRender( VideoFrame *pFrameData )
+VideoRender::~VideoRender()
+{
+	SafeDelete(m_pFrameDataBuf);
+	SafeDelete(m_pBkgDataBuf);
+	SafeDelete(m_pRenderDataBuf);
+}
+
+void VideoRender::DoRender( const LiveVideoFrame *pFrameData )
 {
 	if (m_bPause)
 	{
 		return;
 	}
 
-	if (pFrameData == NULL || pFrameData->data_size == 0)
+	if (pFrameData == NULL || pFrameData->dataSize == 0)
 	{		
 		return;
 	}
-	assert(pFrameData->desc.color_format == COLOR_FORMAT_RGB24);//SDK1.3版本，demo渲染模块只支持渲染COLOR_FORMAT_RGB24格式的图像。
+	assert(pFrameData->desc.colorFormat == COLOR_FORMAT_RGB24);//SDK1.3版本，demo渲染模块只支持渲染COLOR_FORMAT_RGB24格式的图像。
 
-	m_identifier = pFrameData->identifier;
+	m_identifier = pFrameData->identifier.c_str();
 
-	if (m_frameDataBufLen!=pFrameData->data_size)
+	if (m_frameDataBufLen!=pFrameData->dataSize)
 	{
 		if (m_pFrameDataBuf)
 		{
@@ -49,8 +56,8 @@ void VideoRender::DoRender( VideoFrame *pFrameData )
 			SafeDeleteArr(m_pBkgDataBuf);
 		}
 
-		m_colorFormat = pFrameData->desc.color_format;
-		m_frameDataBufLen = pFrameData->data_size;
+		m_colorFormat = pFrameData->desc.colorFormat;
+		m_frameDataBufLen = pFrameData->dataSize;
 		m_pFrameDataBuf = new uint8[m_frameDataBufLen];
 		m_pBkgDataBuf = new uint8[m_frameDataBufLen];
 		memset(m_pFrameDataBuf, 0, m_frameDataBufLen);
@@ -84,7 +91,6 @@ void VideoRender::DoRender( VideoFrame *pFrameData )
 	memset(m_pFrameDataBuf, 0, m_frameDataBufLen);
 	fun_table[pFrameData->desc.rotate](m_pFrameDataBuf, pFrameData->data, m_frameDataBufLen, size);
 
-	//paintPic(m_pBkgDataBuf);
 	paintPic(m_pFrameDataBuf);
 }
 

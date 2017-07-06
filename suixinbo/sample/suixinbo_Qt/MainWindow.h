@@ -5,9 +5,12 @@
 #include "Live.h"
 #include "Register.h"
 #include "RoomListItem.h"
-#include "MessageCallBack.h"
+
 
 #define OnePageCout 10
+
+
+
 
 enum E_LoginState
 {
@@ -21,7 +24,7 @@ class MainWindow : public QMainWindow
 {
 	Q_OBJECT
 public:
-	static MainWindow* getInstance();
+	MainWindow( QWidget * parent = 0, Qt::WindowFlags flags = 0 );
 	QString getUserId();
 	QString	getServerUrl();
 	QString getToken();
@@ -36,13 +39,11 @@ public:
 	void OnForceOffline();
 
 private:
-	MainWindow( QWidget * parent = 0, Qt::WindowFlags flags = 0 );
 	void initSDK();	
 	void readConfig();
 	void saveConfig();
 	void connectSignals();
 	void switchLoginState(E_LoginState state);
-	void dealMessages();
 	static void onForceOffline();
 
 	void clearShowRoomList();
@@ -71,15 +72,14 @@ private:
  	void iLiveLogout();
 	void iLiveCreateRoom();
 	static void OniLiveLoginSuccess(void* data);
-	static void OniLiveLoginError(int code, const std::string& desc, void* data);
+	static void OniLiveLoginError(int code, const char *desc, void* data);
 	static void OniLiveLogoutSuccess(void* data);
-	static void OniLiveLogoutError(int code, const std::string& desc, void* data);
+	static void OniLiveLogoutError(int code, const char *desc, void* data);
 	static void OniLiveCreateRoomSuc(void* data);
-	static void OniLiveCreateRoomErr(int code, const std::string& desc, void* data);
+	static void OniLiveCreateRoomErr(int code, const char *desc, void* data);
 
 protected:
 	void closeEvent(QCloseEvent* event) override;
-	void customEvent(QEvent * event) override;
 
 private slots:
 	void onBtnLogin();
@@ -90,7 +90,6 @@ private slots:
 	void onBtnNextPage();
 
 private:
-	static MainWindow*  ms_pInstance;
 	Ui::MainWindow		m_ui;
 	
 	QSettings*			m_pSetting;

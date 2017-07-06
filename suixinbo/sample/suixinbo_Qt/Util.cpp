@@ -2,12 +2,12 @@
 #include "Util.h"
 
 
-void _CopyBits2Tex_None_0( uint8* pDst, uint8* pSrc, UINT uLen, const SIZE & size )
+void _CopyBits2Tex_None_0( uint8* pDst, uint8* pSrc, uint32 uLen, const SIZE & size )
 {
 	memcpy(pDst, pSrc,uLen);
 }
 
-void _CopyBits2Tex_None_90( uint8* pDst, uint8* pSrc, UINT uLen, const SIZE & size )
+void _CopyBits2Tex_None_90( uint8* pDst, uint8* pSrc, uint32 uLen, const SIZE & size )
 {
 	int n = 0;
 	int linesize = size.cx * 3;
@@ -22,7 +22,7 @@ void _CopyBits2Tex_None_90( uint8* pDst, uint8* pSrc, UINT uLen, const SIZE & si
 	}
 }
 
-void _CopyBits2Tex_None_180( uint8* pDst, uint8* pSrc, UINT uLen, const SIZE & size )
+void _CopyBits2Tex_None_180( uint8* pDst, uint8* pSrc, uint32 uLen, const SIZE & size )
 {
 	int n = 0;
 	int linesize = size.cx * 3;
@@ -36,7 +36,7 @@ void _CopyBits2Tex_None_180( uint8* pDst, uint8* pSrc, UINT uLen, const SIZE & s
 	}
 }
 
-void _CopyBits2Tex_None_270( uint8* pDst, uint8* pSrc, UINT uLen, const SIZE & size )
+void _CopyBits2Tex_None_270( uint8* pDst, uint8* pSrc, uint32 uLen, const SIZE & size )
 {
 	int n = 0;
 	int linesize = size.cx * 3;
@@ -51,7 +51,7 @@ void _CopyBits2Tex_None_270( uint8* pDst, uint8* pSrc, UINT uLen, const SIZE & s
 	}
 }
 
-bool _ResizeWithMendBlack(uint8* pDst, uint8* pSrc, UINT uDstLen, UINT uSrcLen, const SIZE & dstSize, const SIZE & srcSize, UINT bpp)
+bool _ResizeWithMendBlack(uint8* pDst, uint8* pSrc, uint32 uDstLen, uint32 uSrcLen, const SIZE & dstSize, const SIZE & srcSize, uint32 bpp)
 {
 	if(!pDst || !pSrc)
 		return false;
@@ -68,8 +68,8 @@ bool _ResizeWithMendBlack(uint8* pDst, uint8* pSrc, UINT uDstLen, UINT uSrcLen, 
 	if(dstSize.cy < srcSize.cy)
 		return false;
 
-	UINT dstLineblockSize = dstSize.cx * bpp;
-	UINT srcLineblockSize = srcSize.cx * bpp;
+	uint32 dstLineblockSize = dstSize.cx * bpp;
+	uint32 srcLineblockSize = srcSize.cx * bpp;
 
 	int mendCxLeftEnd = dstSize.cx > srcSize.cx ? (dstSize.cx - srcSize.cx) / 2 : 0;
 	int mendCyToEnd = dstSize.cy > srcSize.cy ? (dstSize.cy - srcSize.cy) / 2 : 0;

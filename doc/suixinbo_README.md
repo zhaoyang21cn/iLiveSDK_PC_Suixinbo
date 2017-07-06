@@ -1,30 +1,40 @@
-ï»¿
-ç®€ä»‹ï¼šPCéšå¿ƒæ’­æ˜¯åŸºäºŽiLiveSDKè®¾è®¡çš„ç®€å•ç›´æ’­demo,ä½¿ç”¨Qtä½œä¸ºç•Œé¢åº“ï¼Œå®žçŽ°äº†ç›´æ’­è½¯ä»¶çš„åŸºæœ¬åŠŸèƒ½ï¼Œç™»å½•ã€æ³¨å†Œã€åˆ›å»ºæˆ¿é—´(ä¸»æ’­)ã€åŠ å…¥æˆ¿é—´(è§‚ä¼—)ã€ç‚¹èµžã€é‚€è¯·ä¸Šéº¦ç­‰åŠŸèƒ½ï¼›Androidã€IOSã€PCä¸‰ä¸ªå¹³å°çš„éšå¿ƒæ’­å®žçŽ°äº†äº’é€š;ç›®çš„æ˜¯ä¾›ç”¨æˆ·ä½œä¸ºä½¿ç”¨iLiveSDKçš„å‚è€ƒ;
+# ËæÐÄ²¥
 
-# éšå¿ƒæ’­
+## ¼ò½é£º
+PCËæÐÄ²¥ÊÇ»ùÓÚiLiveSDKÉè¼ÆµÄ¼òµ¥Ö±²¥demo,Ê¹ÓÃQt×÷Îª½çÃæ¿â£¬ÊµÏÖÁËÖ±²¥Èí¼þµÄ»ù±¾¹¦ÄÜ£¬µÇÂ¼¡¢×¢²á¡¢´´½¨·¿¼ä(Ö÷²¥)¡¢¼ÓÈë·¿¼ä(¹ÛÖÚ)¡¢µãÔÞ¡¢ÑûÇëÉÏÂóµÈ¹¦ÄÜ£»Android¡¢IOS¡¢PCÈý¸öÆ½Ì¨µÄËæÐÄ²¥ÊµÏÖÁË»¥Í¨;Ä¿µÄÊÇ¹©ÓÃ»§×÷ÎªÊ¹ÓÃiLiveSDKµÄ²Î¿¼;
 
-## éšå¿ƒæ’­è¿è¡Œ
-  [suixinbo_run.zip](https://github.com/zhaoyang21cn/iLiveSDK_PC_Demos/blob/master/suixinbo_run.zip)å³ä¸ºå·²ç»ç¼–è¯‘å¥½çš„å¯æ‰§è¡ŒåŒ…ï¼Œè§£åŽ‹åŽï¼Œç›´æŽ¥åŒå‡»è¿è¡Œsuixinbo_Qt.exeå³å¯ï¼›
+## ËæÐÄ²¥ÔËÐÐ
+  ¸ùÄ¿Â¼ÏÂµÄ[suixinbo_run.zip](https://github.com/zhaoyang21cn/iLiveSDK_PC_Suixinbo/blob/master/suixinbo_run.zip)Îª±àÒëºÃµÄ¿ÉÖ´ÐÐ°ü£¬½âÑ¹ºó£¬Ë«»÷suixinbo_Qt.exe¼´¿ÉÔËÐÐËæÐÄ²¥£»
 
-## éšå¿ƒæ’­ç¼–è¯‘
+## ËæÐÄ²¥±àÒë
 
-### ç¼–è¯‘çŽ¯å¢ƒ
-VSç‰ˆæœ¬: vs2010<br/>
-Qtç‰ˆæœ¬: 5.0.0<br/>
-OSç‰ˆæœ¬ï¼šwindows 7<br/>
+### QT¿ª·¢»·¾³ÅäÖÃ
+PC°æ±¾µÄËæÐÄ²¥Ê¹ÓÃµÄÊÇQt×ö½çÃæ¿â¿ª·¢µÄ£¬ËùÒÔÐèÒªÏÈ°²×°Qt,ÒÔ¼°vsÉÏ½øÐÐQt¿ª·¢µÄ²å¼þ,·½¿É±àÒëÔËÐÐ£¬ÏÂÃæÒÔvs2015ÎªÀý¡£
 
-### QTçŽ¯å¢ƒå®‰è£…
-PCç‰ˆæœ¬çš„éšå¿ƒæ’­ä½¿ç”¨çš„æ˜¯QTåšç•Œé¢åº“å¼€å‘çš„ï¼Œæ‰€ä»¥éœ€è¦å…ˆå®‰è£…Qt 5.0.0,æ–¹å¯ç¼–è¯‘è¿è¡Œï¼›å¯ä»¥åŽ»Qtçš„å®˜ç½‘ä¸‹è½½ï¼Œä¹Ÿå¯ä»¥[ç‚¹å‡»è¿™é‡Œä¸‹è½½](http://dldir1.qq.com/hudongzhibo/git/Qt/Qt_5.0.0.zip);ä¸‹è½½è§£åŽ‹åŽï¼Œæ–‡ä»¶ç›®å½•å¦‚ä¸‹ï¼Œ<br/>
-![](http://mc.qcloudimg.com/static/img/00d8b25ddf3160c0673327568cd559fc/image.png)<br/>
-å…ˆå®‰è£…Qt5.0.0ï¼Œå†å®‰è£…vs2010çš„Qtå¼€å‘æ’ä»¶;å®‰è£…å®ŒæˆåŽï¼Œé‡å¯VS2010ï¼Œå³å¯åœ¨vsçš„èœå•æ ä¸­çœ‹åˆ°Qtèœå•,å¦‚ä¸‹å›¾,<br/>
-![](http://mc.qcloudimg.com/static/img/3422fe8496cd39d1b7d6c2b418460765/image.png)<br/>
-æ­¤æ—¶,åœ¨Qt-->Qt Optionèœå•ä¸­å¯ä»¥æŸ¥çœ‹æœ¬æœºå·²ç»å®‰è£…çš„Qtç‰ˆæœ¬ï¼Œå¦‚ä¸‹å›¾,<br/>
-![](http://mc.qcloudimg.com/static/img/435adc9eeb163e34bc4e602acfc900a1/image.png)<br/>
-å¦‚æžœæ²¡æœ‰ä»»ä½•å¯ç”¨ç‰ˆæœ¬ï¼Œç‚¹å‡»addæ·»åŠ å‰é¢å®‰è£…çš„Qtç›®å½•å³å¯;è‡³æ­¤ï¼ŒQtå®‰è£…å®Œæˆ;
+* Qt°²×°
 
-### éšå¿ƒæ’­é¡¹ç›®ç¼–è¯‘
-ä½¿ç”¨vs2010æ‰“å¼€suixinbo\sampleç›®å½•ä¸‹çš„suixinbo.sln,å°†suixinbo_Qtè®¾ä¸ºå¯åŠ¨é¡¹ç›®;Ctrl+F5ç¼–è¯‘æ‰§è¡Œéšå¿ƒæ’­;å¦‚æžœå‡ºçŽ°ä»¥ä¸‹é”™è¯¯,<br/>
-![](http://mc.qcloudimg.com/static/img/c26848a45381ec52be2f119651dfedd0/image.png)<br/>
-è§£å†³æ–¹æ³•å¦‚ä¸‹,<br>
-suixinbo_Qté¡¹ç›®ä¸Šå³é”®-->Qt Project Settings-->Version-->é€‰æ‹©æœ¬æœºä¸Šå®‰è£…çš„Qt5.0.0ç‰ˆæœ¬,å¦‚ä¸‹å›¾,<br/>
-![](http://mc.qcloudimg.com/static/img/b4a713a90cf513f0173c5bc556a1a09c/image.png)
+Qt°²×°°ü,¿ÉÒÔÈ¥QtµÄ[¹ÙÍø](http://download.qt.io/archive/qt/)ÏÂÔØ¶ÔÓ¦VS°æ±¾µÄQt£¬ÈçÏÂÍ¼,
+![](https://mc.qcloudimg.com/static/img/dcaba630803943f425c0f40f9b5b59bd/pic.png)
+Ãû×ÖÎª" qt-opensource-windows-x86-msvc2015-5.8.0.exe"µÄ¼´ÎªÖ§³Övs2015µÄ°²×°°ü,½øÐÐÏÂÔØ°²×°¡£ÆäÖÐ¡°msvc2015¡±±íÊ¾Ö§³Övs2015µÄ°æ±¾£¬x86±íÊ¾32Î»°æ±¾µÄQt(Ä¿Ç°iLiveSDKÖ»Ö§³Ö32Î»£¬ËùÒÔ£¬ÕâÀïÒ²±ØÐëÏÂÔØ32Î»°æ±¾µÄQt,¼´Ê±ÄúµÄ¼ÆËã»úÏµÍ³ÊÇ64Î»)£»
+
+* Qt¿ª·¢²å¼þ°²×°
+
+vs2010Ö®ºóµÄ°æ±¾£¬¿ÉÒÔÖ±½ÓÔÚVSÖÐ½øÐÐ°²×°£¬²Ù×÷²½ÖèÈçÏÂÍ¼,
+![](https://mc.qcloudimg.com/static/img/e669d4451aca22173f8bf2ad67a894ab/pic.png)
+![](https://mc.qcloudimg.com/static/img/da49e7fd3f853bfed5814369811188ed/pic.png)
+´ËÊ±£¬ÖØÆôvs£¬²Ëµ¥À¸ÖÐ½«»á³öÏÖÈçÏÂ²Ëµ¥Ïî,
+![](https://mc.qcloudimg.com/static/img/cb5b67ec89f573185a5ce7fbbd85ac9a/pic.png)
+´ËÊ±£¬ÔÚvsÖÐÅäÖÃQtÄ¿Â¼£¬ÅäÖÃ·½·¨Îª£¬<br/>
+"Qt VS Tools"²Ëµ¥Ïî-->Qt Options-->add-->Ñ¡ÔñQt°²×°Ä¿Â¼£¬ÈçÏÂÍ¼£¬
+![](https://mc.qcloudimg.com/static/img/a6bfa24ca0c3ef8d39a289a4a120f4c0/pic.png)
+Ôö¼ÓºÃºó£¬µã»÷È·¶¨£¬ÈçÏÂÍ¼£¬
+![](https://mc.qcloudimg.com/static/img/c5aacc84343bb566097960e1dd595339/pic.png)
+
+×¢Òâ:<br/>
+VS2010ÏÂ£¬Ö±½ÓÔÚVSÖÐËÑË÷ÕÒ²»µ½Qt²å¼þ£¬ÐèÒªÔÚQt¹ÙÍøÏÂÔØQt²å¼þ£¬»òÕß´Ó[ÕâÀï](http://dldir1.qq.com/hudongzhibo/git/Qt/Qt_5.0.0.zip)ÏÂÔØQt5.0.0¼°vs2010²å¼þ,È»ºó½øÐÐÊÖ¶¯°²×°£»
+
+### ËæÐÄ²¥ÏîÄ¿±àÒë
+Ê¹ÓÃVS´ò¿ªsuixinbo\sampleÄ¿Â¼ÏÂµÄsuixinbo.sln£¬Èç¹ûÊÇvs2010Ö®ºóµÄvs°æ±¾£¬»áÌáÊ¾Éý¼¶ÏîÄ¿ÅäÖÃ£¬µã»÷"È·¶¨"£»È»ºó£¬ÔÚÏîÄ¿suixinbo_QtÉÏÓÒ¼ü-->Qt Project Settings-->ÅäÖÃÏîÄ¿Ê¹ÓÃµÄQt°æ±¾£¬ÅäÖÃºÃºó£¬ÈçÏÂÍ¼,
+![](https://mc.qcloudimg.com/static/img/1580d6b0287ea3ac8a88d81ee4d917c1/pic.png)
+´ËÊ±¼´¿É±àÒëÔËÐÐËæÐÄ²¥ÁË;
+

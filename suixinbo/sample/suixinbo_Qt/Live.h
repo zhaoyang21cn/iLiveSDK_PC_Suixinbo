@@ -63,6 +63,8 @@ private slots:
 	void OnBtnOpenScreenShareWnd();
 	void OnBtnUpdateScreenShare();
 	void OnBtnCloseScreenShare();
+	void OnBtnOpenSystemVoiceInput();
+	void OnBtnCloseSystemVoiceInput();
 	void OnBtnSendGroupMsg();
 	void OnBtnStartRecord();
 	void OnBtnStopRecord();
@@ -73,6 +75,8 @@ private slots:
 	void OnSbPlayerVol(int value);
 	void OnHsMicVol(int value);
 	void OnSbMicVol(int value);
+	void OnHsSystemVoiceInputVol(int value);
+	void OnSbSystemVoiceInputVol(int value);
 	void OnVsSkinSmoothChanged(int value);
 	void OnSbSkinSmoothChanged(int value);
 	void OnVsSkinWhiteChanged(int value);
@@ -105,6 +109,7 @@ private:
 	void updateScreenShareUI();
 	void updatePlayerVol();
 	void updateMicVol();
+	void updateSystemVoiceInputVol();
 
 	//信令层函数
 	void sendInviteInteract();//主播向普通观众发出连麦邀请

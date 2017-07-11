@@ -83,6 +83,8 @@ Live::Live( QWidget * parent /*= 0*/, Qt::WindowFlags f /*= 0*/ )
 	connect( m_ui.btnOpenScreenShareWnd, SIGNAL(clicked()), this, SLOT(OnBtnOpenScreenShareWnd()) );
 	connect( m_ui.btnUpdateScreenShare, SIGNAL(clicked()), this, SLOT(OnBtnUpdateScreenShare()) );
 	connect( m_ui.btnCloseScreenShare, SIGNAL(clicked()), this, SLOT(OnBtnCloseScreenShare()) );
+	connect( m_ui.btnOpenSystemVoiceInput, SIGNAL(clicked()), this, SLOT(OnBtnOpenSystemVoiceInput()) );
+	connect( m_ui.btnCloseSystemVoiceInput, SIGNAL(clicked()), this, SLOT(OnBtnCloseSystemVoiceInput()) );
 	connect( m_ui.btnSendGroupMsg, SIGNAL(clicked()), this, SLOT(OnBtnSendGroupMsg()) );
 	connect( m_ui.btnStartRecord, SIGNAL(clicked()), this, SLOT(OnBtnStartRecord()) );
 	connect( m_ui.btnStopRecord, SIGNAL(clicked()), this, SLOT(OnBtnStopRecord()) );
@@ -93,6 +95,8 @@ Live::Live( QWidget * parent /*= 0*/, Qt::WindowFlags f /*= 0*/ )
 	connect( m_ui.sbPlayerVol, SIGNAL(valueChanged(int)), this, SLOT(OnSbPlayerVol(int)) );
 	connect( m_ui.hsMicVol, SIGNAL(valueChanged(int)), this, SLOT(OnHsMicVol(int)) );
 	connect( m_ui.sbMicVol, SIGNAL(valueChanged(int)), this, SLOT(OnSbMicVol(int)) );
+	connect( m_ui.hsSystemVoiceInputVol, SIGNAL(valueChanged(int)), this, SLOT(OnHsSystemVoiceInputVol(int)) );
+	connect( m_ui.sbSystemVoiceInputVol, SIGNAL(valueChanged(int)), this, SLOT(OnSbSystemVoiceInputVol(int)) );
 	connect( m_ui.vsSkinSmooth, SIGNAL(valueChanged(int)), this, SLOT(OnVsSkinSmoothChanged(int)) );
 	connect( m_ui.sbSkinSmooth, SIGNAL(valueChanged(int)), this, SLOT(OnSbSkinSmoothChanged(int)) );
 	connect( m_ui.vsSkinWhite, SIGNAL(valueChanged(int)), this, SLOT(OnVsSkinWhiteChanged(int)) );
@@ -119,6 +123,7 @@ void Live::setRoomUserType( E_RoomUserType userType )
 	m_ui.externalCaptureGB->setEnabled(true);
 	updatePlayerVol();
 	updateMicVol();
+	updateSystemVoiceInputVol();
 	switch(m_userType)
 	{
 	case E_RoomUserCreator:
@@ -135,6 +140,10 @@ void Live::setRoomUserType( E_RoomUserType userType )
 			m_ui.microphoneGB->setVisible(true);
 			m_ui.btnOpenMic->setEnabled(true);
 			m_ui.btnCloseMic->setEnabled(false);
+
+			m_ui.SystemVoiceInputGB->setVisible(true);
+			m_ui.btnOpenSystemVoiceInput->setEnabled(true);
+			m_ui.btnCloseSystemVoiceInput->setEnabled(false);
 
 			m_ui.screenShareGB->setVisible(true);
 			m_ui.sbFPS->setEnabled(true);
@@ -167,6 +176,10 @@ void Live::setRoomUserType( E_RoomUserType userType )
 			m_ui.btnOpenMic->setEnabled(true);
 			m_ui.btnCloseMic->setEnabled(false);
 
+			m_ui.SystemVoiceInputGB->setVisible(true);
+			m_ui.btnOpenSystemVoiceInput->setEnabled(true);
+			m_ui.btnCloseMic->setEnabled(false);
+
 			m_ui.screenShareGB->setVisible(true);
 			m_ui.sbFPS->setEnabled(true);
 			m_ui.btnOpenScreenShareArea->setEnabled(true);
@@ -187,6 +200,7 @@ void Live::setRoomUserType( E_RoomUserType userType )
 			m_ui.cameraGB->setVisible(false);
 			m_ui.externalCaptureGB->setVisible(false);
 			m_ui.microphoneGB->setVisible(false);
+			m_ui.SystemVoiceInputGB->setVisible(false);
 			m_ui.screenShareGB->setVisible(false);
 			this->setWindowTitle( QString::fromLocal8Bit("¹ÛÖÚ") );
 			m_ui.recordGB->setVisible(false);
@@ -760,6 +774,34 @@ void Live::OnBtnCloseScreenShare()
 	}
 }
 
+void Live::OnBtnOpenSystemVoiceInput()
+{
+	m_ui.btnOpenSystemVoiceInput->setEnabled(false);
+	int nRet = GetILive()->openSystemVoiceInput();
+	if (nRet!=NO_ERR)
+	{
+		m_ui.btnOpenSystemVoiceInput->setEnabled(true);
+		ShowCodeErrorTips(nRet, "Open System Voice Input Failed.", this );
+		return;
+	}
+	m_ui.btnCloseSystemVoiceInput->setEnabled(true);
+	updateSystemVoiceInputVol();
+}
+
+void Live::OnBtnCloseSystemVoiceInput()
+{
+	m_ui.btnCloseSystemVoiceInput->setEnabled(false);
+	int nRet = GetILive()->closeSystemVoiceInput();
+	if (nRet!=NO_ERR)
+	{
+		m_ui.btnCloseSystemVoiceInput->setEnabled(true);
+		ShowCodeErrorTips( nRet, "Close SystemVoiceInput Failed.", this );
+		return;
+	}
+	m_ui.btnOpenSystemVoiceInput->setEnabled(true);
+	updateSystemVoiceInputVol();
+}
+
 void Live::OnBtnSendGroupMsg()
 {
 	QString szText = m_ui.teEditText->toPlainText();
@@ -858,6 +900,24 @@ void Live::OnSbMicVol( int value )
 	m_ui.hsMicVol->blockSignals(false);
 
 	GetILive()->setMicVolume(value);
+}
+
+void Live::OnHsSystemVoiceInputVol( int value )
+{
+	m_ui.sbSystemVoiceInputVol->blockSignals(true);
+	m_ui.sbSystemVoiceInputVol->setValue(value);
+	m_ui.sbSystemVoiceInputVol->blockSignals(false);
+
+	GetILive()->setSystemVoiceInputVolume(value);
+}
+
+void Live::OnSbSystemVoiceInputVol( int value )
+{
+	m_ui.hsSystemVoiceInputVol->blockSignals(true);
+	m_ui.hsSystemVoiceInputVol->setValue(value);
+	m_ui.hsSystemVoiceInputVol->blockSignals(false);
+
+	GetILive()->setSystemVoiceInputVolume(value);
 }
 
 void Live::OnVsSkinSmoothChanged( int value )
@@ -1150,23 +1210,24 @@ void Live::updatePlayerVol()
 	m_ui.sbPlayerVol->blockSignals(true);
 	m_ui.hsPlayerVol->blockSignals(true);
 
-	uint32 uVol = GetILive()->getPlayerVolume();
-	m_ui.sbPlayerVol->setValue(uVol);
-	m_ui.hsPlayerVol->setValue(uVol);
-
-	m_ui.sbPlayerVol->blockSignals(false);
-	m_ui.hsPlayerVol->blockSignals(false);
-
 	if ( GetILive()->getCurPlayerState() )
 	{
 		m_ui.sbPlayerVol->setEnabled(true);
 		m_ui.hsPlayerVol->setEnabled(true);
+		uint32 uVol = GetILive()->getPlayerVolume();
+		m_ui.sbPlayerVol->setValue(uVol);
+		m_ui.hsPlayerVol->setValue(uVol);
 	}
 	else
 	{
+		m_ui.sbPlayerVol->setValue(0);
+		m_ui.hsPlayerVol->setValue(0);
 		m_ui.sbPlayerVol->setEnabled(false);
 		m_ui.hsPlayerVol->setEnabled(false);
-	}	
+	}
+
+	m_ui.sbPlayerVol->blockSignals(false);
+	m_ui.hsPlayerVol->blockSignals(false);
 }
 
 void Live::updateMicVol()
@@ -1174,23 +1235,49 @@ void Live::updateMicVol()
 	m_ui.sbMicVol->blockSignals(true);
 	m_ui.hsMicVol->blockSignals(true);
 
-	uint32 uVol = GetILive()->getMicVolume();
-	m_ui.sbMicVol->setValue(uVol);
-	m_ui.hsMicVol->setValue(uVol);
-
-	m_ui.sbMicVol->blockSignals(false);
-	m_ui.hsMicVol->blockSignals(false);
-
 	if ( GetILive()->getCurMicState() )
 	{
 		m_ui.sbMicVol->setEnabled(true);
 		m_ui.hsMicVol->setEnabled(true);
+		uint32 uVol = GetILive()->getMicVolume();
+		m_ui.sbMicVol->setValue(uVol);
+		m_ui.hsMicVol->setValue(uVol);
 	}
 	else
 	{
+		m_ui.sbMicVol->setValue(0);
+		m_ui.hsMicVol->setValue(0);
 		m_ui.sbMicVol->setEnabled(false);
 		m_ui.hsMicVol->setEnabled(false);
 	}
+
+	m_ui.sbMicVol->blockSignals(false);
+	m_ui.hsMicVol->blockSignals(false);
+}
+
+void Live::updateSystemVoiceInputVol()
+{
+	m_ui.sbSystemVoiceInputVol->blockSignals(true);
+	m_ui.hsSystemVoiceInputVol->blockSignals(true);
+
+	if ( GetILive()->getCurSystemVoiceInputState() )
+	{
+		m_ui.sbSystemVoiceInputVol->setEnabled(true);
+		m_ui.hsSystemVoiceInputVol->setEnabled(true);
+		uint32 uVol = GetILive()->getSystemVoiceInputVolume();
+		m_ui.sbSystemVoiceInputVol->setValue(uVol);
+		m_ui.hsSystemVoiceInputVol->setValue(uVol);
+	}
+	else
+	{
+		m_ui.sbSystemVoiceInputVol->setValue(0);
+		m_ui.hsSystemVoiceInputVol->setValue(0);
+		m_ui.sbSystemVoiceInputVol->setEnabled(false);
+		m_ui.hsSystemVoiceInputVol->setEnabled(false);
+	}
+
+	m_ui.sbSystemVoiceInputVol->blockSignals(false);
+	m_ui.hsSystemVoiceInputVol->blockSignals(false);
 }
 
 void Live::sendInviteInteract()

@@ -178,9 +178,9 @@ namespace ilive
 	const uint64 AUTH_BITS_RECV_SCREEN_VIDEO    = 0x00000080;	///< 接收屏幕视频的权限。
 
 	/**
-	@brief 被踢下线通知
+	@brief 被挤下线回调函数指针类型;
 	*/
-	typedef void (*ForceOfflineCallback)(); ///< 被挤下线回调函数指针类型;
+	typedef void (*ForceOfflineCallback)();
 	
 	/**
 	@brief 成功带值回调函数指针类型的封装
@@ -355,12 +355,6 @@ namespace ilive
 			}
 		}
 	};
-
-
-	/**
-	@brief 被踢下线通知函数指针类型
-	*/
-	typedef void (*ForceOfflineCallback)();
 	
 	/**
 	@brief iLiveRoom配置项。
@@ -374,7 +368,6 @@ namespace ilive
 		iLiveRoomOption()
 			:audioCategory(AUDIO_CATEGORY_MEDIA_PLAY_AND_RECORD)//互动直播场景
 			,roomId(0)
-			,authBits(AUTH_BITS_JOIN_ROOM|AUTH_BITS_RECV_AUDIO|AUTH_BITS_RECV_CAMERA_VIDEO|AUTH_BITS_RECV_SCREEN_VIDEO)
 			,autoRequestCamera(true)
 			,autoRequestScreen(true)
 			,autoRequestMediaFile(true)
@@ -387,7 +380,6 @@ namespace ilive
 		E_AudioCategory			audioCategory;			///< 音视场景策略,详细信息见E_AudioCategory的定义.
 		uint32					roomId;					///< 房间ID,由业务侧创建并维护的房间ID
 		String					controlRole;			///< 角色名，web端音视频参数配置工具所设置的角色名
-		uint64					authBits;				///< 通话能力权限位,参加AUTH_BITS_DEFAULT、AUTH_BITS_CREATE_ROOM、AUTH_BITS_JOIN_ROOM等的定义。
 		String					authBuffer;				///< 通话能力权限位的加密串
 		bool					autoRequestCamera;		///< 房间内有成员打开摄像头时，是否自动请求画面;
 		bool					autoRequestScreen;		///< 房间内有成员打开屏幕分享时，是否自动请求画面;
@@ -849,7 +841,7 @@ namespace ilive
 		virtual int closePlayer() = 0;
 		/**
 		@brief 打开屏幕分享(指定窗口)。
-		@param [in] hWnd 所要捕获的窗口句柄。如果传入的hWnd不是有效窗口句柄\窗口不可见\窗口处于最小化状态，将会返回ERR_INVALID_PARAM;
+		@param [in] hWnd 所要捕获的窗口句柄(NULL表示全屏)。如果传入的hWnd不是有效窗口句柄\窗口不可见\窗口处于最小化状态，将会返回ERR_INVALID_PARAM;
 		@param [in] fps 捕获帧率,取值范围[1,10]。
 		@return 操作结果，NO_ERR表示无错误。
 		@remark 传入的参数(fps)可能会经过sdk内部调整，并通过引用方式传回给调用者，实际分享使用的fps以传回值为准;
@@ -879,6 +871,30 @@ namespace ilive
 		virtual int closeScreenShare() = 0;
 
 		/**
+		@brief 打开系统声音采集。
+		@details 采集系统声音.
+		@return 操作结果，NO_ERR表示无错误;
+		*/
+		virtual int openSystemVoiceInput() = 0;
+		/**
+		@brief 设置系统声音采集的音量。
+		@param [in] value 设置目标音量,取值范围[0,100].
+		@return 操作结果，NO_ERR表示无错误;
+		@note 只有打开了系统声音采集才能进行设置,否则返回ERR_WRONG_STATE;
+		*/
+		virtual int	setSystemVoiceInputVolume( uint32 value ) = 0;
+		/**
+		@brief 获取系统声音采集音量。
+		@return 返回系统声音采集音量,未打开则返回0;
+		*/
+		virtual uint32 getSystemVoiceInputVolume() = 0;
+		/**
+		@brief 关闭系统声音采集。
+		@return 操作结果，NO_ERR表示无错误。
+		*/
+		virtual int closeSystemVoiceInput() = 0;
+
+		/**
 		@brief 获取当前摄像头状态
 		@return true:打开 false：关闭
 		*/
@@ -903,6 +919,11 @@ namespace ilive
 		@return 当前屏幕分享状态
 		*/
 		virtual E_ScreenShareState getScreenShareState() = 0;
+		/**
+		@brief 获取当前系统声音采集状态
+		@return true:打开 false：关闭
+		*/
+		virtual bool getCurSystemVoiceInputState() = 0;
 
 	};
 

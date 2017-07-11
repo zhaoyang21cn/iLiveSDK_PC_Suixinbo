@@ -515,7 +515,6 @@ void MainWindow::iLiveCreateRoom()
 	roomOption.audioCategory = AUDIO_CATEGORY_MEDIA_PLAY_AND_RECORD;//»¥¶¯Ö±²¥³¡¾°
 	roomOption.roomId = m_curRoomInfo.info.roomnum;
 	roomOption.controlRole = LiveMaster;
-	roomOption.authBits = AUTH_BITS_DEFAULT;
 	roomOption.roomDisconnectListener = Live::OnRoomDisconnect;
 	roomOption.memberStatusListener = Live::OnMemStatusChange;
 	roomOption.data = m_pLive;

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1208</width>
-    <height>572</height>
+    <height>650</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -297,13 +297,13 @@
    <property name="geometry">
     <rect>
      <x>210</x>
-     <y>135</y>
+     <y>145</y>
      <width>131</width>
-     <height>111</height>
+     <height>125</height>
     </rect>
    </property>
    <property name="title">
-    <string>麦克风增强</string>
+    <string>麦克风</string>
    </property>
    <widget class="QPushButton" name="btnOpenMic">
     <property name="geometry">
@@ -341,10 +341,13 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>75</y>
+      <y>90</y>
       <width>80</width>
       <height>20</height>
      </rect>
+    </property>
+    <property name="toolTip">
+     <string>麦克风增强</string>
     </property>
     <property name="maximum">
      <number>100</number>
@@ -366,10 +369,13 @@
     <property name="geometry">
      <rect>
       <x>100</x>
-      <y>75</y>
+      <y>90</y>
       <width>25</width>
       <height>20</height>
      </rect>
+    </property>
+    <property name="statusTip">
+     <string>麦克风增强</string>
     </property>
     <property name="buttonSymbols">
      <enum>QAbstractSpinBox::NoButtons</enum>
@@ -382,6 +388,19 @@
     </property>
     <property name="value">
      <number>100</number>
+    </property>
+   </widget>
+   <widget class="QLabel" name="lbMicVol">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>65</y>
+      <width>111</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>麦克风增强：</string>
     </property>
    </widget>
   </widget>
@@ -511,7 +530,7 @@
      <x>210</x>
      <y>10</y>
      <width>131</width>
-     <height>111</height>
+     <height>125</height>
     </rect>
    </property>
    <property name="title">
@@ -553,10 +572,13 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>75</y>
+      <y>90</y>
       <width>80</width>
       <height>20</height>
      </rect>
+    </property>
+    <property name="toolTip">
+     <string>扬声器音量</string>
     </property>
     <property name="minimum">
      <number>0</number>
@@ -578,10 +600,13 @@
     <property name="geometry">
      <rect>
       <x>100</x>
-      <y>75</y>
+      <y>90</y>
       <width>25</width>
       <height>20</height>
      </rect>
+    </property>
+    <property name="toolTip">
+     <string>扬声器音量</string>
     </property>
     <property name="buttonSymbols">
      <enum>QAbstractSpinBox::NoButtons</enum>
@@ -597,6 +622,19 @@
     </property>
     <property name="value">
      <number>100</number>
+    </property>
+   </widget>
+   <widget class="QLabel" name="lbPlayerVol">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>65</y>
+      <width>111</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>扬声器音量：</string>
     </property>
    </widget>
   </widget>
@@ -652,7 +690,7 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>400</y>
+     <y>480</y>
      <width>331</width>
      <height>161</height>
     </rect>
@@ -738,10 +776,10 @@
    </property>
    <property name="geometry">
     <rect>
-     <x>210</x>
-     <y>258</y>
-     <width>131</width>
-     <height>141</height>
+     <x>10</x>
+     <y>410</y>
+     <width>331</width>
+     <height>65</height>
     </rect>
    </property>
    <property name="title">
@@ -753,9 +791,9 @@
     </property>
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>60</y>
-      <width>108</width>
+      <x>105</x>
+      <y>20</y>
+      <width>81</width>
       <height>31</height>
      </rect>
     </property>
@@ -771,8 +809,8 @@
      <rect>
       <x>10</x>
       <y>20</y>
-      <width>108</width>
-      <height>31</height>
+      <width>81</width>
+      <height>33</height>
      </rect>
     </property>
     <property name="text">
@@ -785,9 +823,9 @@
     </property>
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>100</y>
-      <width>107</width>
+      <x>200</x>
+      <y>20</y>
+      <width>120</width>
       <height>31</height>
      </rect>
     </property>
@@ -1033,6 +1071,120 @@
    <property name="maximum">
     <number>999999999</number>
    </property>
+  </widget>
+  <widget class="QGroupBox" name="SystemVoiceInputGB">
+   <property name="geometry">
+    <rect>
+     <x>210</x>
+     <y>279</y>
+     <width>131</width>
+     <height>121</height>
+    </rect>
+   </property>
+   <property name="toolTip">
+    <string>系统声音采集</string>
+   </property>
+   <property name="title">
+    <string>系统声音采集</string>
+   </property>
+   <widget class="QPushButton" name="btnOpenSystemVoiceInput">
+    <property name="geometry">
+     <rect>
+      <x>8</x>
+      <y>20</y>
+      <width>55</width>
+      <height>35</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>打开</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btnCloseSystemVoiceInput">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>70</x>
+      <y>20</y>
+      <width>55</width>
+      <height>35</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>关闭</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="lbSystemVoiceInputVol">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>60</y>
+      <width>111</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>系统声音采集音量：</string>
+    </property>
+   </widget>
+   <widget class="QSlider" name="hsSystemVoiceInputVol">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>90</y>
+      <width>80</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string>系统声音采集音量</string>
+    </property>
+    <property name="maximum">
+     <number>100</number>
+    </property>
+    <property name="pageStep">
+     <number>10</number>
+    </property>
+    <property name="value">
+     <number>100</number>
+    </property>
+    <property name="orientation">
+     <enum>Qt::Horizontal</enum>
+    </property>
+   </widget>
+   <widget class="QSpinBox" name="sbSystemVoiceInputVol">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>100</x>
+      <y>90</y>
+      <width>25</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string>系统声音采集音量</string>
+    </property>
+    <property name="buttonSymbols">
+     <enum>QAbstractSpinBox::NoButtons</enum>
+    </property>
+    <property name="maximum">
+     <number>100</number>
+    </property>
+    <property name="singleStep">
+     <number>10</number>
+    </property>
+    <property name="value">
+     <number>100</number>
+    </property>
+   </widget>
   </widget>
  </widget>
  <resources/>

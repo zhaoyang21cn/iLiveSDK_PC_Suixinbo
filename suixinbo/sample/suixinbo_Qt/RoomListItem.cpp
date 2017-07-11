@@ -75,7 +75,6 @@ void RoomListItem::iLiveJoinRoom()
 	roomOption.audioCategory = AUDIO_CATEGORY_MEDIA_PLAY_AND_RECORD;//»¥¶¯Ö±²¥³¡¾°
 	roomOption.roomId = m_room.info.roomnum;
 	roomOption.controlRole = Guest;
-	roomOption.authBits = AUTH_BITS_JOIN_ROOM|AUTH_BITS_RECV_AUDIO|AUTH_BITS_RECV_CAMERA_VIDEO|AUTH_BITS_RECV_SCREEN_VIDEO;
 	roomOption.memberStatusListener = Live::OnMemStatusChange;
 	roomOption.roomDisconnectListener = Live::OnRoomDisconnect;
 	roomOption.data = g_pMainWindow->getLiveView();

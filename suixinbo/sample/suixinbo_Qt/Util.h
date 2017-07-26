@@ -16,4 +16,6 @@ void ShowCodeErrorTips( const int code, const QString& desc, QWidget* parent = N
 
 QString getFileNameByUrl(QString szUrl);
 
+QString getTimeStrBySeconds(const int64 sec);
+
 #endif//Util_h_

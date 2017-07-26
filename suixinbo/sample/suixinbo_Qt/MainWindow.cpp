@@ -27,11 +27,15 @@ MainWindow::MainWindow( QWidget * parent /*= 0*/, Qt::WindowFlags flags /*= 0 */
 	m_nCurrentPage = 0;
 	m_nTotalPage = 0;
 
+	m_nAppId = SuixinboAppid;
+	m_nAccountType = SuixinboAccountType;
+	m_szServerUrl = SuixinboServerUrl;
+
 	readConfig();
 	initSDK();
 	connectSignals();
 
-	m_ui.lbVersion->setText(QString("iLive SDK version: ") + 
+	m_ui.lbVersion->setText(QString("iLiveSDK Version: ") + 
 		                    QString(GetILive()->getVersion()));
 }
 
@@ -87,6 +91,7 @@ void MainWindow::initSDK()
 	GetILive()->setForceOfflineCallback(onForceOffline);
 	GetILive()->setLocalVideoCallBack(Live::OnLocalVideo, m_pLive);
 	GetILive()->setRemoteVideoCallBack(Live::OnRemoteVideo, m_pLive);
+	GetILive()->setDeviceOperationCallback(Live::OnDeviceOperation, m_pLive);
 
 	int nRet = GetILive()->init(m_nAppId, m_nAccountType);
 	if (nRet != NO_ERR)
@@ -97,30 +102,7 @@ void MainWindow::initSDK()
 }
 
 void MainWindow::readConfig()
-{
-	if ( m_pSetting->contains("appId") && m_pSetting->contains("accountType") )
-	{
-		QVariant varAppid = m_pSetting->value("appId");
-		QVariant varAccountType = m_pSetting->value("accountType");
-		m_nAppId = varAppid.value<int>();
-		m_nAccountType = varAccountType.value<int>();
-	}
-	else
-	{
-		m_nAppId = 1400027849;
-		m_nAccountType = 11656;
-	}
-
-	if ( m_pSetting->contains("serverUrl") )
-	{
-		QVariant varServerUrl = m_pSetting->value("serverUrl");
-		m_szServerUrl = varServerUrl.value<QString>();
-	}
-	else
-	{
-		m_szServerUrl = "http://123.206.118.43/sxb_dev/index.php";
-	}
-
+{	
 	if ( m_pSetting->contains("userId") )
 	{
 		m_ui.edUserName->setText( m_pSetting->value("userId").toString() );
@@ -133,12 +115,8 @@ void MainWindow::readConfig()
 
 void MainWindow::saveConfig()
 {
-	m_pSetting->setValue( "appId", QVariant(m_nAppId) );
-	m_pSetting->setValue( "accountType", QVariant(m_nAccountType) );
-	m_pSetting->setValue( "serverUrl", QVariant(m_szServerUrl) );
 	m_pSetting->setValue( "userId", QVariant(m_szUserId) );
 	m_pSetting->setValue( "userPwd", QVariant(m_szUserPassword) );
-	SafeDelete(m_pSetting);
 }
 
 void MainWindow::connectSignals()

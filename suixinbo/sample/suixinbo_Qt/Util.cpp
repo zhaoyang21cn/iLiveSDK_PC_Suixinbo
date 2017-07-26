@@ -166,3 +166,13 @@ QString getFileNameByUrl( QString szUrl )
 	}
 	return ret;
 }
+
+QString getTimeStrBySeconds( const int64 sec )
+{
+	int hours = sec/3600;
+	int minutes = (sec%3600)/60;
+	int secs = sec%60;
+	char res[9]={0};
+	sprintf( res, "%02d:%02d:%02d", hours, minutes, secs );
+	return res;
+}

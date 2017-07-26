@@ -1,6 +1,7 @@
 #ifndef iLiveCommon_h_
 #define iLiveCommon_h_
 
+#include <iostream>
 #include <assert.h>
 #include <stdarg.h>
 #include <Windows.h>

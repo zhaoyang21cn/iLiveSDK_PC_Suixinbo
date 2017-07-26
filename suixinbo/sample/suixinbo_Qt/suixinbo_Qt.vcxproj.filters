@@ -107,6 +107,15 @@
     <ClCompile Include="GeneratedFiles\Release\moc_NetworkHelper.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
+    <ClCompile Include="WndList.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_WndList.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_WndList.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -132,6 +141,9 @@
     </ClInclude>
     <ClInclude Include="PicDownHelper.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_WndList.h">
+      <Filter>Generated Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -166,6 +178,12 @@
       <Filter>Resource Files</Filter>
     </CustomBuild>
     <CustomBuild Include="VideoRender.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="WndList.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="WndList.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
   </ItemGroup>

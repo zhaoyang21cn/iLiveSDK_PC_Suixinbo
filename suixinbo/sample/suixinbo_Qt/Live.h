@@ -7,9 +7,6 @@
 #define MaxVideoRender 3
 #define MaxShowMembers 50
 
-static bool isPushing;
-static bool isRecording;
-
 enum E_RoomUserType
 {
 	E_RoomUserInvalid = -1,
@@ -33,7 +30,6 @@ public:
 	void setRoomID(int roomID);
 	void setRoomUserType(E_RoomUserType userType);
 	void ChangeRoomUserType();
-	void updatePushAndRecordStateUI();
 
 	void dealMessage(const Message& message);
 	void parseCusMessage(const std::string& sender,std::string msg);
@@ -49,6 +45,7 @@ public:
 	static void OnLocalVideo(const LiveVideoFrame* video_frame, void* custom_data);
 	static void OnRemoteVideo(const LiveVideoFrame* video_frame, void* custom_data);
 	static void OnMessage( const Message& msg, void* data );
+	static void OnDeviceOperation(E_DeviceOperationType oper, int retCode, void* data);
 	
 private slots:
 	void OnBtnOpenCamera();
@@ -71,6 +68,9 @@ private slots:
 	void OnBtnStartPushStream();
 	void OnBtnStopPushStream();
 	void OnBtnPraise();
+	void OnBtnSelectMediaFile();
+	void OnBtnPlayMediaFile();
+	void OnBtnStopMediaFile();
 	void OnHsPlayerVol(int value);
 	void OnSbPlayerVol(int value);
 	void OnHsMicVol(int value);
@@ -81,9 +81,11 @@ private slots:
 	void OnSbSkinSmoothChanged(int value);
 	void OnVsSkinWhiteChanged(int value);
 	void OnSbSkinWhiteChanged(int value);
+	void OnHsMediaFileRateChanged(int value);
 	void OnHeartBeatTimer();
 	void OnDelayUpdateTimer();
 	void OnFillFrameTimer();
+	void OnPlayMediaFileTimer();
 	void OnMemberListMenu(QPoint point);
 	void OnActInviteInteract();
 	void OnActCancelInteract();	
@@ -106,10 +108,48 @@ private:
 	void addRequestViews( const std::vector<AVStream> &views );
 
 	void updateMemberList();
-	void updateScreenShareUI();
-	void updatePlayerVol();
-	void updateMicVol();
-	void updateSystemVoiceInputVol();
+	void updateMsgs();
+
+	void updateCameraGB();
+	void updatePlayerGB();
+	void updateExternalCaptureGB();
+	void updateMicGB();
+	void updateScreenShareGB();
+	void updateSystemVoiceInputGB();
+	void updateMediaFilePlayGB();
+	void updateRecordGB();
+	void updatePushStreamGB();
+	
+	void updatePlayMediaFileProgress();
+	void doStartPlayMediaFile();
+	void doPausePlayMediaFile();
+	void doResumePlayMediaFile();
+	void doStopPlayMediaFile();
+
+	void doAutoStopRecord();
+	void doAutoStopPushStream();
+
+	//设备操作回调
+	void OnOpenCameraCB(const int& retCode);
+	void OnCloseCameraCB(const int& retCode);
+
+	void OnOpenExternalCaptureCB(const int& retCode);
+	void OnCloseExternalCaptureCB(const int& retCode);
+
+	void OnOpenMicCB(const int& retCode);
+	void OnCloseMicCB(const int& retCode);
+
+	void OnOpenPlayerCB(const int& retCode);
+	void OnClosePlayerCB(const int& retCode);
+
+	void OnOpenScreenShareCB(const int& retCode);
+	void OnCloseScreenShareCB(const int& retCode);
+
+	void OnOpenSystemVoiceInputCB(const int& retCode);
+	void OnCloseSystemVoiceInputCB(const int& retCode);
+
+	void OnOpenPlayMediaFileCB(const int& retCode);
+	void OnClosePlayMediaFileCB(const int& retCode);
 
 	//信令层函数
 	void sendInviteInteract();//主播向普通观众发出连麦邀请
@@ -183,24 +223,33 @@ private:
 	QTimer*			m_pTimer;
 	QTimer*			m_pDelayUpdateTimer;
 	QTimer*			m_pFillFrameTimer;
+	QTimer*			m_pPlayMediaFileTimer;
 	
 	int				m_nCurSelectedMember;
 	QMenu*			m_pMenuInviteInteract;
 	QMenu*			m_pMenuCancelInteract;
 
-	QString					m_inputRecordName;
+	QString				m_inputRecordName;
 	RecordOption		m_recordOpt;
-	PushStreamOption			m_pushOpt;
-	uint64					m_channelId;
+	PushStreamOption	m_pushOpt;
+	uint64				m_channelId;
 	std::list<LiveUrl>	m_pushUrls;
 
-	uint32	m_x0;
-	uint32	m_y0;
-	uint32	m_x1;
-	uint32	m_y1;
+	int32	m_x0;
+	int32	m_y0;
+	int32	m_x1;
+	int32	m_y1;
 	uint32	m_fps;
 
-	
+	int64	m_n64Pos;
+	int64	m_n64MaxPos;
+
+	bool	m_bRoomDisconnectClose;
+
+	bool	m_bRecording;
+	bool	m_bPushing;
+
+	QString	m_szMsgs;
 };
 
 #endif//Live_h_

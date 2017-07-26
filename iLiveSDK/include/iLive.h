@@ -155,6 +155,16 @@ namespace ilive
 	};
 
 	/**
+	@brief 播片状态。
+	*/
+	enum E_PlayMediaFileState
+	{
+		E_PlayMediaFileStop,	///< 停止播放
+		E_PlayMediaFilePlaying,	///< 播放中
+		E_PlayMediaFilePause,	///< 暂停中
+	};
+
+	/**
 	@brief 视频数据类型。
 	@details 视频数据类型。
 	*/
@@ -164,6 +174,28 @@ namespace ilive
 		VIDEO_SRC_TYPE_CAMERA = 1,	///< 摄像头
 		VIDEO_SRC_TYPE_SCREEN = 2,	///< 屏幕
 		VIDEO_SRC_TYPE_MEDIA = 3,	///< 播片
+	};
+
+	/**
+	@brief 设备操作类型
+	*/
+	enum E_DeviceOperationType
+	{
+		E_DeviceOperationNone,		///< 默认值，无意义
+		E_OpenCamera,				///< 打开摄像头
+		E_CloseCamera,				///< 关闭摄像头
+		E_OpenExternalCapture,		///< 打开自定义采集
+		E_CloseExternalCapture,		///< 关闭自定义采集
+		E_OpenMic,					///< 打开麦克风
+		E_CloseMic,					///< 关闭麦克风
+		E_OpenPlayer,				///< 打开扬声器
+		E_ClosePlayer,				///< 关闭扬声器
+		E_OpenScreenShare,			///< 打开屏幕分享
+		E_CloseScreenShare,			///< 关闭屏幕分享
+		E_OpenSystemVoiceInput,		///< 打开系统声音采集
+		E_CloseSystemVoiceInput,	///< 关闭系统声音采集
+		E_OpenPlayMediaFile,		///< 打开文件播放
+		E_ClosePlayMediaFile,		///< 关闭文件播放
 	};
 
 	/// 音视频通话的通话能力权限位。
@@ -193,7 +225,7 @@ namespace ilive
 		@param [in] value 操作成功，SDK返回给业务侧响应类型的值;
 		@param [in] data SDK传回业务侧自定义的数据指针;
 		*/
-		typedef void (*iliveValueSuccCallback)(T value, void* data);
+		typedef void (*iLiveValueSuccCallback)(T value, void* data);
 	};
 
 	/**
@@ -207,14 +239,21 @@ namespace ilive
     @param video_frame 视频帧对象。
     @param data 自定义指针
     */
-	typedef void(*PreTreatmentCallback)( struct LiveVideoFrame* video_frame, void* data );
+	typedef void (*iLivePreTreatmentCallback)( struct LiveVideoFrame* video_frame, void* data );
 	/**
     @brief 视频帧回调
     @param video_frame 视频帧对象。
     @param data 自定义指针
     */
-    typedef void(*PreviewCallback)( const struct LiveVideoFrame* video_frame, void* data );
+    typedef void (*iLivePreviewCallback)( const struct LiveVideoFrame* video_frame, void* data );
 
+	/**
+	@brief 设备操作回调
+	@param [in] oper 设备操作类型;
+	@param [in] retCode 错误码，NO_ERR表示成功;
+	@param [in] data 自定义指针;
+	*/
+	typedef void (*iLiveDeviceOperationCallback)(E_DeviceOperationType oper, int retCode, void* data);
 	/**
 	@brief 通用失败回调
 	@param [in] code 错误码
@@ -385,7 +424,7 @@ namespace ilive
 		bool					autoRequestScreen;		///< 房间内有成员打开屏幕分享时，是否自动请求画面;
 		bool					autoRequestMediaFile;	///< 房间内有成员打开播片时，是否自动请求画面;
 
-		iLiveRoomDisconnectListener	roomDisconnectListener;	///< SDK主动退出房间提示,参见iLiveRoomDisconnectListener定义。
+		iLiveRoomDisconnectListener	roomDisconnectListener;	///< SDK主动退出房间回调;一般是在网络断开30秒后,会收到此回调,此时已被sdk强制退出房间,所以,不要调用退出房间接口;网络重连后,需要重新创建\进入房间,参见iLiveRoomDisconnectListener定义。
 		iLiveMemStatusListener		memberStatusListener;	///< 房间成员状态变化通知，参见iLiveMemStatusListener定义。
 		void*						data;					///< 用户自定义数据类型，在roomDisconnectListener、memberStatusListener中原封不动返回。
 	};
@@ -541,7 +580,7 @@ namespace ilive
 		@param [in] suc 成功回调
 		@param [in] err 失败回调
 		@param [in] data 用户自定义数据的指针，回调函数中原封不动地传回(通常为调用类的指针);
-		@remark 此函数会清理7天前的iLiveSDK日志文件。
+		@remark 此函数会清理7天前的所有日志文件(iLiveSDK、AVSDK、IMSDK)。
 		*/
 		virtual void release(iLiveSuccCallback suc = NULL, iLiveErrCallback err = NULL, void* data = NULL) = 0;
 		/**
@@ -566,21 +605,28 @@ namespace ilive
 		@remark 预处理函数耗时不要过久，最好控制在10ms内; 同时不能改变图像大小和图像颜色格式。
 		@note SDK将在子线程中执行此回调.
 		*/
-		virtual void setPreTreatmentFun( PreTreatmentCallback pPreTreatmentFun, void* data ) = 0;
+		virtual void setPreTreatmentFun( iLivePreTreatmentCallback pPreTreatmentFun, void* data ) = 0;
 		/**
 		@brief 设置本地视频回调函数指针。
 		@param [in] pLocalVideoCB 本地视频回调函数指针
 		@param [in] data 用户自定义数据的指针，回调函数中原封不动地传回(通常为调用类的指针);
 		@remark 业务侧实现该回调函数，SDK向该回调函数传入本地视频相关数据，业务侧拿到数据后进行渲染显示
 		*/
-		virtual void setLocalVideoCallBack( PreviewCallback pLocalVideoCB, void* data ) = 0;
+		virtual void setLocalVideoCallBack( iLivePreviewCallback pLocalVideoCB, void* data ) = 0;
 		/**
 		@brief 设置远程视频回调函数指针。
 		@param [in] pRemoteVideoCB 远程视频回调函数指针
 		@param [in] data 用户自定义数据的指针，回调函数中原封不动地传回(通常为调用类的指针);
 		@remark 业务侧实现该回调函数，SDK向该回调函数传入远程视频相关数据，业务侧拿到数据后进行渲染显示
 		*/
-		virtual void setRemoteVideoCallBack( PreviewCallback pRemoteVideoCB, void* data ) = 0;
+		virtual void setRemoteVideoCallBack( iLivePreviewCallback pRemoteVideoCB, void* data ) = 0;
+		/**
+		@brief 设置设备操作回调函数指针。
+		@details 摄像头、自定义采集、麦克风、扬声器、屏幕分享、系统声音采集、文件播放等设备操作结果，会通过此回调通知给业务层。
+		@param [in] cb 设备操作的回调函数指针.
+		@param [in] data 用户自定义数据的指针，回调函数中原封不动地传回(通常为调用类的指针);
+		*/
+		virtual	void setDeviceOperationCallback( iLiveDeviceOperationCallback cb, void* data ) = 0;
 		/**
 		@brief 登录
 		@param [in] userId 用户id
@@ -675,7 +721,7 @@ namespace ilive
 		@param [in] err 失败回调
 		@param [in] data 用户自定义数据的指针，回调函数中原封不动地传回(通常为调用类的指针)
 		*/
-		virtual void startPushStream( const PushStreamOption& pushOption, Type<PushStreamRsp&>::iliveValueSuccCallback suc, iLiveErrCallback err, void* data ) = 0;
+		virtual void startPushStream( const PushStreamOption& pushOption, Type<PushStreamRsp&>::iLiveValueSuccCallback suc, iLiveErrCallback err, void* data ) = 0;
 		/**
 		@brief 结束推流
 		@param [in] channelId 频道id(在推流成功的的回调中返回的频道id)
@@ -701,7 +747,7 @@ namespace ilive
 		@param [in] data 用户自定义数据的指针，回调函数中原封不动地传回(通常为调用类的指针)
 		@remark 停止录制成功回调，返回录制视频文件的ID列表; 业务侧开起自动录制时，将返回空列表，用户可直接到后台查询。
 		*/
-		virtual void stopRecord(Type<Vector<String>&>::iliveValueSuccCallback suc, iLiveErrCallback err, void* data) = 0;
+		virtual void stopRecord(Type<Vector<String>&>::iLiveValueSuccCallback suc, iLiveErrCallback err, void* data) = 0;
 
 		/**
 		@brief 结束推流
@@ -727,62 +773,58 @@ namespace ilive
 		virtual int setSkinWhitenessGrade(int grade) = 0;
 		/**
 		@brief 获取可用摄像头列表
-		@param [out] cameraList 传回获取到的摄像头列表;
-		@return 操作结果,NO_ERR表示无错误;如果没有可用摄像头,返回AV_ERR_DEVICE_NOT_EXIST错误码;
+		@param [out] cameraList 传回获取到的摄像头列表,第一个(索引0)为系统默认设备;
+		@return 操作结果,NO_ERR表示无错误;如果没有可用摄像头,返回AV_ERR_DEVICE_NOT_EXIST错误码(错误码见github上的错误码表);
 		*/
 		virtual int getCameraList( Vector< Pair<String/*id*/, String/*name*/> >& cameraList ) = 0;
 		/**
 		@brief 获取可用麦克风列表
-		@param [out] micList 传回获取到的麦克风列表;
-		@return 操作结果,NO_ERR表示无错误;如果没有可用麦克风,返回AV_ERR_DEVICE_NOT_EXIST错误码;
+		@param [out] micList 传回获取到的麦克风列表,第一个(索引0)为系统默认设备;
+		@return 操作结果,NO_ERR表示无错误;如果没有可用麦克风,返回AV_ERR_DEVICE_NOT_EXIST错误码(错误码见github上的错误码表);
 		*/
 		virtual int getMicList( Vector< Pair<String/*id*/, String/*name*/> >& micList ) = 0;
 		/**
 		@brief 获取可用的扬声器列表
-		@param [out] playerList 传回获取到的扬声器列表;
-		@return 操作结果,NO_ERR表示无错误;如果没有可用扬声器,返回AV_ERR_DEVICE_NOT_EXIST错误码;
+		@param [out] playerList 传回获取到的扬声器列表,第一个(索引0)为系统默认设备;
+		@return 操作结果,NO_ERR表示无错误;如果没有可用扬声器,返回AV_ERR_DEVICE_NOT_EXIST错误码(错误码见github上的错误码表);
 		*/
 		virtual int getPlayerList( Vector< Pair<String/*id*/, String/*name*/> >& playerList ) = 0;
 		/**
 		@brief 获取任务栏打开的所有窗口。
 		@param [out] wndList 传回获取到的窗口列表(会过滤掉不可见窗口\无标题窗口\最小化窗状态的窗口)。
-		@return 操作结果,NO_ERR表示无错误;如果没有可分享窗口,返回AV_ERR_DEVICE_NOT_EXIST错误码;
+		@return 操作结果,NO_ERR表示无错误;如果没有可分享窗口,返回AV_ERR_DEVICE_NOT_EXIST错误码(错误码见github上的错误码表);
 		@remark 用户可以调用此接口获取可以进行屏幕分享的窗口句柄列表,也可以自己获取;
 		*/
 		virtual int getWndList( Vector< Pair<HWND/*id*/, String/*name*/> >& wndList ) = 0;
 		/**
 		@brief 打开摄像头
 		@param [in] szCameraId 通过getCameraList()函数获取的摄像头列表中的某个摄像头id
-		@return 操作结果，NO_ERR表示无错误;
 		@note 
 		1、打开摄像头成功，如果用户有上传视频权限，便会自动开始上传摄像头视频;<br/>
-		2、打开摄像头操作和打开自定义采集是互斥的操作;如果同时打开，会返回错误AV_ERR_EXCLUSIVE_OPERATION
+		2、打开摄像头操作和打开自定义采集是互斥的操作;如果同时打开，会返回错误AV_ERR_EXCLUSIVE_OPERATION(错误码见github上的错误码表)
 		*/
-		virtual int	openCamera(const String& szCameraId) = 0;
+		virtual void openCamera(const String& szCameraId) = 0;
 		/**
 		@brief 关闭当前打开的摄像头
-		@return 操作结果，NO_ERR表示无错误
 		*/
-		virtual int closeCamera() = 0;
+		virtual void closeCamera() = 0;
 		/**
 		@brief 打开自定义采集
-		@return 操作结果，NO_ERR表示无错误
 		@note 
 		1、打开自定义采集成功，如果用户有上传视频权限，用户通过fillExternalCaptureFrame()填入的每一帧画面将会通过sdk上传;<br/>
-		2、打开摄像头操作和打开自定义采集是互斥的操作;如果同时打开，会返回错误AV_ERR_EXCLUSIVE_OPERATION;
+		2、打开摄像头操作和打开自定义采集是互斥的操作;如果同时打开，会返回错误AV_ERR_EXCLUSIVE_OPERATION(错误码见github上的错误码表);
 		*/
-		virtual int openExternalCapture() = 0;
+		virtual void openExternalCapture() = 0;
 		/**
 		@brief 关闭自定义采集
-		@return 操作结果，NO_ERR表示无错误;
 		*/
-		virtual int closeExternalCapture() = 0;
+		virtual void closeExternalCapture() = 0;
 		/**
 		@brief 外部输入视频数据接口。
 		@return 操作结果，NO_ERR表示无错误;
 		@note 
 		1、目前sdk支持的VideoFrame格式只有COLOR_FORMAT_RGB24和COLOR_FORMAT_I420,如果传入的视频帧不是此两种格式，将返回ERR_NOT_SUPPORT;<br/>
-		2、视频帧只能是这些辨率(176*144、192*144、320*240、480*360、640*368、640*480、960*540、1280*720、144*176、144*192、240*320、360*480、368*640、480*640、540*960、720*1280),否则返回AV_ERR_INVALID_ARGUMENT;<br/>
+		2、视频帧只能是这些辨率(176*144、192*144、320*240、480*360、640*368、640*480、960*540、1280*720、144*176、144*192、240*320、360*480、368*640、480*640、540*960、720*1280),否则返回AV_ERR_INVALID_ARGUMENT(错误码见github上的错误码表);<br/>
 		3、视频帧率最好在10-15帧左右;
 		4、传入的视频帧分辨率如果大于控制台SPEAR引擎配置的值，视频将会被裁剪到SPEAR配置的分辨率(主播端预览画面和观众端画面大小将会不一致);<br/>
 		   如果小于控制台配置的值，将会按照传入的视频帧大小传入到观众端(即不会被放大到控制台配置的值);
@@ -791,10 +833,9 @@ namespace ilive
 		/**
 		@brief 打开麦克风。
 		@param [in] szMicId 通过getMicList()函数获取的麦克风列表中的某个麦克风id。
-		@return 操作结果，NO_ERR表示无错误;
 		@note 打开麦克风成功，如果用户有上传语音权限，便会自动开始上传麦克风音频。
 		*/
-		virtual int openMic(const String &szMicId) = 0;
+		virtual void openMic(const String &szMicId) = 0;
 		/**
 		@brief 设置麦克风增强。
 		@param [in] value 设置麦克风增强,取值范围[0,100].
@@ -812,16 +853,14 @@ namespace ilive
 		virtual uint32 getMicVolume() = 0;
 		/**
 		@brief 关闭当前打开的麦克风。
-		@return 操作结果，NO_ERR表示无错误。
 		*/
-		virtual int closeMic() = 0;
+		virtual void closeMic() = 0;
 		/**
 		@brief 打开扬声器。
 		@param [in] szPlayerId 通过getPlayerList()函数获取的扬声器列表中的某个扬声器id。
-		@return 操作结果，NO_ERR表示无错误;
 		@note 打开扬声器成功，如果用户有接收音频权限，便会自动开始播放远端音频。
 		*/
-		virtual int openPlayer(const String& szPlayerId) = 0;
+		virtual void openPlayer(const String& szPlayerId) = 0;
 		/**
 		@brief 设置扬声器音量。
 		@param [in] value 设置扬声器的目标音量,取值范围[0,100].
@@ -836,25 +875,30 @@ namespace ilive
 		virtual uint32 getPlayerVolume() = 0;
 		/**
 		@brief 关闭当前打开的扬声器。
-		@return 操作结果，NO_ERR表示无错误。
 		*/
-		virtual int closePlayer() = 0;
+		virtual void closePlayer() = 0;
 		/**
 		@brief 打开屏幕分享(指定窗口)。
 		@param [in] hWnd 所要捕获的窗口句柄(NULL表示全屏)。如果传入的hWnd不是有效窗口句柄\窗口不可见\窗口处于最小化状态，将会返回ERR_INVALID_PARAM;
 		@param [in] fps 捕获帧率,取值范围[1,10]。
-		@return 操作结果，NO_ERR表示无错误。
 		@remark 传入的参数(fps)可能会经过sdk内部调整，并通过引用方式传回给调用者，实际分享使用的fps以传回值为准;
+		@note
+		屏幕分享和播片功能都是通过辅路流传输，所以屏幕分享和播片互斥使用;
+		辅路流被自己占用，设备操作回调中，返回错误码AV_ERR_EXCLUSIVE_OPERATION(错误码见github上的错误码表);
+		被房间内其他成员占用，设备操作回调中，返回错误码AV_ERR_RESOURCE_IS_OCCUPIED(错误码见github上的错误码表);
 		*/
-		virtual int openScreenShare( HWND hWnd, uint32& fps ) = 0;
+		virtual void openScreenShare( HWND hWnd, uint32& fps ) = 0;
 		/**
 		@brief 打开屏幕共享(指定区域)。
 		@param [in] left/top/right/bottom 所要捕获屏幕画面的区域的左上角坐标(left, top)和右下角坐标(right, bottom)，它们是以屏幕的左上角坐标为原点的。
 		@param [in] fps 捕获帧率，取值范围[1,10];
-		@return 操作结果，NO_ERR表示无错误。
 		@remark 传入的参数可能会经过sdk内部细微的调整，并通过引用方式传回给调用者，实际的分享区域以传回的值为准;
+		@note
+		屏幕分享和播片功能都是通过辅路流传输，所以屏幕分享和播片互斥使用;
+		辅路流被自己占用，设备操作回调中，返回错误码AV_ERR_EXCLUSIVE_OPERATION(错误码见github上的错误码表);
+		被房间内其他成员占用，设备操作回调中，返回错误码AV_ERR_RESOURCE_IS_OCCUPIED(错误码见github上的错误码表);
 		*/
-		virtual int openScreenShare( uint32& left, uint32& top, uint32& right, uint32& bottom, uint32& fps ) = 0;
+		virtual void openScreenShare( int32& left, int32& top, int32& right, int32& bottom, uint32& fps ) = 0;
 		/**
 		@brief 屏幕分享过程中,动态修改屏幕分享的区域。
 		@param [in] left/top/right/bottom 所要捕获屏幕画面的区域的左上角坐标(left, top)和右下角坐标(right, bottom)，坐标以屏幕的左上角为原点。
@@ -862,20 +906,24 @@ namespace ilive
 		@remark 传入的参数可能会经过sdk内部细微的调整，并通过引用方式传回给调用者，实际的分享区域以传回的值为准;
 		@note 此接口只有在打开了指定区域的屏幕共享时才有效,其他状态下将会返回ERR_WRONG_STATE错误;
 		*/
-		virtual int changeScreenShareSize( uint32& left, uint32& top, uint32& right, uint32& bottom ) = 0;
+		virtual int changeScreenShareSize( int32& left, int32& top, int32& right, int32& bottom ) = 0;
 		/**
 		@brief 关闭屏幕共享。
 		@return 操作结果，NO_ERR表示无错误。
 		@remark 指定窗口的屏幕分享和指定区域的屏幕分享都调用此接口来关闭.
 		*/
-		virtual int closeScreenShare() = 0;
+		virtual void closeScreenShare() = 0;
 
 		/**
 		@brief 打开系统声音采集。
-		@details 采集系统声音.
-		@return 操作结果，NO_ERR表示无错误;
+		@details 采集系统声音。
+		@remark 文件播放和系统声音采集不应该同时打开，否则文件播放的声音又会被系统声音采集到，出现重音现象;
 		*/
-		virtual int openSystemVoiceInput() = 0;
+		virtual void openSystemVoiceInput() = 0;
+		/**
+		@brief 关闭系统声音采集。
+		*/
+		virtual void closeSystemVoiceInput() = 0;
 		/**
 		@brief 设置系统声音采集的音量。
 		@param [in] value 设置目标音量,取值范围[0,100].
@@ -888,11 +936,66 @@ namespace ilive
 		@return 返回系统声音采集音量,未打开则返回0;
 		*/
 		virtual uint32 getSystemVoiceInputVolume() = 0;
+
 		/**
-		@brief 关闭系统声音采集。
+		@brief 打开文件播放。
+		@details 开始播放本地音频\视频文件，播放文件前，最好先调用isValidMediaFile()检查文件的可用性。
+		@param [in] szMediaFile 文件路径。
+		@remark
+		1、支持的文件类型:<br/>
+		*.aac,*.ac3,*.amr,*.ape,*.mp3,*.flac,*.midi,*.wav,*.wma,*.ogg,*.amv,
+		*.mkv,*.mod,*.mts,*.ogm,*.f4v,*.flv,*.hlv,*.asf,*.avi,*.wm,*.wmp,*.wmv,
+		*.ram,*.rm,*.rmvb,*.rpm,*.rt,*.smi,*.dat,*.m1v,*.m2p,*.m2t,*.m2ts,*.m2v,
+		*.mp2v, *.tp,*.tpr,*.ts,*.m4b,*.m4p,*.m4v,*.mp4,*.mpeg4,*.3g2,*.3gp,*.3gp2,
+		*.3gpp,*.mov,*.pva,*.dat,*.m1v,*.m2p,*.m2t,*.m2ts,*.m2v,*.mp2v,*.pss,*.pva,
+		*.ifo,*.vob,*.divx,*.evo,*.ivm,*.mkv,*.mod,*.mts,*.ogm,*.scm,*.tod,*.vp6,*.webm,*.xlmv。<br/>
+		2、目前sdk会对大于640*480的视频裁剪到640*480;<br/>
+		3、文件播放和系统声音采集不应该同时打开，否则文件播放的声音又会被系统声音采集到，出现重音现象;
+		@note
+		屏幕分享和播片功能都是通过辅路流传输，所以屏幕分享和播片互斥使用;
+		辅路流被自己占用，设备操作回调中，返回错误码AV_ERR_EXCLUSIVE_OPERATION(错误码见github上的错误码表);
+		被房间内其他成员占用，设备操作回调中，返回错误码AV_ERR_RESOURCE_IS_OCCUPIED(错误码见github上的错误码表);
+		*/
+		virtual void openPlayMediaFile( const String& szMediaFile ) = 0;
+		/**
+		@brief 关闭文件播放。
+		*/
+		virtual void closePlayMediaFile() = 0;
+		/**
+		@brief 从头播放文件。
+		@return 操作结果，NO_ERR表示无错误。
+		@note 只有在处于播放状态下(E_PlayMediaFilePlaying)，此接口才有效，否则返回ERR_WRONG_STATE;
+		*/
+		virtual int restartMediaFile() = 0;
+		/**
+		@brief 暂停播放文件。
 		@return 操作结果，NO_ERR表示无错误。
 		*/
-		virtual int closeSystemVoiceInput() = 0;
+		virtual int pausePlayMediaFile() = 0;
+		/**
+		@brief 恢复播放文件。
+		@return 操作结果，NO_ERR表示无错误。
+		*/
+		virtual int	resumePlayMediaFile() = 0;
+		/**
+		@brief 设置播放文件进度。
+		@param [in] n64Pos 播放位置(单位: 秒)
+		@return 操作结果，NO_ERR表示无错误。
+		*/
+		virtual int setPlayMediaFilePos(const int64& n64Pos) = 0;
+		/**
+		@brief 获取播放文件进度。
+		@param [out] n64Pos 当前播放位置(单位: 秒)
+		@param [out] n64MaxPos 当前所播放文件的总长度(单位: 秒)
+		@return 操作结果，NO_ERR表示无错误。
+		*/
+		virtual int getPlayMediaFilePos(int64& n64Pos, int64& n64MaxPos) = 0;
+		/**
+		@brief 判断文件是否可用于播放。
+		@param [in] szMediaFile 要检查的视频文件.
+		@return 是否可用;如果文件不存在，也会返回false;
+		*/
+		virtual bool isValidMediaFile(const String& szMediaFile) = 0;
 
 		/**
 		@brief 获取当前摄像头状态
@@ -919,6 +1022,11 @@ namespace ilive
 		@return 当前屏幕分享状态
 		*/
 		virtual E_ScreenShareState getScreenShareState() = 0;
+		/**
+		@brief 获取当前文件播放状态。
+		@return 当前文件播放状态.
+		*/
+		virtual E_PlayMediaFileState getPlayMediaFileState() = 0;
 		/**
 		@brief 获取当前系统声音采集状态
 		@return true:打开 false：关闭

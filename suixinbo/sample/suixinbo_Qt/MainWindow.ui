@@ -146,6 +146,9 @@
       <property name="text">
        <string>PC随心播</string>
       </property>
+      <property name="maxLength">
+       <number>32</number>
+      </property>
      </widget>
      <widget class="QPushButton" name="btnBeginLive">
       <property name="geometry">
@@ -278,7 +281,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>TextLabel</string>
+     <string>iLiveSDK Version:</string>
     </property>
    </widget>
   </widget>

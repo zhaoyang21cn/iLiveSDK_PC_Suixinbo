@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1208</width>
-    <height>650</height>
+    <height>648</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -409,18 +409,18 @@
     <rect>
      <x>970</x>
      <y>490</y>
-     <width>175</width>
-     <height>71</height>
+     <width>231</width>
+     <height>91</height>
     </rect>
    </property>
   </widget>
   <widget class="QPushButton" name="btnSendGroupMsg">
    <property name="geometry">
     <rect>
-     <x>1150</x>
-     <y>490</y>
-     <width>52</width>
-     <height>71</height>
+     <x>970</x>
+     <y>590</y>
+     <width>231</width>
+     <height>51</height>
     </rect>
    </property>
    <property name="text">
@@ -440,7 +440,7 @@
     </rect>
    </property>
    <property name="title">
-    <string>屏幕分享</string>
+    <string>辅路视频(屏幕分享/文件播放)</string>
    </property>
    <widget class="QWidget" name="verticalLayoutWidget_2">
     <property name="geometry">
@@ -484,7 +484,7 @@
      <x>730</x>
      <y>10</y>
      <width>231</width>
-     <height>551</height>
+     <height>545</height>
     </rect>
    </property>
    <property name="title">
@@ -840,7 +840,7 @@
      <x>490</x>
      <y>430</y>
      <width>231</width>
-     <height>131</height>
+     <height>125</height>
     </rect>
    </property>
    <property name="title">
@@ -850,7 +850,7 @@
     <property name="geometry">
      <rect>
       <x>50</x>
-      <y>60</y>
+      <y>55</y>
       <width>121</width>
       <height>51</height>
      </rect>
@@ -863,9 +863,9 @@
     <property name="geometry">
      <rect>
       <x>50</x>
-      <y>20</y>
+      <y>25</y>
       <width>121</width>
-      <height>31</height>
+      <height>21</height>
      </rect>
     </property>
     <property name="text">
@@ -873,29 +873,13 @@
     </property>
    </widget>
   </widget>
-  <widget class="QListWidget" name="liMsgs">
-   <property name="geometry">
-    <rect>
-     <x>970</x>
-     <y>18</y>
-     <width>231</width>
-     <height>463</height>
-    </rect>
-   </property>
-   <property name="focusPolicy">
-    <enum>Qt::NoFocus</enum>
-   </property>
-   <property name="selectionMode">
-    <enum>QAbstractItemView::NoSelection</enum>
-   </property>
-  </widget>
   <widget class="QGroupBox" name="SkinGB">
    <property name="geometry">
     <rect>
      <x>350</x>
      <y>380</y>
      <width>131</width>
-     <height>181</height>
+     <height>175</height>
     </rect>
    </property>
    <property name="title">
@@ -1185,6 +1169,122 @@
      <number>100</number>
     </property>
    </widget>
+  </widget>
+  <widget class="QGroupBox" name="MediaFileGB">
+   <property name="geometry">
+    <rect>
+     <x>350</x>
+     <y>560</y>
+     <width>611</width>
+     <height>81</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>文件播放</string>
+   </property>
+   <widget class="QLineEdit" name="edMediaFilePath">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>20</y>
+      <width>348</width>
+      <height>25</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btnPlayMediaFile">
+    <property name="geometry">
+     <rect>
+      <x>450</x>
+      <y>18</y>
+      <width>75</width>
+      <height>28</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>播放</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btnStopMediaFile">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>530</x>
+      <y>18</y>
+      <width>75</width>
+      <height>28</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>停止</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btnSelectMediaFile">
+    <property name="geometry">
+     <rect>
+      <x>370</x>
+      <y>18</y>
+      <width>71</width>
+      <height>28</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>选择</string>
+    </property>
+   </widget>
+   <widget class="QSlider" name="hsMediaFileRate">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>52</y>
+      <width>480</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="focusPolicy">
+     <enum>Qt::StrongFocus</enum>
+    </property>
+    <property name="maximum">
+     <number>100</number>
+    </property>
+    <property name="pageStep">
+     <number>1</number>
+    </property>
+    <property name="orientation">
+     <enum>Qt::Horizontal</enum>
+    </property>
+   </widget>
+   <widget class="QLabel" name="lbMediaFileRate">
+    <property name="geometry">
+     <rect>
+      <x>500</x>
+      <y>50</y>
+      <width>101</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>00:00:00/00:00:00</string>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QTextEdit" name="teMsgs">
+   <property name="geometry">
+    <rect>
+     <x>970</x>
+     <y>17</y>
+     <width>231</width>
+     <height>462</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">font: 75 10pt &quot;楷体&quot;;</string>
+   </property>
+   <property name="readOnly">
+    <bool>true</bool>
+   </property>
   </widget>
  </widget>
  <resources/>

@@ -3,7 +3,7 @@
 ###### V1.5.0(2017-07-26)
 * 升级到avsdk1.9.1;
 * 增加文件播放功能;
-* 所有设备操作修改为异步回调方式(为了解决遗留bug);
+* 所有设备操作修改为异步回调方式[(说明)](https://github.com/zhaoyang21cn/iLiveSDK_PC_Suixinbo/blob/master/iLiveSDK/README.md);
 * 日志内容优化，日志文件统一生成到txsdklog目录下，日志定期清理;
 * 修正遗留bug;
 

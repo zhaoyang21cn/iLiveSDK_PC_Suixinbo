@@ -374,7 +374,7 @@ namespace ilive
 	template<typename T> inline bool
 	TStringBase<T>::operator != (const TStringBase<T>& rhs) const
 	{
-		return !(*this == rhs)
+		return !(*this == rhs);
 	}
 
 	//------------------------------------------------------------------------

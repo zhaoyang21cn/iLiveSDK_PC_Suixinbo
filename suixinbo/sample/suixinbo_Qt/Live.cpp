@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "Live.h"
-#include "WndList.h"
 
 Live::Live( QWidget * parent /*= 0*/, Qt::WindowFlags f /*= 0*/ )
 	:QDialog(parent, f)

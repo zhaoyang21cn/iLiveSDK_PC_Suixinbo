@@ -3,6 +3,7 @@
 
 #include "ui_Live.h"
 #include "VideoRender.h"
+#include "WndList.h"
 
 #define MaxVideoRender 3
 #define MaxShowMembers 50

@@ -1346,7 +1346,7 @@ void Live::updateRecordGB()
 	{
 		m_ui.cbRecordDataType->addItem( FromBits("辅路(屏幕分享/文件播放)"), QVariant(E_RecordScreen) );
 	}
-	nRecordDataTypeIndex = min( m_ui.cbRecordDataType->count()-1, max(0, nRecordDataTypeIndex) );
+	nRecordDataTypeIndex = iliveMin( m_ui.cbRecordDataType->count()-1, iliveMax(0, nRecordDataTypeIndex) );
 	m_ui.cbRecordDataType->setCurrentIndex( nRecordDataTypeIndex );
 }
 
@@ -1397,8 +1397,8 @@ void Live::updatePushStreamGB()
 	}
 	m_ui.cbPushEncodeType->addItem(FromBits("HLS"), QVariant(HLS) );
 	m_ui.cbPushEncodeType->addItem(FromBits("RTMP"),QVariant(RTMP) );
-	nPushDataTypeIndex = min( m_ui.cbPushDataType->count()-1, max(0, nPushDataTypeIndex) );
-	nPushEncodeTypeIndex = min( m_ui.cbPushEncodeType->count()-1, max(0, nPushEncodeTypeIndex) );
+	nPushDataTypeIndex = iliveMin( m_ui.cbPushDataType->count()-1, iliveMax(0, nPushDataTypeIndex) );
+	nPushEncodeTypeIndex = iliveMin( m_ui.cbPushEncodeType->count()-1, iliveMax(0, nPushEncodeTypeIndex) );
 	m_ui.cbPushDataType->setCurrentIndex( nPushDataTypeIndex );
 	m_ui.cbPushEncodeType->setCurrentIndex( nPushEncodeTypeIndex );
 }

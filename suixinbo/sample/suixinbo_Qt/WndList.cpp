@@ -45,7 +45,7 @@ int WndList::Refresh()
 		{
 			m_ui.liWndList->addItem( new QListWidgetItem( FromBits( m_wndList[i].second.c_str() ) ) );
 		}
-		ms_nLastIndex = min( m_wndList.size()-1, max(0, ms_nLastIndex) );
+		ms_nLastIndex = iliveMin( m_wndList.size()-1, iliveMax(0, ms_nLastIndex) );
 		m_ui.liWndList->setCurrentRow(ms_nLastIndex);
 	}
 	return nRet;

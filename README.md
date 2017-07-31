@@ -16,7 +16,7 @@ iLiveSDK(全称:Interactive Live SDK)整合了互动直播SDK(AVSDK)、即时通
 [错误码表](https://github.com/zhaoyang21cn/ILiveSDK_Android_Demos/blob/master/doc/ILiveSDK/error.md)
 
 ## 相关知识
-[角色配置](https://github.com/zhaoyang21cn/iLiveSDK_Android_Suixinbo/blob/master/doc/ILiveSDK/roleIntr.md)
+[角色配置](https://github.com/zhaoyang21cn/iLiveSDK_Android_Suixinbo/blob/master/doc/ILiveSDK/roleIntr.md)<br/>
 [如何录制混流视频](https://github.com/zhaoyang21cn/iLiveSDK_Android_Suixinbo/blob/master/doc/ILiveSDK/MixStream.md)
 
 ## 关键路径LOG

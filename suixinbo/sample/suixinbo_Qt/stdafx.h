@@ -64,7 +64,7 @@ enum E_CustomCmd
 };
 /////////////////////////ÀÊ–ƒ≤•–≈¡ÓEnd///////////////////////////////
 
-void g_sendC2CCustomCmd( QString dstUser, E_CustomCmd userAction, QString actionParam, iLiveSuccCallback suc = NULL, iLiveErrCallback err = NULL, void* data = NULL );
-void g_sendGroupCustomCmd( E_CustomCmd userAction, QString actionParam, iLiveSuccCallback suc = NULL, iLiveErrCallback err = NULL, void* data = NULL );
+void g_sendC2CCustomCmd( QString dstUser, E_CustomCmd userAction, QString actionParam, iLiveSucCallback suc = NULL, iLiveErrCallback err = NULL, void* data = NULL );
+void g_sendGroupCustomCmd( E_CustomCmd userAction, QString actionParam, iLiveSucCallback suc = NULL, iLiveErrCallback err = NULL, void* data = NULL );
 
 #endif//stdafx_h_

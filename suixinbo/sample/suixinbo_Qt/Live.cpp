@@ -145,6 +145,7 @@ void Live::setRoomUserType( E_RoomUserType userType )
 			m_ui.pushStreamGB->setVisible(true);
 			m_ui.lbPraiseNum->setVisible(true);
 			m_ui.btnPraise->setVisible(false);
+			if ( m_ui.cbCamera->count() > 0 ) OnBtnOpenCamera();//主播创建房间后，自动打开摄像头
 			break;
 		}
 	case E_RoomUserJoiner:
@@ -383,6 +384,14 @@ void Live::OnRoomDisconnect( int reason, const char *errorinfo, void* data )
 	pThis->m_bRoomDisconnectClose = true;
 	pThis->close();
 	ShowCodeErrorTips( reason, errorinfo, pThis, FromBits("已被强制退出房间.") );
+}
+
+void Live::OnDeviceDetect( void* data )
+{
+	Live* pThis = reinterpret_cast<Live*>(data);
+	pThis->updateCameraGB();
+	pThis->updateMicGB();
+	pThis->updatePlayerGB();
 }
 
 void Live::OnLocalVideo( const LiveVideoFrame* video_frame, void* custom_data )
@@ -943,6 +952,10 @@ void Live::closeEvent( QCloseEvent* event )
 	{
 		m_pFillFrameTimer->stop();
 	}
+	if ( m_pPlayMediaFileTimer->isActive() )
+	{
+		m_pPlayMediaFileTimer->stop();
+	}
 	g_pMainWindow->setUseable(true);
 	event->accept();
 }
@@ -1356,6 +1369,7 @@ void Live::updatePushStreamGB()
 	int nPushEncodeTypeIndex = m_ui.cbPushEncodeType->currentIndex();
 	m_ui.cbPushDataType->clear();
 	m_ui.cbPushEncodeType->clear();
+	m_ui.tePushStreamUrl->setPlainText("");
 
 	if ( (!GetILive()->getCurCameraState()) && (!GetILive()->getExternalCaptureState()) 
 		&& (!GetILive()->getScreenShareState()) && (!GetILive()->getPlayMediaFileState()) )

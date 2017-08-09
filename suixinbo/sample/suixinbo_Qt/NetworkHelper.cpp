@@ -72,6 +72,7 @@ void NetworkHelper::OnTimer()
 void NetworkHelper::excuteGet()
 {
 	QNetworkRequest network_request;
+	network_request.setHeader(QNetworkRequest::ContentTypeHeader, "application/octet-stream");//二进制流类型
 	network_request.setUrl( QUrl(m_url) );
 	m_pNetworkAccessManager->get(network_request);
 	m_pTimer->start(m_timeout);
@@ -80,6 +81,7 @@ void NetworkHelper::excuteGet()
 void NetworkHelper::excutePost()
 {
 	QNetworkRequest network_request;
+	network_request.setHeader(QNetworkRequest::ContentTypeHeader, "application/octet-stream");//二进制流类型
 	network_request.setUrl( QUrl(m_url) );
 	QByteArray post_data;
 	post_data.append(m_content);

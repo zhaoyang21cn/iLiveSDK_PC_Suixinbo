@@ -1,9 +1,20 @@
 ## PC_iLiveSDK_ChangeList
 
+###### V1.5.1(2017-08-09)
+* 增加权限配置功能,用户可以直接以连麦观众身份加入房间[(更新说明)](https://github.com/zhaoyang21cn/iLiveSDK_PC_Suixinbo/blob/master/iLiveSDK/README.md);
+* 增加获取直播质量参数接口;
+* 增加发送接收图片功能;
+* 增加水印功能;
+* 增加设备插拔监听接口;
+* 增加设置sdk日志目录接口;
+* 增加获取本地C2C历史消息接口;
+* 增加纯音频推流录制功能;
+* 代码优化及bug修正;
+
 ###### V1.5.0(2017-07-26)
 * 升级到avsdk1.9.1;
 * 增加文件播放功能;
-* 所有设备操作修改为异步回调方式[(说明)](https://github.com/zhaoyang21cn/iLiveSDK_PC_Suixinbo/blob/master/iLiveSDK/README.md);
+* 所有设备操作修改为异步回调方式[(更新说明)](https://github.com/zhaoyang21cn/iLiveSDK_PC_Suixinbo/blob/master/iLiveSDK/README.md);
 * 日志内容优化，日志文件统一生成到txsdklog目录下，日志定期清理;
 * 修正遗留bug;
 

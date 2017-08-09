@@ -492,9 +492,11 @@ void MainWindow::iLiveCreateRoom()
 	iLiveRoomOption roomOption;
 	roomOption.audioCategory = AUDIO_CATEGORY_MEDIA_PLAY_AND_RECORD;//互动直播场景
 	roomOption.roomId = m_curRoomInfo.info.roomnum;
+	roomOption.authBits = AUTH_BITS_DEFAULT;
 	roomOption.controlRole = LiveMaster;
 	roomOption.roomDisconnectListener = Live::OnRoomDisconnect;
 	roomOption.memberStatusListener = Live::OnMemStatusChange;
+	roomOption.deviceDetectListener = Live::OnDeviceDetect;
 	roomOption.data = m_pLive;
 	GetILive()->createRoom( roomOption, OniLiveCreateRoomSuc, OniLiveCreateRoomErr, this );
 }
@@ -503,6 +505,14 @@ void MainWindow::OniLiveLoginSuccess( void* data )
 {
 	MainWindow* pThis = reinterpret_cast<MainWindow*>(data);
 	pThis->switchLoginState(E_Login);
+
+	//设置水印
+	QImage img("waterMark.png");
+	int nRet = GetILive()->addWaterMark( WATER_MARK_TYPE_1280_720, img.bits(), img.width(), img.height() );//PC随心播只用到了这一种分辨率，所以，这里只设置一次水印。
+	if (nRet != NO_ERR)
+	{
+		ShowCodeErrorTips(nRet, FromBits("设置水印失败."), pThis);
+	}
 }
 
 void MainWindow::OniLiveLoginError( int code, const char *desc, void* data )

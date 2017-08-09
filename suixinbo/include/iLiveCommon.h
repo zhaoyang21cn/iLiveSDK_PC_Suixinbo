@@ -31,6 +31,8 @@ typedef unsigned long long	uint64;
 #define SafeDelete(p) {delete (p); (p) = 0;}
 #define SafeDeleteArr(pArr) {delete[] (pArr); (pArr) = 0;}
 
+#define NAME(X) #X
+
 template<typename T> inline void
 iliveSwap(T& a, T&b)
 {

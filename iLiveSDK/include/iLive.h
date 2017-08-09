@@ -6,6 +6,7 @@
 #include <iLiveVector.h>
 #include <iLivePair.h>
 
+
 namespace ilive
 {
 	/**
@@ -71,6 +72,17 @@ namespace ilive
 	{
 		TEXT,
 		CUSTOM,
+		IMAGE,
+	};
+
+	/**
+	@brief 图片类型。原图是指用户发送的原始图片，尺寸和大小都保持不变；缩略图是将原图等比压缩，压缩后宽、高中较小的一个等于198像素；大图也是将原图等比压缩，压缩后宽、高中较小的一个等于720像素
+	*/
+	enum E_ImageType
+	{
+		THUMB,
+		LARGE,
+		ORIGINAL,
 	};
 
 	/**
@@ -100,14 +112,15 @@ namespace ilive
 	*/
 	enum E_RecordFileType
 	{
-		RecordFile_NONE= 0,
-		RecordFile_HLS = 1,
-		RecordFile_FLV = 2,
-		RecordFile_HLS_FLV = 3,
-		RecordFile_MP4 = 4,
-		RecordFile_HLS_MP4 = 5,
-		RecordFile_FLV_MP4 = 6,
-		RecordFile_HLS_FLV_MP4 = 7
+		RecordFile_NONE= 0x00,
+		RecordFile_HLS = 0x01,
+		RecordFile_FLV = 0x02,
+		RecordFile_HLS_FLV = 0x03,
+		RecordFile_MP4 = 0x04,
+		RecordFile_HLS_MP4 = 0x05,
+		RecordFile_FLV_MP4 = 0x06,
+		RecordFile_HLS_FLV_MP4 = 0x07,
+		RecordFile_MP3 = 0x10,
 	};
 
 	/**
@@ -198,6 +211,24 @@ namespace ilive
 		E_ClosePlayMediaFile,		///< 关闭文件播放
 	};
 
+	/**
+	@brief 水印类型。
+	@details 水印类型,就是针对哪种编码分辨率的视频设置水印。
+	*/
+	enum E_WaterMarkType
+	{
+		WATER_MARK_TYPE_NONE        = 0,
+		WATER_MARK_TYPE_320_240     = 1, //针对编码分辨率为320*240的视频设置水印。
+		WATER_MARK_TYPE_480_360     = 2, //针对编码分辨率为480*360的视频设置水印。
+		WATER_MARK_TYPE_640_480     = 3, //针对编码分辨率为640*480的视频设置水印。
+		WATER_MARK_TYPE_640_368     = 4, //针对编码分辨率为640*368的视频设置水印。
+		WATER_MARK_TYPE_960_540     = 5, //针对编码分辨率为960*540的视频设置水印。
+		WATER_MARK_TYPE_1280_720    = 6, //针对编码分辨率为1280*720的视频设置水印。
+		WATER_MARK_TYPE_192_144     = 7, //针对编码分辨率为192*144的视频设置水印。
+		WATER_MARK_TYPE_320_180     = 8, //针对编码分辨率为192*144的视频设置水印。
+		WATER_MARK_TYPE_MAX,
+	};
+
 	/// 音视频通话的通话能力权限位。
 	const uint64 AUTH_BITS_DEFAULT              = -1;			///< 所有权限。
 	const uint64 AUTH_BITS_CREATE_ROOM          = 0x00000001;	///< 创建房间权限。
@@ -254,6 +285,7 @@ namespace ilive
 	@param [in] data 自定义指针;
 	*/
 	typedef void (*iLiveDeviceOperationCallback)(E_DeviceOperationType oper, int retCode, void* data);
+	
 	/**
 	@brief 通用失败回调
 	@param [in] code 错误码
@@ -265,7 +297,7 @@ namespace ilive
 	@brief 通用成功回调
 	@param [in] data 自定义指针
 	*/
-	typedef void (*iLiveSuccCallback)(void* data);
+	typedef void (*iLiveSucCallback)(void* data);
 
 	/**
 	@brief SDK主动退出房间监听函数指针
@@ -283,6 +315,42 @@ namespace ilive
 	@param [in] data 用户自定数据类型，回调函数中原封不动传回给业务侧
 	*/
 	typedef void (*iLiveMemStatusListener)(E_EndpointEventId eventId, const Vector<String> &ids, void* data);
+	/**
+	@brief 设备插拔监听函数指针
+	@param [in] data 用户自定数据类型，回调函数中原封不动传回给业务侧
+	*/
+	typedef void (*iLiveDeviceDetectListener)(void* data);
+	/**
+	@brief 房间内质量报告的回调函数指针类型
+	@details 在iLiveRoomOption中的参数
+	@param [in] param 房间内质量参数.
+	@param [in] data 用户自定数据类型，回调函数中原封不动传回给业务侧
+	*/
+	typedef void (*iLiveQualityParamCallback)(const struct iLiveRoomStatParam& param, void* data);
+
+	/**
+	@brief 消息中的图片
+	*/
+	struct Image
+	{
+		/**
+		@brief 图片构造方法
+		@param [in] _type 图片类型
+		@param [in] _size 图片文件大小
+		@param [in] _width 图片宽度
+		@param [in] _height 图片高度
+		@param [in] _url 图片下载地址
+		*/
+		Image(E_ImageType _type, unsigned _size, unsigned _width, unsigned _height, String _url) : type(_type), size(_size), width(_width), height(_height), url(_url)
+		{
+
+		}
+		E_ImageType type;
+		unsigned size;
+		unsigned height;
+		unsigned width;
+		String url;
+	};
 
 	/**
 	@brief 消息元素基类
@@ -320,6 +388,32 @@ namespace ilive
 	};
 
 	/**
+	@brief 图片消息元素
+	*/
+	struct MessageImageElem : public MessageElem
+	{
+		MessageImageElem(const String& _path) : path(_path)
+		{
+			type = IMAGE;
+		}
+		MessageImageElem(const MessageImageElem& other)
+		{
+			path = other.path;
+			for (int i = 0; i < other.images.size(); ++i)
+			{
+				Image *otherImg = other.images[i];
+				Image *img = new Image(otherImg->type, otherImg->size, otherImg->width, otherImg->height, otherImg->url);
+				images.push_back(img);
+			}
+
+		}
+
+		String path;///< 发送图片的本地地址，仅发送有效
+		Vector<Image*> images;///< 接收的图片，仅接收有效
+
+	};
+
+	/**
 	@brief 消息
 	@details 一个消息内可以包含多个消息元素，按照顺序存放在vector中
 	*/
@@ -353,8 +447,16 @@ namespace ilive
 						MessageCustomElem *e = new MessageCustomElem(otherElem->data, otherElem->ext);
 						elems.push_back(e);
 						break;
+					}				
+				case IMAGE:
+					{
+						const MessageImageElem *otherElem = static_cast<const MessageImageElem*>(other.elems[i]);
+						MessageImageElem *e = new MessageImageElem(*otherElem);
+						elems.push_back(e);
+						break;
 					}
 				}
+			
 			}
 		}
 
@@ -378,6 +480,13 @@ namespace ilive
 					{
 						const MessageCustomElem *otherElem = static_cast<const MessageCustomElem*>(other.elems[i]);
 						MessageCustomElem *e = new MessageCustomElem(otherElem->data, otherElem->ext);
+						elems.push_back(e);
+						break;
+					}
+				case IMAGE:
+					{
+						const MessageImageElem *otherElem = static_cast<const MessageImageElem*>(other.elems[i]);
+						MessageImageElem *e = new MessageImageElem(*otherElem);
 						elems.push_back(e);
 						break;
 					}
@@ -407,26 +516,53 @@ namespace ilive
 		iLiveRoomOption()
 			:audioCategory(AUDIO_CATEGORY_MEDIA_PLAY_AND_RECORD)//互动直播场景
 			,roomId(0)
+			,authBits(AUTH_BITS_JOIN_ROOM|AUTH_BITS_RECV_AUDIO|AUTH_BITS_RECV_CAMERA_VIDEO|AUTH_BITS_RECV_SCREEN_VIDEO)
 			,autoRequestCamera(true)
 			,autoRequestScreen(true)
 			,autoRequestMediaFile(true)
+			,timeElapse(1000)
 			,roomDisconnectListener(NULL)
 			,memberStatusListener(NULL)
+			,deviceDetectListener(NULL)
+			,qualityParamCallback(NULL)
 			,data(NULL)
 		{
 		}
 
 		E_AudioCategory			audioCategory;			///< 音视场景策略,详细信息见E_AudioCategory的定义.
 		uint32					roomId;					///< 房间ID,由业务侧创建并维护的房间ID
+		uint64					authBits;				///< 通话能力权限位;主播应当设置为AUTH_BITS_DEFAULT,连麦观众设置为AUTH_BITS_DEFAULT & (~AUTH_BITS_CREATE_ROOM),观众设置为AUTH_BITS_JOIN_ROOM|AUTH_BITS_RECV_AUDIO|AUTH_BITS_RECV_CAMERA_VIDEO|AUTH_BITS_RECV_SCREEN_VIDEO
 		String					controlRole;			///< 角色名，web端音视频参数配置工具所设置的角色名
 		String					authBuffer;				///< 通话能力权限位的加密串
 		bool					autoRequestCamera;		///< 房间内有成员打开摄像头时，是否自动请求画面;
 		bool					autoRequestScreen;		///< 房间内有成员打开屏幕分享时，是否自动请求画面;
 		bool					autoRequestMediaFile;	///< 房间内有成员打开播片时，是否自动请求画面;
+		uint32					timeElapse;				///< sdk执行qualityParamCallback回调的时间间隔,单位毫秒(SDK内部1秒更新一次，所以,timeElapse小于1000将会被修正到1000)。
 
-		iLiveRoomDisconnectListener	roomDisconnectListener;	///< SDK主动退出房间回调;一般是在网络断开30秒后,会收到此回调,此时已被sdk强制退出房间,所以,不要调用退出房间接口;网络重连后,需要重新创建\进入房间,参见iLiveRoomDisconnectListener定义。
-		iLiveMemStatusListener		memberStatusListener;	///< 房间成员状态变化通知，参见iLiveMemStatusListener定义。
-		void*						data;					///< 用户自定义数据类型，在roomDisconnectListener、memberStatusListener中原封不动返回。
+		/**
+		@brief SDK主动退出房间回调;
+		@details 在网络断开30秒后,会收到此回调,此时已被sdk强制退出房间,所以,不要调用退出房间接口;网络重连后,需要重新创建\进入房间,参见iLiveRoomDisconnectListener定义。
+		*/
+		iLiveRoomDisconnectListener	roomDisconnectListener;
+		/**
+		@brief 房间成员事件通知，参见iLiveMemStatusListener定义。
+		*/
+		iLiveMemStatusListener		memberStatusListener;
+		/**
+		@brief 设备插拔监听回调;
+		@details 当摄像头、麦克风、扬声器等设备的接入及拔出时，sdk会通过此回调通知给业务侧，收到此回调需要更新设备列表;参见iLiveDeviceDetectListener定义。
+		@note 当摄像头、麦克风、扬声器等正在使用中时,收到此回调前，还会收到相应设备关闭的回调;
+		*/
+		iLiveDeviceDetectListener	deviceDetectListener;
+		/**
+		@brief 质量报告的回调;
+		@details 如果用户需要监听房间内直播质量,可以设置此回调，并设置timeElapse的值。参见iLiveQualityParamCallback定义。
+		*/
+		iLiveQualityParamCallback	qualityParamCallback;
+		/**
+		@brief 用户自定义数据类型，在iLiveRoomOption中指定的各个回调中原封不动返回。
+		*/
+		void*						data;
 	};
 
 	/**
@@ -463,12 +599,25 @@ namespace ilive
 			:pushDataType(E_PushCamera)
 			,encode(HLS)
 			,recordFileType(RecordFile_NONE)
+			,bOnlyPushAudio(false)
 		{
 		}
 
 		E_PushDataType				pushDataType;		///< 推送数据类型，参见E_PushDataType定义.
 		E_iLiveStreamEncode			encode;				///< 推流数据编码方式，参见E_TIMStreamEncode定义.
 		E_RecordFileType			recordFileType;		///< 推流时自动录制的文件类型，参见E_RecordFileType定义.
+		/**
+		@brief 是否纯音频推流
+		@remark 
+		1、要使用纯音频推流，需注意:<br/>
+			(1)需要联系腾讯开启白名单放可使用此功能;<br/>
+			(2)不能在后台开启自动推流配置项;<br/>
+			(3)在开启推流前，不能有视频流(打开摄像头、屏幕分享等);<br/>
+		2、 使用纯音频推流时，其他相关参数说明:<br/>
+			(1)如果需要推流时自动录制文件，recordFileType需要设置为RecordFile_MP3;<br/>
+			(2)使用纯音频推流时，pushDataType设置为E_PushCamera和E_PushScreen，效果一样，建议使用默认值E_PushCamera;
+		*/
+		bool						bOnlyPushAudio;		///< 纯音频推流,纯音频推流时，如果要录制文件，需要将recordFileType指定为RecordFile_MP3
 	};
 
 	/**
@@ -476,9 +625,9 @@ namespace ilive
 	*/
 	struct LiveUrl
 	{
-		int			encodeType;	///< 视频流编码类型
-		String		url;		///< 视频流播放URL
-		E_RateType	rateType;	///< 码率档位信息
+		E_iLiveStreamEncode			encodeType;	///< 视频流编码类型
+		String						url;		///< 视频流播放URL
+		E_RateType					rateType;	///< 码率档位信息
 	};
 	
 	/**
@@ -556,6 +705,247 @@ namespace ilive
 	};
 
 	/**
+	@brief 视频编码相关参数
+	*/
+	struct iLiveVideoEncodeParam
+	{
+		iLiveVideoEncodeParam():viewType(0),width(0),height(0),fps(0),bitrate(0),angle(0){}
+
+		/**
+		@brief 将此参数结果转换为String，方便打印输出
+		@param [in] pre 输出每行的前缀;
+		@return 输出的String
+		*/
+		String getInfoString(const String& pre) const
+		{
+			String szRet;
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(viewType), viewType);
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(width), width);
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(height), height);
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(fps), fps);
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(bitrate), bitrate);
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(angle), angle);
+			return szRet;
+		}
+
+		uint32 viewType;	///< 画面类型，作为编码信息索引：0-主路画面 2-辅路
+		uint32 width;       ///< 视频编码宽
+		uint32 height;      ///< 视频编码高
+		uint32 fps;         ///< 视频编码实时帧率×10
+		uint32 bitrate;     ///< 视频编码码率(无包头)
+		uint32 angle;       ///< 角度
+	};
+
+	/**
+	@brief 视频解码相关参数
+	*/
+	struct iLiveVideoDecodeParam
+	{
+		iLiveVideoDecodeParam():viewType(0),width(0),height(0),fps(0),bitrate(0){}
+
+		/**
+		@brief 将此参数结果转换为String，方便打印输出
+		@param [in] pre 输出每行的前缀;
+		@return 输出的String
+		*/
+		String getInfoString(const String& pre) const
+		{
+			String szRet;
+			szRet += String::Format("%s%s: %s\n", pre.c_str(), NAME(userId), userId.c_str());
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(viewType), viewType);
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(width), width);
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(height), height);
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(fps), fps);
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(bitrate), bitrate);
+			return szRet;
+		}
+
+		String userId;		///< 解码用户
+		uint32 viewType;	///< 画面类型，作为编码信息索引：0-主路画面 2-辅路
+		uint32 width;		///< 视频解码宽
+		uint32 height;		///< 视频解码高
+		uint32 fps;			///< 视频解码出的帧率×10
+		uint32 bitrate;		///< 视频解码出的码率(无包头)
+	};
+
+	/**
+	@brief 视频下发调控参数,与在后台Spear上配置的参数相关
+	*/
+	struct iLiveVideoQosParam
+	{
+		iLiveVideoQosParam():width(0),height(0),fps(0),bitrate(0){}
+		
+		/**
+		@brief 将此参数结果转换为String，方便打印输出
+		@param [in] pre 输出每行的前缀;
+		@return 输出的String
+		*/
+		String getInfoString(const String& pre) const
+		{
+			String szRet;
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(width), width);
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(height), height);
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(fps), fps);
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(bitrate), bitrate);
+			return szRet;
+		}
+
+		uint32 width;    ///< 视频宽
+		uint32 height;   ///< 视频高
+		uint32 fps;      ///< 帧率
+		uint32 bitrate;  ///< 码率
+	};
+
+	/**
+	@brief 音频编码相关参数
+	*/
+	struct iLiveAudioEncodeParam
+	{
+		iLiveAudioEncodeParam():encodeBitrate(0){}
+
+		/**
+		@brief 将此参数结果转换为String，方便打印输出
+		@param [in] pre 输出每行的前缀;
+		@return 输出的String
+		*/
+		String getInfoString(const String& pre) const
+		{
+			String szRet;
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(encodeBitrate), encodeBitrate);
+			return szRet;
+		}
+
+		uint32	encodeBitrate;	///< 音频编码码率
+	};
+
+	/**
+	@brief 音频解码相关参数
+	*/
+	struct iLiveAudioDecodeParam
+	{
+		iLiveAudioDecodeParam():sampleRate(0),channelCount(0){}
+
+		/**
+		@brief 将此参数结果转换为String，方便打印输出
+		@param [in] pre 输出每行的前缀;
+		@return 输出的String
+		*/
+		String getInfoString(const String& pre) const
+		{
+			String szRet;
+			szRet += String::Format("%s%s: %s\n", pre.c_str(), NAME(userId), userId.c_str());
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(sampleRate), sampleRate);
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(channelCount), channelCount);
+			return szRet;
+		}
+
+		String userId;       ///< 音频解码用户
+		uint32 sampleRate;   ///< 音频编码采样率
+		uint32 channelCount; ///< 通道数，1表示单声道(mono)，2表示立体声(stereo)
+	};
+	
+	/**
+	@brief 音频下发调控参数,与在后台Spear上配置的参数相关
+	*/
+	struct iLiveAudioQosParam
+	{
+		iLiveAudioQosParam():sampleRate(0),channelCount(0),bitrate(0),aecEnable(0),agcEnable(0){}
+		
+		/**
+		@brief 将此参数结果转换为String，方便打印输出
+		@param [in] pre 输出每行的前缀;
+		@return 输出的String
+		*/
+		String getInfoString(const String& pre) const
+		{
+			String szRet;
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(sampleRate), sampleRate);
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(channelCount), channelCount);
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(bitrate), bitrate);
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(aecEnable), aecEnable);
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(agcEnable), agcEnable);
+			return szRet;
+		}
+
+		uint32 sampleRate;             ///< 采样率
+		uint32 channelCount;           ///< 通道数，1表示单声道(mono)，2表示立体声(stereo)
+		uint32 bitrate;                ///< 码率
+		uint8  aecEnable;              ///< AEC功能是否开启
+		uint8  agcEnable;              ///< AGC功能是否开启
+	};
+
+	/**
+	@brief 房间直播质量相关的参数
+	*/
+	struct iLiveRoomStatParam
+	{
+		iLiveRoomStatParam():exeCpuRate(0),sysCpuRate(0),rtt(0){}
+
+		/**
+		@brief 将此参数结果转换为String，方便打印输出
+		@return 输出的String
+		*/
+		String getInfoString() const
+		{
+			String szRet;
+
+			szRet += String::Format("%s: %.02f%%\n", NAME(exeCpuRate), exeCpuRate/100.f);
+			szRet += String::Format("%s: %.02f%%\n", NAME(sysCpuRate), sysCpuRate/100.f);
+
+			szRet += String::Format("%s: %ums\n", NAME(rtt), rtt);
+			
+			szRet += String::Format( "%s: %d\n", NAME(videoEncodeParams.size), videoEncodeParams.size() );
+			for (int i=0; i<videoEncodeParams.size(); ++i)
+			{
+				szRet += String::Format("videoEncodeParams[%d]:\n", i);
+				szRet += videoEncodeParams[i].getInfoString("   ");
+			}
+
+			szRet += String::Format( "%s: %d\n", NAME(videoDecodeParams.size), videoDecodeParams.size() );
+			for (int i=0; i<videoDecodeParams.size(); ++i)
+			{
+				szRet += String::Format("videoDecodeParams[%d]:\n", i);
+				szRet += videoDecodeParams[i].getInfoString("   ");
+			}
+
+			szRet += "videoMainQosParam:\n";
+			szRet += videoMainQosParam.getInfoString("   ");
+
+			szRet += "videoAuxQosParam:\n";
+			szRet += videoAuxQosParam.getInfoString("   ");
+
+			szRet += "audioEncodeParams:\n";
+			szRet += audioEncodeParams.getInfoString("   ");
+
+			szRet += String::Format( "%s: %d\n", NAME(audioDecodeParams.size), audioDecodeParams.size() );
+			for (int i=0; i<audioDecodeParams.size(); ++i)
+			{
+				szRet += String::Format("audioDecodeParams[%d]:\n", i);
+				szRet += audioDecodeParams[i].getInfoString("   ");
+			}
+
+			szRet += "audioQosParam:\n";
+			szRet += audioQosParam.getInfoString("   ");
+			
+			return szRet;
+		}
+
+		uint16 exeCpuRate;	///< 应用CPU使用率×10000(例如：3456对应于34.56%)
+		uint16 sysCpuRate;	///< 系统CPU使用率×10000(例如：3456对应于34.56%)
+		
+		uint32 rtt;         ///< 往返时延（Round-Trip Time），单位毫秒;
+
+		Vector<iLiveVideoEncodeParam> videoEncodeParams;	///< 视频编码参数
+		Vector<iLiveVideoDecodeParam> videoDecodeParams;	///< 视频解码参数
+		iLiveVideoQosParam videoMainQosParam;				///< 主路视频流控下发参数
+		iLiveVideoQosParam videoAuxQosParam;				///< 辅路视频流控下发参数
+
+		iLiveAudioEncodeParam		  audioEncodeParams;	///< 音频编码参数(此参数暂时为0，后续会矫正)
+		Vector<iLiveAudioDecodeParam> audioDecodeParams;	///< 音频解码参数(此参数暂时为0，后续会矫正)
+		iLiveAudioQosParam			  audioQosParam;        ///< 音频流控下发参数
+	};
+
+	/**
 	@brief 接口封装抽象接口
 	*/
 	struct iLive
@@ -582,7 +972,7 @@ namespace ilive
 		@param [in] data 用户自定义数据的指针，回调函数中原封不动地传回(通常为调用类的指针);
 		@remark 此函数会清理7天前的所有日志文件(iLiveSDK、AVSDK、IMSDK)。
 		*/
-		virtual void release(iLiveSuccCallback suc = NULL, iLiveErrCallback err = NULL, void* data = NULL) = 0;
+		virtual void release(iLiveSucCallback suc = NULL, iLiveErrCallback err = NULL, void* data = NULL) = 0;
 		/**
 		@brief 设置被踢下线监听
 		@details 每个账号不能同时登录多台设备，当其他设备登录相同账号时会收到这个通知
@@ -627,6 +1017,7 @@ namespace ilive
 		@param [in] data 用户自定义数据的指针，回调函数中原封不动地传回(通常为调用类的指针);
 		*/
 		virtual	void setDeviceOperationCallback( iLiveDeviceOperationCallback cb, void* data ) = 0;
+		
 		/**
 		@brief 登录
 		@param [in] userId 用户id
@@ -635,14 +1026,14 @@ namespace ilive
 		@param [in] err 失败回调
 		@param [in] data 用户自定义数据的指针，回调函数中原封不动地传回(通常为调用类的指针);
 		*/
-		virtual void login(const char *userId, const char *userSig, iLiveSuccCallback suc, iLiveErrCallback err, void* data) = 0;
+		virtual void login(const char *userId, const char *userSig, iLiveSucCallback suc, iLiveErrCallback err, void* data) = 0;
 		/**
 		@brief 登出
 		@param [in] suc 成功回调
 		@param [in] err 失败回调
 		@param [in] data 用户自定义数据的指针，回调函数中原封不动地传回(通常为调用类的指针);
 		*/
-		virtual void logout(iLiveSuccCallback suc, iLiveErrCallback err, void* data) = 0;
+		virtual void logout(iLiveSucCallback suc, iLiveErrCallback err, void* data) = 0;
 		/**
 		@brief 创建直播房间
 		@param [in] roomOption 房间配置
@@ -650,7 +1041,7 @@ namespace ilive
 		@param [in] err 失败回调
 		@param [in] data 用户自定义数据的指针，回调函数中原封不动地传回(通常为调用类的指针);
 		*/
-		virtual void createRoom(const iLiveRoomOption &roomOption, iLiveSuccCallback suc, iLiveErrCallback err, void* data) = 0;
+		virtual void createRoom(const iLiveRoomOption &roomOption, iLiveSucCallback suc, iLiveErrCallback err, void* data) = 0;
 		/**
 		@brief 加入直播房间
 		@param [in] roomOption 房间配置
@@ -658,14 +1049,14 @@ namespace ilive
 		@param [in] err 失败回调
 		@param [in] data 用户自定义数据的指针，回调函数中原封不动地传回(通常为调用类的指针);
 		*/
-		virtual void joinRoom(const iLiveRoomOption& roomOption, iLiveSuccCallback suc, iLiveErrCallback err, void* data) = 0;
+		virtual void joinRoom(const iLiveRoomOption& roomOption, iLiveSucCallback suc, iLiveErrCallback err, void* data) = 0;
 		/**
 		@brief 退出直播房间
 		@param [in] suc 成功回调
 		@param [in] err 失败回调
 		@param [in] data 用户自定义数据的指针，回调函数中原封不动地传回(通常为调用类的指针);
 		*/
-		virtual void quitRoom(iLiveSuccCallback suc, iLiveErrCallback err, void* data) = 0;
+		virtual void quitRoom(iLiveSucCallback suc, iLiveErrCallback err, void* data) = 0;
 		/**
 		@brief 请求一个或多个成员的视频画面
 		@param [in] streams 请求的流
@@ -676,7 +1067,7 @@ namespace ilive
 		1、requestStream操作必须等待异步回调函数执行结束后，才能进行新的requestStream操作;<br/>
 		2、requestStream、cancelStream和cancelAllStream不能并发执行，即同一时刻只能进行一种操作;
 		*/
-		virtual void requestStream(const Vector<AVStream> &streams, iLiveSuccCallback suc, iLiveErrCallback err, void* data) = 0;
+		virtual void requestStream(const Vector<AVStream> &streams, iLiveSucCallback suc, iLiveErrCallback err, void* data) = 0;
 		/**
 		@brief  取消指定用户的画面。
 		@param [in] streams 取消的流
@@ -687,7 +1078,7 @@ namespace ilive
 		1、cancelStream操作必须等待异步回调函数执行结束后，才能进行新的cancelStream操作;<br/>
 		2、requestStream、cancelStream和cancelAllStream不能并发执行，即同一时刻只能进行一种操作;
 		*/
-		virtual void cancelStream(const Vector<AVStream> &streams, iLiveSuccCallback suc, iLiveErrCallback err, void* data) = 0;
+		virtual void cancelStream(const Vector<AVStream> &streams, iLiveSucCallback suc, iLiveErrCallback err, void* data) = 0;
 		/**
 		@brief 取消所有请求的视频画面。
 		@param [in] suc 成功回调
@@ -695,7 +1086,7 @@ namespace ilive
 		@param [in] data 用户自定义数据的指针，回调函数中原封不动地传回(通常为调用类的指针)
 		@note requestStream、cancelStream和cancelAllStream不能并发执行，即同一时刻只能进行一种操作;
 		*/
-		virtual void cancelAllStream(iLiveSuccCallback suc, iLiveErrCallback err, void* data) = 0;
+		virtual void cancelAllStream(iLiveSucCallback suc, iLiveErrCallback err, void* data) = 0;
 		/**
 		@brief 发C2C消息
 		@param [in] dstUser 接收方id
@@ -704,7 +1095,7 @@ namespace ilive
 		@param [in] err 失败回调
 		@param [in] data 用户自定义数据的指针，回调函数中原封不动地传回(通常为调用类的指针)
 		*/
- 		virtual void sendC2CMessage( const char *dstUser, const Message	&message, iLiveSuccCallback suc, iLiveErrCallback err, void* data ) = 0;
+ 		virtual void sendC2CMessage( const char *dstUser, const Message	&message, iLiveSucCallback suc, iLiveErrCallback err, void* data ) = 0;
  		/**
 		@brief 发群消息
 		@param [in] message 要发送的消息
@@ -713,7 +1104,18 @@ namespace ilive
 		@param [in] data 用户自定义数据的指针，回调函数中原封不动地传回(通常为调用类的指针)
 		@note 此处发送群消息，仅限于在当前直播间中发送群消息。
 		*/
-		virtual void sendGroupMessage( const Message &message, iLiveSuccCallback suc, iLiveErrCallback err, void* data ) = 0;
+		virtual void sendGroupMessage( const Message &message, iLiveSucCallback suc, iLiveErrCallback err, void* data ) = 0;
+
+		/**
+		@brief 获取本地消息
+		@param [in] count 要获取的消息条数
+		@param [in] user 会话的对象id
+		@param [in] suc 成功回调
+		@param [in] err 失败回调
+		@param [in] data 用户自定义数据的指针，回调函数中原封不动地传回(通常为调用类的指针)
+		*/
+		virtual void getLocalC2CMessage( int count, const char *user, Type<Vector<Message>>::iLiveValueSuccCallback suc, iLiveErrCallback err, void* data ) = 0;
+
 		/**
 		@brief 开始推流
 		@param [in] pushOption 推流参数
@@ -729,7 +1131,7 @@ namespace ilive
 		@param [in] err 失败回调
 		@param [in] data 用户自定义数据的指针，回调函数中原封不动地传回(通常为调用类的指针)
 		*/
-		virtual void stopPushStream( uint64 channelId, iLiveSuccCallback suc, iLiveErrCallback err, void* data ) = 0;
+		virtual void stopPushStream( uint64 channelId, iLiveSucCallback suc, iLiveErrCallback err, void* data ) = 0;
 
 		/**
 		@brief 开始录制。
@@ -738,7 +1140,7 @@ namespace ilive
 		@param [in] err 失败回调
 		@param [in] data 用户自定义数据的指针，回调函数中原封不动地传回(通常为调用类的指针)
 		*/
-		virtual void startRecord(const RecordOption& recordOption, iLiveSuccCallback suc, iLiveErrCallback err, void* data) = 0;
+		virtual void startRecord(const RecordOption& recordOption, iLiveSucCallback suc, iLiveErrCallback err, void* data) = 0;
 
 		/**
 		@brief 停止录制。
@@ -756,7 +1158,7 @@ namespace ilive
 		@param [in] err 失败回调
 		@param [in] data 用户自定义数据的指针，回调函数中原封不动地传回(通常为调用类的指针)
 		*/
-		virtual void changeRole( const char *role, iLiveSuccCallback suc, iLiveErrCallback err, void* data ) = 0;		 
+		virtual void changeRole( const char *role, iLiveSucCallback suc, iLiveErrCallback err, void* data ) = 0;		 
 		/**
 		@brief 设置美颜程度
 		@param [in] grade 美颜程度参数。grade取值范围在0-9之间，0表示美颜关闭
@@ -790,7 +1192,7 @@ namespace ilive
 		*/
 		virtual int getPlayerList( Vector< Pair<String/*id*/, String/*name*/> >& playerList ) = 0;
 		/**
-		@brief 获取任务栏打开的所有窗口。
+		@brief 获取任务栏打开的所有主窗口。
 		@param [out] wndList 传回获取到的窗口列表(会过滤掉不可见窗口\无标题窗口\最小化窗状态的窗口)。
 		@return 操作结果,NO_ERR表示无错误;如果没有可分享窗口,返回AV_ERR_DEVICE_NOT_EXIST错误码(错误码见github上的错误码表);
 		@remark 用户可以调用此接口获取可以进行屏幕分享的窗口句柄列表,也可以自己获取;
@@ -940,7 +1342,7 @@ namespace ilive
 		/**
 		@brief 打开文件播放。
 		@details 开始播放本地音频\视频文件，播放文件前，最好先调用isValidMediaFile()检查文件的可用性。
-		@param [in] szMediaFile 文件路径。
+		@param [in] szMediaFile 文件路径(可以是本地文件路径，也可以是一个网络文件的url);
 		@remark
 		1、支持的文件类型:<br/>
 		*.aac,*.ac3,*.amr,*.ape,*.mp3,*.flac,*.midi,*.wav,*.wma,*.ogg,*.amv,
@@ -998,6 +1400,29 @@ namespace ilive
 		virtual bool isValidMediaFile(const String& szMediaFile) = 0;
 
 		/**
+		@brief 设置音视频SDK画面的水印.
+		@param [in] waterMarkType 水印类型，参考E_WaterMarkType说明;
+		@param [in] argbData 水印的argb格式数据;
+		@param [in] width 水印宽度;
+		@param [in] height 水印高度;
+		@return 操作结果，NO_ERR表示无错误。
+		@remark 
+		1、只能在登录成功，打开主路视频(摄像头\自定义采集)之前调用此接口。<br/>
+		2、为了所有画面都有水印效果，用户Spear上配置的各个分辨率都应该设置相应水印;<br/>
+		3、为了性能考虑，设置了水印后，主播自己的预览画面不会显示水印，观众端才会显示水印。<br/>
+		4、水印大小限制规则为: 水印宽度不大于画面宽度的1/4,高度不能大于1/6,且水印宽高都必须为2的倍数;<br/>
+		5、sdk暂时只支持对主路视频设置水印,不支持对辅路设置水印;
+		*/
+		virtual int addWaterMark(E_WaterMarkType waterMarkType, uint8* argbData, uint32 width, uint32 height) = 0;
+
+		/**
+		@brief 设置sdk的日志路径
+		@return 操作结果，true成功，false失败
+		@remark 为避免调用此接口前后日志打印到不同目录下,限制只能在sdk任何接口调用之前调用此接口，否则返回false;
+		*/
+		virtual bool setLogPath(const String& szLogPath) = 0;
+
+		/**
 		@brief 获取当前摄像头状态
 		@return true:打开 false：关闭
 		*/
@@ -1040,5 +1465,7 @@ namespace ilive
 	@return iLive的指针
 	*/
 	extern "C" iLiveAPI iLive* GetILive();
+
+
 }
 #endif //iLive_h_

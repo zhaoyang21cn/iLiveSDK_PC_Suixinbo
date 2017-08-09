@@ -43,6 +43,7 @@ public:
 
 	static void OnMemStatusChange(E_EndpointEventId event_id, const Vector<String> &ids, void* data);
 	static void OnRoomDisconnect(int reason, const char *errorinfo, void* data);
+	static void OnDeviceDetect(void* data);
 	static void OnLocalVideo(const LiveVideoFrame* video_frame, void* custom_data);
 	static void OnRemoteVideo(const LiveVideoFrame* video_frame, void* custom_data);
 	static void OnMessage( const Message& msg, void* data );

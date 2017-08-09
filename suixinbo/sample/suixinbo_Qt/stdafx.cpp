@@ -1,6 +1,6 @@
 #include "stdafx.h"
 
-void g_sendC2CCustomCmd( QString dstUser, E_CustomCmd userAction, QString actionParam, iLiveSuccCallback suc /*= NULL*/, iLiveErrCallback err /*= NULL*/, void* data /*= NULL */ )
+void g_sendC2CCustomCmd( QString dstUser, E_CustomCmd userAction, QString actionParam, iLiveSucCallback suc /*= NULL*/, iLiveErrCallback err /*= NULL*/, void* data /*= NULL */ )
 {
 	QVariantMap varmap;
 	varmap.insert("userAction", (int)userAction);
@@ -14,7 +14,7 @@ void g_sendC2CCustomCmd( QString dstUser, E_CustomCmd userAction, QString action
 	GetILive()->sendC2CMessage( dstUser.toStdString().c_str(), message, suc, err, data );
 }
 
-void g_sendGroupCustomCmd( E_CustomCmd userAction, QString actionParam, iLiveSuccCallback suc /*= NULL*/, iLiveErrCallback err /*= NULL*/, void* data /*= NULL */ )
+void g_sendGroupCustomCmd( E_CustomCmd userAction, QString actionParam, iLiveSucCallback suc /*= NULL*/, iLiveErrCallback err /*= NULL*/, void* data /*= NULL */ )
 {
 	QVariantMap varmap;
 	varmap.insert( "userAction", (int)userAction );

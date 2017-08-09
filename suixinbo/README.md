@@ -4,7 +4,7 @@
 PC随心播是基于iLiveSDK设计的简单直播demo,使用Qt作为界面库，实现了直播软件的基本功能，登录、注册、创建房间(主播)、加入房间(观众)、点赞、邀请上麦等功能；Android、IOS、PC三个平台的随心播实现了互通;目的是供用户作为使用iLiveSDK的参考;
 
 ## 随心播运行
-  点击[这里](http://dldir1.qq.com/hudongzhibo/git/iLiveSDK_PC_Suixinbo/suixinbo_run.zip)可以下载随心播编译好的可运行包，解压后，双击suixinbo_Qt.exe即可运行;
+  下载编译好的[随心播运行包](http://dldir1.qq.com/hudongzhibo/git/iLiveSDK_PC_Suixinbo/suixinbo_run.zip)，解压后，双击suixinbo_Qt.exe即可运行;
 
 ## 随心播编译
 

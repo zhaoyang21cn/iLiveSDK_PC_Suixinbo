@@ -1,5 +1,9 @@
 ## PC_iLiveSDK_ChangeList
 
+###### V1.5.1.1(2017-08-10)
+* RoomOption默认权限修改为拥有所有权限;
+* 针对用户的反馈SDK内部做相应优化;
+
 ###### V1.5.1(2017-08-09)
 * 增加权限配置功能,用户可以直接以连麦观众身份加入房间[(更新说明)](https://github.com/zhaoyang21cn/iLiveSDK_PC_Suixinbo/blob/master/iLiveSDK/README.md);
 * 增加获取直播质量参数接口;

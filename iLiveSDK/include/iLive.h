@@ -516,7 +516,7 @@ namespace ilive
 		iLiveRoomOption()
 			:audioCategory(AUDIO_CATEGORY_MEDIA_PLAY_AND_RECORD)//»¥¶¯Ö±²¥³¡¾°
 			,roomId(0)
-			,authBits(AUTH_BITS_JOIN_ROOM|AUTH_BITS_RECV_AUDIO|AUTH_BITS_RECV_CAMERA_VIDEO|AUTH_BITS_RECV_SCREEN_VIDEO)
+			,authBits(AUTH_BITS_DEFAULT)
 			,autoRequestCamera(true)
 			,autoRequestScreen(true)
 			,autoRequestMediaFile(true)

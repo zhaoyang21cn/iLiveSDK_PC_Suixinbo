@@ -196,7 +196,7 @@ void Live::ChangeRoomUserType()
 void Live::dealMessage( const Message& message )
 {
 	std::string szSender = message.sender.c_str();	
-	for (size_t i = 0; i < message.elems.size(); ++i)
+	for (int i = 0; i < message.elems.size(); ++i)
 	{
 		MessageElem *pElem = message.elems[i];
 		switch( pElem->type )
@@ -956,7 +956,6 @@ void Live::closeEvent( QCloseEvent* event )
 	{
 		m_pPlayMediaFileTimer->stop();
 	}
-	g_pMainWindow->setUseable(true);
 	event->accept();
 }
 
@@ -2008,6 +2007,7 @@ void Live::OnQuitRoomSuc( void* data )
 	roominfo.szId = "";
 	roominfo.info.thumbup = 0;
 	g_pMainWindow->setCurRoomIdfo(roominfo);
+	g_pMainWindow->setUseable(true);
 }
 
 void Live::OnQuitRoomErr( int code, const char *desc, void* data )
@@ -2022,7 +2022,7 @@ void Live::OnChangeRoleSuc( void* data )
 
 void Live::OnChangeRoleErr( int code, const char *desc, void* data )
 {
-	ShowCodeErrorTips(code, desc, reinterpret_cast<Live*>(data), "Change Role Error.");
+	ShowCodeErrorTips(code, FromBits(desc), reinterpret_cast<Live*>(data), "Change Role Error.");
 }
 
 void Live::OnSendGroupMsgSuc( void* data )

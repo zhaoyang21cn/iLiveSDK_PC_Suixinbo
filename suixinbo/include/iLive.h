@@ -73,6 +73,7 @@ namespace ilive
 		TEXT,
 		CUSTOM,
 		IMAGE,
+		FACE,
 	};
 
 	/**
@@ -152,7 +153,7 @@ namespace ilive
 		COLOR_FORMAT_NV21 = 1,
 		COLOR_FORMAT_NV12 = 3,
 		COLOR_FORMAT_RGB16 = 7,
-		COLOR_FORMAT_RGB24 = 8,		///< rgb24格式
+		COLOR_FORMAT_RGB24 = 8,		///< rgb24格式(实际内存中存放方式是BGR888)
 		COLOR_FORMAT_RGB32 = 9,
 	};
 
@@ -358,7 +359,9 @@ namespace ilive
 	struct MessageElem
 	{
 		E_MessageElemType type;
-		virtual ~MessageElem() {};
+		MessageElem(){}
+		MessageElem(const MessageElem& oth):type(oth.type){}
+		virtual ~MessageElem() {}
 	};
 
 	/**
@@ -388,6 +391,19 @@ namespace ilive
 	};
 
 	/**
+	@brief 表情消息元素
+	*/
+	struct MessageFaceElem : public MessageElem
+	{
+		MessageFaceElem(int _index, const String &_data) : data(_data), index(_index)
+		{
+			type = FACE;
+		}
+		int index;
+		String data;
+	};
+
+	/**
 	@brief 图片消息元素
 	*/
 	struct MessageImageElem : public MessageElem
@@ -397,6 +413,7 @@ namespace ilive
 			type = IMAGE;
 		}
 		MessageImageElem(const MessageImageElem& other)
+			:MessageElem(other)
 		{
 			path = other.path;
 			for (int i = 0; i < other.images.size(); ++i)
@@ -405,7 +422,14 @@ namespace ilive
 				Image *img = new Image(otherImg->type, otherImg->size, otherImg->width, otherImg->height, otherImg->url);
 				images.push_back(img);
 			}
-
+		}
+		~MessageImageElem()
+		{
+			while(images.size() > 0)
+			{
+				delete images.back();
+				images.pop_back();
+			}
 		}
 
 		String path;///< 发送图片的本地地址，仅发送有效
@@ -420,6 +444,7 @@ namespace ilive
 	struct Message
 	{
 		String sender;
+		uint32 time;
 		Vector<MessageElem*> elems;
 		
 		Message()
@@ -429,6 +454,7 @@ namespace ilive
 		Message(const Message& other)
 		{
 			sender = other.sender;
+			time = other.time;
 			for (int i = 0; i < other.elems.size(); ++i)
 			{
 				const MessageElem* elem = other.elems[i];
@@ -447,11 +473,18 @@ namespace ilive
 						MessageCustomElem *e = new MessageCustomElem(otherElem->data, otherElem->ext);
 						elems.push_back(e);
 						break;
-					}				
+					}
 				case IMAGE:
 					{
 						const MessageImageElem *otherElem = static_cast<const MessageImageElem*>(other.elems[i]);
 						MessageImageElem *e = new MessageImageElem(*otherElem);
+						elems.push_back(e);
+						break;
+					}
+				case FACE:
+					{
+						const MessageFaceElem *otherElem = static_cast<const MessageFaceElem*>(other.elems[i]);
+						MessageFaceElem *e = new MessageFaceElem(otherElem->index, otherElem->data);
 						elems.push_back(e);
 						break;
 					}
@@ -464,6 +497,7 @@ namespace ilive
 		{
 			if (&other == this) return *this;
 			sender = other.sender;
+			time = other.time;
 			for (int i = 0; i < other.elems.size(); ++i)
 			{
 				const MessageElem* elem = other.elems[i];
@@ -490,6 +524,13 @@ namespace ilive
 						elems.push_back(e);
 						break;
 					}
+				case FACE:
+					{
+						const MessageFaceElem *otherElem = static_cast<const MessageFaceElem*>(other.elems[i]);
+						MessageFaceElem *e = new MessageFaceElem(otherElem->index, otherElem->data);
+						elems.push_back(e);
+						break;
+					}
 				}
 			}
 			return *this;
@@ -497,9 +538,10 @@ namespace ilive
 
 		~Message()
 		{
-			for (int i = 0; i < elems.size(); ++i)
+			while(elems.size()>0)
 			{
-				delete elems[i];
+				delete elems.back();
+				elems.pop_back();
 			}
 		}
 	};
@@ -552,7 +594,9 @@ namespace ilive
 		@brief 设备插拔监听回调;
 		@details 当摄像头、麦克风、扬声器等设备的接入及拔出时，sdk会通过此回调通知给业务侧，收到此回调需要更新设备列表;参见iLiveDeviceDetectListener定义。
 		@note 当摄像头、麦克风、扬声器等正在使用中时,收到此回调前，还会收到相应设备关闭的回调;
+		@todo 此字段即将废弃，请用户使用iLive::setDeviceDetectCallback()接口设置此此回调
 		*/
+		Deprecated
 		iLiveDeviceDetectListener	deviceDetectListener;
 		/**
 		@brief 质量报告的回调;
@@ -1017,7 +1061,13 @@ namespace ilive
 		@param [in] data 用户自定义数据的指针，回调函数中原封不动地传回(通常为调用类的指针);
 		*/
 		virtual	void setDeviceOperationCallback( iLiveDeviceOperationCallback cb, void* data ) = 0;
-		
+		/**
+		@brief 设置设备插拔监听函数;
+		@details 当摄像头、麦克风、扬声器设备的接入及拔出时，sdk会通过此回调通知给业务侧，收到此回调需要更新设备列表;参见iLiveDeviceDetectListener定义。
+		@note 当摄像头、麦克风、扬声器等正在使用中时,设备被拔出，收到此回调前，还会收到相应设备关闭的回调;
+		*/
+		virtual void setDeviceDetectCallback( iLiveDeviceDetectListener cb, void* data ) = 0;
+
 		/**
 		@brief 登录
 		@param [in] userId 用户id
@@ -1034,6 +1084,27 @@ namespace ilive
 		@param [in] data 用户自定义数据的指针，回调函数中原封不动地传回(通常为调用类的指针);
 		*/
 		virtual void logout(iLiveSucCallback suc, iLiveErrCallback err, void* data) = 0;
+
+		/**
+		@brief 开始设备测试
+		@details 开始设备测试后，可以在登录之后，进入房间之前，对打开摄像头、麦克风、扬声器，进行设备测试;
+		@param [in] suc 成功回调
+		@param [in] err 失败回调
+		@param [in] data 用户自定义数据的指针，回调函数中原封不动地传回(通常为调用类的指针);
+		@param [in] preWidth 设置打开摄像头测试时,视频帧的宽度;
+		@param [in] preHeight 设置打开摄像头测试时,视频帧的高度;
+		@remark 设备测试时，美颜、美白功能可用;
+		*/
+		virtual void startDeviceTest(iLiveSucCallback suc, iLiveErrCallback err, void* data, int preWidth = 640, int preHeight = 480) = 0;
+		/**
+		@brief 停止设备测试
+		@param [in] suc 成功回调
+		@param [in] err 失败回调
+		@param [in] data 用户自定义数据的指针，回调函数中原封不动地传回(通常为调用类的指针);
+		@remark 在开始设备测试后，需要停止设备测试，才能进入房间，否则会返回相应错误码;
+		*/
+		virtual void stopDeviceTest(iLiveSucCallback suc, iLiveErrCallback err, void* data) = 0;
+		
 		/**
 		@brief 创建直播房间
 		@param [in] roomOption 房间配置
@@ -1110,11 +1181,12 @@ namespace ilive
 		@brief 获取本地消息
 		@param [in] count 要获取的消息条数
 		@param [in] user 会话的对象id
+		@param [in] fromStart 从头开始拉取
 		@param [in] suc 成功回调
 		@param [in] err 失败回调
 		@param [in] data 用户自定义数据的指针，回调函数中原封不动地传回(通常为调用类的指针)
 		*/
-		virtual void getLocalC2CMessage( int count, const char *user, Type<Vector<Message>>::iLiveValueSuccCallback suc, iLiveErrCallback err, void* data ) = 0;
+		virtual void getLocalC2CMessage( int count, const char *user, bool fromStart, Type<Vector<Message>>::iLiveValueSuccCallback suc, iLiveErrCallback err, void* data ) = 0;
 
 		/**
 		@brief 开始推流

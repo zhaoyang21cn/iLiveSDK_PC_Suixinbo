@@ -36,7 +36,10 @@
     </rect>
    </property>
    <property name="maxLength">
-    <number>16</number>
+    <number>24</number>
+   </property>
+   <property name="placeholderText">
+    <string>4～24个字母\数字(不能为纯数字)</string>
    </property>
   </widget>
   <widget class="QLabel" name="lbPassword">
@@ -63,6 +66,9 @@
    </property>
    <property name="maxLength">
     <number>16</number>
+   </property>
+   <property name="placeholderText">
+    <string>8～16个字母\数字</string>
    </property>
   </widget>
   <widget class="QPushButton" name="btnRegister">

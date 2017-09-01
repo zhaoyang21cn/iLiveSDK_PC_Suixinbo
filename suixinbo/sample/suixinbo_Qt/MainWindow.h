@@ -5,12 +5,9 @@
 #include "Live.h"
 #include "Register.h"
 #include "RoomListItem.h"
-
+#include "DeviceTest.h"
 
 #define OnePageCout 10
-
-
-
 
 enum E_LoginState
 {
@@ -77,6 +74,9 @@ private:
 	static void OniLiveLogoutError(int code, const char *desc, void* data);
 	static void OniLiveCreateRoomSuc(void* data);
 	static void OniLiveCreateRoomErr(int code, const char *desc, void* data);
+	
+	static void OnStartDeviceTestSuc(void* data);
+	static void OnStartDeviceTestErr(int code, const char *desc, void* data);
 
 protected:
 	void closeEvent(QCloseEvent* event) override;
@@ -88,6 +88,7 @@ private slots:
 	void onBtnRefreshLiveList();
 	void onBtnLastPage();
 	void onBtnNextPage();
+	void on_btnDeviceTest_clicked();
 
 private:
 	Ui::MainWindow		m_ui;
@@ -106,6 +107,7 @@ private:
 
 	Register*			m_pRegister;
 	Live*				m_pLive;
+	DeviceTest*			m_pDeviceTest;
 
 	int					m_nCurrentPage;
 	int					m_nTotalPage;

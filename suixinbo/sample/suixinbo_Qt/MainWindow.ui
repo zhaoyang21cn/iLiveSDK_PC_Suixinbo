@@ -163,6 +163,19 @@
        <string>开始直播</string>
       </property>
      </widget>
+     <widget class="QPushButton" name="btnDeviceTest">
+      <property name="geometry">
+       <rect>
+        <x>270</x>
+        <y>430</y>
+        <width>711</width>
+        <height>81</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>设备测试</string>
+      </property>
+     </widget>
     </widget>
    </widget>
    <widget class="QGroupBox" name="groupBox">
@@ -238,7 +251,7 @@
       <string/>
      </property>
      <property name="maxLength">
-      <number>16</number>
+      <number>24</number>
      </property>
     </widget>
     <widget class="QLabel" name="lbUserName">

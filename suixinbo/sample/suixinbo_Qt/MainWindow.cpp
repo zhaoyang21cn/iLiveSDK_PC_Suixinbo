@@ -9,6 +9,7 @@ MainWindow::MainWindow( QWidget * parent /*= 0*/, Qt::WindowFlags flags /*= 0 */
 	m_pSetting = new QSettings("config.ini", QSettings::IniFormat, this);
 	m_pLive = new Live(this, Qt::Dialog|Qt::WindowMinimizeButtonHint|Qt::WindowCloseButtonHint);
 	m_pRegister = new Register(this);
+	m_pDeviceTest = new DeviceTest(this);
 
 	for(int i=0; i<OnePageCout; ++i)
 	{
@@ -89,9 +90,7 @@ void MainWindow::initSDK()
 {
 	GetILive()->setMessageCallBack(Live::OnMessage, m_pLive);
 	GetILive()->setForceOfflineCallback(onForceOffline);
-	GetILive()->setLocalVideoCallBack(Live::OnLocalVideo, m_pLive);
 	GetILive()->setRemoteVideoCallBack(Live::OnRemoteVideo, m_pLive);
-	GetILive()->setDeviceOperationCallback(Live::OnDeviceOperation, m_pLive);
 
 	int nRet = GetILive()->init(m_nAppId, m_nAccountType);
 	if (nRet != NO_ERR)
@@ -489,6 +488,9 @@ void MainWindow::iLiveLogout()
 
 void MainWindow::iLiveCreateRoom()
 {
+	GetILive()->setLocalVideoCallBack(Live::OnLocalVideo, m_pLive);
+	GetILive()->setDeviceOperationCallback(Live::OnDeviceOperation, m_pLive);
+	GetILive()->setDeviceDetectCallback(Live::OnDeviceDetect, m_pLive);
 	iLiveRoomOption roomOption;
 	roomOption.audioCategory = AUDIO_CATEGORY_MEDIA_PLAY_AND_RECORD;//»¥¶¯Ö±²¥³¡¾°
 	roomOption.roomId = m_curRoomInfo.info.roomnum;
@@ -496,7 +498,6 @@ void MainWindow::iLiveCreateRoom()
 	roomOption.controlRole = LiveMaster;
 	roomOption.roomDisconnectListener = Live::OnRoomDisconnect;
 	roomOption.memberStatusListener = Live::OnMemStatusChange;
-	roomOption.deviceDetectListener = Live::OnDeviceDetect;
 	roomOption.data = m_pLive;
 	GetILive()->createRoom( roomOption, OniLiveCreateRoomSuc, OniLiveCreateRoomErr, this );
 }
@@ -553,6 +554,19 @@ void MainWindow::OniLiveCreateRoomErr( int code, const char *desc, void* data )
 	pThis->setUseable(true);
 }
 
+void MainWindow::OnStartDeviceTestSuc( void* data )
+{
+	GetILive()->setDeviceOperationCallback(DeviceTest::OnDeviceOperation, g_pMainWindow->m_pDeviceTest);
+	GetILive()->setLocalVideoCallBack(DeviceTest::OnCameraVideo, g_pMainWindow->m_pDeviceTest);
+	GetILive()->setDeviceDetectCallback(DeviceTest::OnDeviceDetect, g_pMainWindow->m_pDeviceTest);
+	g_pMainWindow->m_pDeviceTest->show();
+}
+
+void MainWindow::OnStartDeviceTestErr( int code, const char *desc, void* data )
+{
+	ShowCodeErrorTips(code, desc, g_pMainWindow);
+}
+
 void MainWindow::closeEvent( QCloseEvent* event )
 {
 	if(m_pLive->isVisible())
@@ -565,6 +579,10 @@ void MainWindow::closeEvent( QCloseEvent* event )
 		event->accept();
 		saveConfig();
 		GetILive()->release();
+	}
+	if (m_pDeviceTest->isVisible())
+	{
+		m_pDeviceTest->close();
 	}
 	if (m_pRegister->isVisible())
 	{
@@ -640,5 +658,10 @@ void MainWindow::onBtnNextPage()
 
 	m_nCurrentPage++;
 	sxbRoomList();
+}
+
+void MainWindow::on_btnDeviceTest_clicked()
+{
+	GetILive()->startDeviceTest(OnStartDeviceTestSuc, OnStartDeviceTestErr, this);
 }
 

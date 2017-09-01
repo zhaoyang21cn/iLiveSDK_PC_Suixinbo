@@ -172,7 +172,7 @@ QString getTimeStrBySeconds( const int64 sec )
 	int hours = sec/3600;
 	int minutes = (sec%3600)/60;
 	int secs = sec%60;
-	char res[9]={0};
-	sprintf( res, "%02d:%02d:%02d", hours, minutes, secs );
+	char res[16]={0};
+	sprintf_s( res, 16, "%02d:%02d:%02d", hours, minutes, secs );
 	return res;
 }

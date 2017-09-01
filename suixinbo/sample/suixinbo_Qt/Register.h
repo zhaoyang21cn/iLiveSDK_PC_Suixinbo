@@ -13,6 +13,7 @@ private slots:
 	void onBtnRegister();
 
 private:
+	bool isDigitStr(const QString& str);
 	void sxbRegister();
 	static void OnRegister(int errorCode, QString errorInfo, QVariantMap datamap, void* pCusData);
 

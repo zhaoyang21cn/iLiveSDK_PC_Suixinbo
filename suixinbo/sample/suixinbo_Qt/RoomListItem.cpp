@@ -71,6 +71,9 @@ void RoomListItem::OnSxbWatcherJoinRoom( int errorCode, QString errorInfo, QVari
 
 void RoomListItem::iLiveJoinRoom()
 {
+	GetILive()->setLocalVideoCallBack(Live::OnLocalVideo, g_pMainWindow->getLiveView());
+	GetILive()->setDeviceOperationCallback(Live::OnDeviceOperation, g_pMainWindow->getLiveView());
+	GetILive()->setDeviceDetectCallback(Live::OnDeviceDetect, g_pMainWindow->getLiveView());
 	iLiveRoomOption roomOption;
 	roomOption.audioCategory = AUDIO_CATEGORY_MEDIA_PLAY_AND_RECORD;//»¥¶¯Ö±²¥³¡¾°
 	roomOption.roomId = m_room.info.roomnum;
@@ -78,7 +81,6 @@ void RoomListItem::iLiveJoinRoom()
 	roomOption.controlRole = Guest;
 	roomOption.memberStatusListener = Live::OnMemStatusChange;
 	roomOption.roomDisconnectListener = Live::OnRoomDisconnect;
-	roomOption.deviceDetectListener = Live::OnDeviceDetect;
 	roomOption.data = g_pMainWindow->getLiveView();
 	GetILive()->joinRoom( roomOption, OniLiveJoinRoomSuc, OniLiveJoinRoomErr, this );
 }

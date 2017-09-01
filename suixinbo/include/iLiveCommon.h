@@ -6,10 +6,10 @@
 #include <stdarg.h>
 #include <Windows.h>
 
-#ifdef iLiveSDKImpl
+#ifdef iLiveSDKExport
 #define iLiveAPI __declspec(dllexport)
 #else
-#define iLiveAPI __declspec(dllimport)
+#define iLiveAPI
 #endif
 
 #define	ILIVE_MININUM_STRING_CAPACITY		32
@@ -32,6 +32,12 @@ typedef unsigned long long	uint64;
 #define SafeDeleteArr(pArr) {delete[] (pArr); (pArr) = 0;}
 
 #define NAME(X) #X
+
+#if defined(_MSC_VER)
+#    define Deprecated __declspec(deprecated)
+#else
+#    define Deprecated
+#endif
 
 template<typename T> inline void
 iliveSwap(T& a, T&b)
@@ -58,7 +64,7 @@ template<typename T> inline T
 iliveClamp(const T& x, const T& min, const T& max)
 {
 	assert(max >= min);
-	return iliveMin<T>( max, iliveMax(min, x) );
+	return iliveMin( max, iliveMax(min, x) );
 }
 
 iLiveAPI void*		iliveMalloc(sizet size);

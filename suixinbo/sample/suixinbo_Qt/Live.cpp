@@ -942,6 +942,10 @@ void Live::closeEvent( QCloseEvent* event )
 			sxbWatcherOrJoinerQuitRoom();
 		}
 	}
+	else
+	{
+		g_pMainWindow->setUseable(true);
+	}
 	m_bRecording = false;
 	m_bPushing = false;
 	m_bRoomDisconnectClose = false;

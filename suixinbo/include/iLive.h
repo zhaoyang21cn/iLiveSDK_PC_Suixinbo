@@ -1064,7 +1064,7 @@ namespace ilive
 		/**
 		@brief 设置设备插拔监听函数;
 		@details 当摄像头、麦克风、扬声器设备的接入及拔出时，sdk会通过此回调通知给业务侧，收到此回调需要更新设备列表;参见iLiveDeviceDetectListener定义。
-		@note 当摄像头、麦克风、扬声器等正在使用中时,设备被拔出，收到此回调前，还会收到相应设备关闭的回调;
+		@note 当摄像头、麦克风、扬声器等正在使用中时,设备被拔出，收到此回调前，还会收到相应设备关闭的回调;注意: 只有在房间中或设备测试中，才会收到此回调;
 		*/
 		virtual void setDeviceDetectCallback( iLiveDeviceDetectListener cb, void* data ) = 0;
 

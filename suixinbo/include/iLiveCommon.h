@@ -12,7 +12,7 @@
 #define iLiveAPI
 #endif
 
-#define	ILIVE_MININUM_STRING_CAPACITY		32
+#define	ILIVE_MININUM_STRING_CAPACITY	32
 #define	ILIVE_INVALID_INDEX				-1
 
 typedef size_t				sizet;

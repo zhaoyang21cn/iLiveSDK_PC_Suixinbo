@@ -245,6 +245,13 @@ namespace ilive
 	@brief 被挤下线回调函数指针类型;
 	*/
 	typedef void (*ForceOfflineCallback)();
+
+	/**
+	@brief 连接网络成功函数指针类型;
+	*/
+	typedef void (*onNetworkCallback)();
+
+
 	
 	/**
 	@brief 成功带值回调函数指针类型的封装
@@ -1030,6 +1037,13 @@ namespace ilive
 		@note 当前房间之外的群消息会被sdk过滤掉;
 		*/
 		virtual void setMessageCallBack( iLiveMessageCallback cb, void* data ) = 0;
+		/**
+		@brief 设置网络连接监听
+		@param [in] onConn 联网成功回调
+		@param [in] onDisconn 断连回调
+		@note 建议成功联网回调后再进行登录等其他业务逻辑
+		*/
+		virtual void setConnListener( onNetworkCallback onConn, onNetworkCallback onDisconn ) = 0;
 
 		/**
 		@brief 设置预处理函数指针。

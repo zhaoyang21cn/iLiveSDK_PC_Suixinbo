@@ -34,7 +34,7 @@ vs2010之后的版本，可以直接在VS中进行安装，操作步骤如下图
 VS2010下，直接在VS中搜索找不到Qt插件，需要在Qt官网下载Qt插件，或者从[这里](http://dldir1.qq.com/hudongzhibo/git/Qt/Qt_5.0.0.zip)下载Qt5.0.0及vs2010插件,然后进行手动安装；
 
 ### 随心播项目编译
-使用VS打开suixinbo\sample目录下的suixinbo.sln，如果是vs2010之后的vs版本，会提示升级项目配置，点击"确定",一定要选择升级，否则会使用vs2010来编译；然后，在项目suixinbo_Qt上右键-->Qt Project Settings-->配置项目使用的Qt版本，配置好后，如下图,
+使用VS打开suixinbo\sample目录下的suixinbo.sln，如果是vs2010之后的vs版本，会提示升级项目配置，点击"确定",一定要选择升级，否则会使用vs2010来编译；然后，在项目suixinbo_Qt上右键-->Qt Project Settings-->配置项目使用的Qt版本，配置好后，如下图,<br/>
 ![](https://mc.qcloudimg.com/static/img/1580d6b0287ea3ac8a88d81ee4d917c1/pic.png)<br/>
 此时即可编译运行随心播了;
 

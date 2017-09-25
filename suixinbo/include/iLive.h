@@ -580,6 +580,7 @@ namespace ilive
 
 		E_AudioCategory			audioCategory;			///< 音视场景策略,详细信息见E_AudioCategory的定义.
 		uint32					roomId;					///< 房间ID,由业务侧创建并维护的房间ID
+		String					groupId;				///< IM群组ID;此字段只在大咖模式下使用;
 		uint64					authBits;				///< 通话能力权限位;主播应当设置为AUTH_BITS_DEFAULT,连麦观众设置为AUTH_BITS_DEFAULT & (~AUTH_BITS_CREATE_ROOM),观众设置为AUTH_BITS_JOIN_ROOM|AUTH_BITS_RECV_AUDIO|AUTH_BITS_RECV_CAMERA_VIDEO|AUTH_BITS_RECV_SCREEN_VIDEO
 		String					controlRole;			///< 角色名，web端音视频参数配置工具所设置的角色名
 		String					authBuffer;				///< 通话能力权限位的加密串
@@ -1034,7 +1035,7 @@ namespace ilive
 		@brief 设置消息监听
 		@param [in] cb 回调函数
 		@param [in] data 用户自定义数据的指针，回调函数中原封不动地传回(通常为调用类的指针);
-		@note 当前房间之外的群消息会被sdk过滤掉;
+		@note 当前房间所用群组之外的群消息会被sdk过滤掉;
 		*/
 		virtual void setMessageCallBack( iLiveMessageCallback cb, void* data ) = 0;
 		/**
@@ -1368,8 +1369,7 @@ namespace ilive
 		/**
 		@brief 打开屏幕分享(指定窗口)。
 		@param [in] hWnd 所要捕获的窗口句柄(NULL表示全屏)。如果传入的hWnd不是有效窗口句柄\窗口不可见\窗口处于最小化状态，将会返回ERR_INVALID_PARAM;
-		@param [in] fps 捕获帧率,取值范围[1,10]。
-		@remark 传入的参数(fps)可能会经过sdk内部调整，并通过引用方式传回给调用者，实际分享使用的fps以传回值为准;
+		@param [in] fps 捕获帧率,取值范围[1,10]。注意: 此参数暂无意义，sdk会根据网络情况，动态调整fps;
 		@note
 		屏幕分享和播片功能都是通过辅路流传输，所以屏幕分享和播片互斥使用;
 		辅路流被自己占用，设备操作回调中，返回错误码AV_ERR_EXCLUSIVE_OPERATION(错误码见github上的错误码表);
@@ -1379,8 +1379,7 @@ namespace ilive
 		/**
 		@brief 打开屏幕共享(指定区域)。
 		@param [in] left/top/right/bottom 所要捕获屏幕画面的区域的左上角坐标(left, top)和右下角坐标(right, bottom)，它们是以屏幕的左上角坐标为原点的。
-		@param [in] fps 捕获帧率，取值范围[1,10];
-		@remark 传入的参数可能会经过sdk内部细微的调整，并通过引用方式传回给调用者，实际的分享区域以传回的值为准;
+		@param [in] fps 捕获帧率，取值范围[1,10];注意: 此参数暂时无意义，sdk会根据网络情况，动态调整fps;
 		@note
 		屏幕分享和播片功能都是通过辅路流传输，所以屏幕分享和播片互斥使用;
 		辅路流被自己占用，设备操作回调中，返回错误码AV_ERR_EXCLUSIVE_OPERATION(错误码见github上的错误码表);

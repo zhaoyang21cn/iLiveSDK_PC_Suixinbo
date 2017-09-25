@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1208</width>
+    <width>1221</width>
     <height>648</height>
    </rect>
   </property>
@@ -93,9 +93,9 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>170</y>
+      <y>160</y>
       <width>171</width>
-      <height>31</height>
+      <height>38</height>
      </rect>
     </property>
     <property name="text">
@@ -106,9 +106,9 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>20</y>
+      <y>25</y>
       <width>21</width>
-      <height>16</height>
+      <height>20</height>
      </rect>
     </property>
     <property name="text">
@@ -119,9 +119,9 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>50</y>
+      <y>56</y>
       <width>21</width>
-      <height>16</height>
+      <height>20</height>
      </rect>
     </property>
     <property name="text">
@@ -132,9 +132,9 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>80</y>
+      <y>90</y>
       <width>21</width>
-      <height>16</height>
+      <height>20</height>
      </rect>
     </property>
     <property name="text">
@@ -145,35 +145,22 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>110</y>
+      <y>125</y>
       <width>21</width>
-      <height>16</height>
+      <height>20</height>
      </rect>
     </property>
     <property name="text">
      <string>Y1:</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_5">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>140</y>
-      <width>31</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>FPS:</string>
-    </property>
-   </widget>
    <widget class="QSpinBox" name="sbX0">
     <property name="geometry">
      <rect>
       <x>50</x>
-      <y>20</y>
+      <y>23</y>
       <width>41</width>
-      <height>22</height>
+      <height>27</height>
      </rect>
     </property>
     <property name="buttonSymbols">
@@ -187,9 +174,9 @@
     <property name="geometry">
      <rect>
       <x>50</x>
-      <y>50</y>
+      <y>56</y>
       <width>41</width>
-      <height>22</height>
+      <height>27</height>
      </rect>
     </property>
     <property name="buttonSymbols">
@@ -203,9 +190,9 @@
     <property name="geometry">
      <rect>
       <x>50</x>
-      <y>80</y>
+      <y>91</y>
       <width>41</width>
-      <height>22</height>
+      <height>27</height>
      </rect>
     </property>
     <property name="buttonSymbols">
@@ -219,9 +206,9 @@
     <property name="geometry">
      <rect>
       <x>50</x>
-      <y>110</y>
+      <y>125</y>
       <width>41</width>
-      <height>22</height>
+      <height>27</height>
      </rect>
     </property>
     <property name="buttonSymbols">
@@ -231,25 +218,6 @@
      <number>10000</number>
     </property>
    </widget>
-   <widget class="QSpinBox" name="sbFPS">
-    <property name="geometry">
-     <rect>
-      <x>50</x>
-      <y>140</y>
-      <width>131</width>
-      <height>22</height>
-     </rect>
-    </property>
-    <property name="buttonSymbols">
-     <enum>QAbstractSpinBox::NoButtons</enum>
-    </property>
-    <property name="maximum">
-     <number>300</number>
-    </property>
-    <property name="value">
-     <number>0</number>
-    </property>
-   </widget>
    <widget class="QPushButton" name="btnUpdateScreenShare">
     <property name="enabled">
      <bool>false</bool>
@@ -257,9 +225,9 @@
     <property name="geometry">
      <rect>
       <x>100</x>
-      <y>60</y>
+      <y>65</y>
       <width>81</width>
-      <height>33</height>
+      <height>38</height>
      </rect>
     </property>
     <property name="text">
@@ -272,7 +240,7 @@
       <x>100</x>
       <y>20</y>
       <width>81</width>
-      <height>33</height>
+      <height>38</height>
      </rect>
     </property>
     <property name="text">
@@ -283,9 +251,9 @@
     <property name="geometry">
      <rect>
       <x>100</x>
-      <y>100</y>
+      <y>115</y>
       <width>81</width>
-      <height>33</height>
+      <height>38</height>
      </rect>
     </property>
     <property name="text">
@@ -642,9 +610,9 @@
    <property name="geometry">
     <rect>
      <x>350</x>
-     <y>80</y>
+     <y>100</y>
      <width>131</width>
-     <height>291</height>
+     <height>271</height>
     </rect>
    </property>
    <property name="contextMenuPolicy">
@@ -1274,9 +1242,9 @@
    <property name="geometry">
     <rect>
      <x>970</x>
-     <y>17</y>
+     <y>88</y>
      <width>231</width>
-     <height>462</height>
+     <height>391</height>
     </rect>
    </property>
    <property name="styleSheet">
@@ -1284,6 +1252,51 @@
    </property>
    <property name="readOnly">
     <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QGroupBox" name="cameraGB_2">
+   <property name="geometry">
+    <rect>
+     <x>970</x>
+     <y>10</y>
+     <width>231</width>
+     <height>61</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>混流</string>
+   </property>
+   <widget class="QPushButton" name="btnMix">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>20</y>
+      <width>211</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>开始混流</string>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QLabel" name="lbInviteTip">
+   <property name="geometry">
+    <rect>
+     <x>350</x>
+     <y>80</y>
+     <width>131</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">#lbInviteTip
+{
+	font: 8pt &quot;宋体&quot;;
+}</string>
+   </property>
+   <property name="text">
+    <string>主播用鼠标右键邀请上麦</string>
    </property>
   </widget>
  </widget>

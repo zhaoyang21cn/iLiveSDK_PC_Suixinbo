@@ -1,5 +1,7 @@
 #include "stdafx.h"
 #include "Live.h"
+#include "json/json.h"
+#include "MixStreamHelper.h"
 
 Live::Live( QWidget * parent /*= 0*/, Qt::WindowFlags f /*= 0*/ )
 	:QDialog(parent, f)
@@ -40,7 +42,6 @@ Live::Live( QWidget * parent /*= 0*/, Qt::WindowFlags f /*= 0*/ )
 	m_ui.sbY0->setValue(m_y0);
 	m_ui.sbX1->setValue(m_x1);
 	m_ui.sbY1->setValue(m_y1);
-	m_ui.sbFPS->setValue(m_fps);
 
 	m_n64Pos = 0;
 	m_n64MaxPos = 0;
@@ -108,12 +109,13 @@ Live::Live( QWidget * parent /*= 0*/, Qt::WindowFlags f /*= 0*/ )
 	connect( m_pFillFrameTimer, SIGNAL(timeout()), this, SLOT(OnFillFrameTimer()) );
 	connect( m_pPlayMediaFileTimer, SIGNAL(timeout()), this, SLOT(OnPlayMediaFileTimer()) );
 	connect( pActInviteInteract, SIGNAL(triggered()), this, SLOT(OnActInviteInteract()) );
-	connect( pActCancelInteract, SIGNAL(triggered()), this, SLOT(OnActCancelInteract()) );
+	connect( pActCancelInteract, SIGNAL(triggered()), this, SLOT(OnActCancelInteract()) );	
 }
 
 void Live::setRoomID( int roomID )
 {
 	m_ui.sbRoomID->setValue(roomID);
+	mRoomId = roomID;
 }
 
 void Live::setRoomUserType( E_RoomUserType userType )
@@ -336,7 +338,7 @@ void Live::dealCusMessage( const std::string& sender, int nUserAction, QString s
 	}
 }
 
-void Live::startTimer()
+void Live::StartTimer()
 {
 	sxbRoomIdList();
 	m_pTimer->start(10000); //随心播后台要求10秒上报一次心跳
@@ -594,15 +596,13 @@ void Live::OnBtnOpenScreenShareArea()
 	m_y0 = m_ui.sbY0->value();
 	m_x1 = m_ui.sbX1->value();
 	m_y1 = m_ui.sbY1->value();
-	m_fps= m_ui.sbFPS->value();
 	GetILive()->openScreenShare(m_x0, m_y0, m_x1, m_y1, m_fps);
 }
 
 void Live::OnBtnOpenScreenShareWnd()
 {
 	m_ui.btnOpenScreenShareWnd->setEnabled(false);
-	m_fps= m_ui.sbFPS->value();
-
+	
 	HWND hwnd = WndList::GetSelectWnd();
 	if ( !hwnd )
 	{
@@ -1016,12 +1016,15 @@ void Live::freeCameraVideoRenders( std::vector<std::string> arrNeedFreeRenders )
 
 void Live::freeAllCameraVideoRender()
 {
+	m_pLocalCameraRender->Clear();
+	m_pScreenShareRender->Clear();
 	m_pLocalCameraRender->exitFullScreen();
 	m_pScreenShareRender->exitFullScreen();
 	m_pLocalCameraRender->recoverRender();
 	m_pScreenShareRender->recoverRender();
 	for (int i=0; i<MaxVideoRender; ++i)
 	{
+		m_pRemoteVideoRenders[i]->Clear();
 		m_pRemoteVideoRenders[i]->exitFullScreen();
 		m_pRemoteVideoRenders[i]->recoverRender();
 		m_arrRemoteIdentifiers[i] = "";
@@ -1031,6 +1034,7 @@ void Live::freeAllCameraVideoRender()
 
 void Live::freeScreenVideoRender()
 {
+	m_pScreenShareRender->Clear();
 	m_pScreenShareRender->update();
 	updateLater();
 }
@@ -1198,17 +1202,14 @@ void Live::updateScreenShareGB()
 	m_ui.sbY0->blockSignals(true);
 	m_ui.sbX1->blockSignals(true);
 	m_ui.sbY1->blockSignals(true);
-	m_ui.sbFPS->blockSignals(true);
 	m_ui.sbX0->setValue(m_x0);
 	m_ui.sbY0->setValue(m_y0);
 	m_ui.sbX1->setValue(m_x1);
 	m_ui.sbY1->setValue(m_y1);
-	m_ui.sbFPS->setValue(m_fps);
 	m_ui.sbX0->blockSignals(false);
 	m_ui.sbY0->blockSignals(false);
 	m_ui.sbX1->blockSignals(false);
 	m_ui.sbY1->blockSignals(false);
-	m_ui.sbFPS->blockSignals(false);
 
 	E_ScreenShareState state = GetILive()->getScreenShareState();
 	switch( state )
@@ -1219,7 +1220,6 @@ void Live::updateScreenShareGB()
 			m_ui.sbY0->setEnabled(true);
 			m_ui.sbX1->setEnabled(true);
 			m_ui.sbY1->setEnabled(true);
-			m_ui.sbFPS->setEnabled(true);
 			m_ui.btnOpenScreenShareArea->setEnabled(true);
 			m_ui.btnUpdateScreenShare->setEnabled(false);
 			m_ui.btnOpenScreenShareWnd->setEnabled(true);
@@ -1232,7 +1232,6 @@ void Live::updateScreenShareGB()
 			m_ui.sbY0->setEnabled(true);
 			m_ui.sbX1->setEnabled(true);
 			m_ui.sbY1->setEnabled(true);
-			m_ui.sbFPS->setEnabled(false);
 			m_ui.btnOpenScreenShareArea->setEnabled(false);
 			m_ui.btnUpdateScreenShare->setEnabled(true);
 			m_ui.btnOpenScreenShareWnd->setEnabled(false);
@@ -1245,7 +1244,6 @@ void Live::updateScreenShareGB()
 			m_ui.sbY0->setEnabled(false);
 			m_ui.sbX1->setEnabled(false);
 			m_ui.sbY1->setEnabled(false);
-			m_ui.sbFPS->setEnabled(false);
 			m_ui.btnOpenScreenShareArea->setEnabled(false);
 			m_ui.btnUpdateScreenShare->setEnabled(false);
 			m_ui.btnOpenScreenShareWnd->setEnabled(false);
@@ -2062,16 +2060,24 @@ void Live::OnMemberListMenu( QPoint point )
 
 void Live::OnActInviteInteract()
 {
-	sendInviteInteract();
+	m_nCurSelectedMember = m_ui.liMembers->currentRow();
+	if ( m_nCurSelectedMember >= 0 || m_nCurSelectedMember < m_ui.liMembers->count() )
+	{
+		sendInviteInteract();
+	}
 }
 
 void Live::OnActCancelInteract()
 {
-	RoomMember& roomber = m_roomMemberList[m_nCurSelectedMember];
-	roomber.userType = E_RoomUserWatcher;
-	updateMemberList();
+	m_nCurSelectedMember = m_ui.liMembers->currentRow();
+	if ( m_nCurSelectedMember >= 0 || m_nCurSelectedMember < m_ui.liMembers->count() )
+	{
+		RoomMember& roomber = m_roomMemberList[m_nCurSelectedMember];
+		roomber.userType = E_RoomUserWatcher;
+		updateMemberList();
 
-	sendCancelInteract();
+		sendCancelInteract();
+	}
 }
 
 void Live::OnVideoRenderFullScreen( VideoRender* pRender )
@@ -2166,3 +2172,49 @@ void Live::OnStopPushStreamErr( int code, const char *desc, void* data )
 {
 	ShowCodeErrorTips(code, desc, reinterpret_cast<Live*>(data), "Stop Push Stream Error.");
 }
+
+
+void Live::on_btnMix_clicked()
+{
+	std::vector<std::pair<std::string, bool>> list;
+	//aux
+	if (m_pScreenShareRender != nullptr && !m_pScreenShareRender->getId().empty())
+	{
+		std::pair<std::string, bool> id(m_pScreenShareRender->getId(), true);		
+		list.push_back(id);
+	}
+	//local camera
+	if (m_pLocalCameraRender != nullptr && !m_pLocalCameraRender->getId().empty())
+	{
+		std::pair<std::string, bool> id(m_pLocalCameraRender->getId(), false);		
+		list.push_back(id);
+	}
+
+	//remote camera
+	for (sizet i = 0; i < m_arrRemoteIdentifiers.size(); ++i)
+	{
+		if (m_arrRemoteIdentifiers[i].empty()) continue;
+		std::pair<std::string, bool> id(m_arrRemoteIdentifiers[i], false);		
+		list.push_back(id);
+	}
+	
+	if (list.size() < 2)
+	{
+		ShowErrorTips( FromBits("至少有两路流才可以进行混流!"), this );
+	}
+	else
+	{
+		MixStreamHelper helper(list, QString("45eeb9fc2e4e6f88b778e0bbd9de3737"), mRoomId, this);
+		helper.doRequest();
+	}
+}
+
+void Live::onMixStream(std::string streamCode)
+{
+	std::stringstream ss;
+	ss << "ffplay rtmp://8525.liveplay.myqcloud.com/live/" << streamCode;	
+	std::string url = ss.str();
+	
+	system(url.c_str());
+}
+

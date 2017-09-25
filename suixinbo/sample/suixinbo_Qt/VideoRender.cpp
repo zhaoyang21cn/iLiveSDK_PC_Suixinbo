@@ -100,6 +100,7 @@ void VideoRender::Clear()
 	m_frameHeight = height();
 	paintPic(m_pBkgDataBuf);
 	m_lastClock = 0;
+	m_identifier = "";
 }
 
 void VideoRender::pauseRender()
@@ -263,5 +264,10 @@ void VideoRender::paintPic( uint8* pData )
 	DeleteObject(hMemBitmap);
 	DeleteObject(hMemDC);	
 	ReleaseDC(hWnd, hDC);
+}
+
+std::string VideoRender::getId()
+{
+	return m_identifier;
 }
 

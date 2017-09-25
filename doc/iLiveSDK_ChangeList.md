@@ -1,5 +1,9 @@
 ## PC_iLiveSDK_ChangeList
 
+###### V1.7.0.0(2017-09-25)
+* 升级到avsdk 1.9.5;
+* 支持大咖模式(先创建房间，主播和观众不分先后顺序加入房间,[使用说明](https://github.com/zhaoyang21cn/iLiveSDK_PC_Suixinbo/blob/master/doc/bigstar.md));
+
 ###### V1.5.2.3(2017-09-13)
 * 修正iLiveSDK接收消息时，偶现crash问题;
 * 收到被踢下线回调时，sdk没有恢复到登出状态----bug修正;

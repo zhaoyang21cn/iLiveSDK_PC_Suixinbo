@@ -36,8 +36,9 @@ public:
 	void parseCusMessage(const std::string& sender,std::string msg);
 	void dealCusMessage(const std::string& sender, int nUserAction, QString szActionParam);
 	
-	void startTimer();
+	void StartTimer();
 	void stopTimer();
+	void onMixStream(std::string streamCode);
 
 	void updateLater(int msec = 2000);
 
@@ -93,6 +94,8 @@ private slots:
 	void OnActCancelInteract();	
 	void OnVideoRenderFullScreen(VideoRender* pRender);
 	void OnExitVideoRenderFullScreen(VideoRender* pRender);
+	void on_btnMix_clicked();
+
 
 protected:
 	void closeEvent(QCloseEvent* event) override;
@@ -165,6 +168,7 @@ private:
 
 	void exitInteract();//连麦观众执行主播发出的断线命令
 	void OnExitInteract();
+	void onMixTextClick(const QUrl &url);
 
 	void sendQuitRoom();//主播发送退出房间信令
 
@@ -252,6 +256,7 @@ private:
 	bool	m_bPushing;
 
 	QString	m_szMsgs;
+	int mRoomId;
 };
 
 #endif//Live_h_

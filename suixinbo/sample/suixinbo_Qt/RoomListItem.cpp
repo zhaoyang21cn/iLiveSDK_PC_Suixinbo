@@ -94,7 +94,7 @@ void RoomListItem::OniLiveJoinRoomSuc( void* data )
 	Live* pLive = g_pMainWindow->getLiveView();
 	pLive->setRoomID(pRoomListItem->m_room.info.roomnum);
 	pLive->setRoomUserType(E_RoomUserWatcher);
-	pLive->startTimer();
+	pLive->StartTimer();
 	pLive->show();
 }
 

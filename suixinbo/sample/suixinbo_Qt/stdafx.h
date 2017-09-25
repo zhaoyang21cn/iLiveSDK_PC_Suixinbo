@@ -29,6 +29,8 @@ using namespace ilive;
 #define SuixinboServerUrl	"http://123.206.118.43/sxb_dev/index.php"
 #define SuixinboAppid		1400027849
 #define SuixinboAccountType 11656
+#define SuixinboApiKey      45eeb9fc2e4e6f88b778e0bbd9de3737
+
 
 #define FromStdStr(str) QString::fromStdString(str)
 #define FromBits(str) QString::fromLocal8Bit(str)

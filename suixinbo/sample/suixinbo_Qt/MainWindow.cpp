@@ -372,7 +372,7 @@ void MainWindow::OnSxbCreatorJoinRoom( int errorCode, QString errorInfo, QVarian
 
 	if (errorCode==E_SxbOK)
 	{
-		pMainWindow->m_pLive->startTimer();//启动计时器
+		pMainWindow->m_pLive->StartTimer();//启动计时器
 	}
 	else
 	{
@@ -508,12 +508,12 @@ void MainWindow::OniLiveLoginSuccess( void* data )
 	pThis->switchLoginState(E_Login);
 
 	//设置水印
-	QImage img("waterMark.png");
-	int nRet = GetILive()->addWaterMark( WATER_MARK_TYPE_1280_720, img.bits(), img.width(), img.height() );//PC随心播只用到了这一种分辨率，所以，这里只设置一次水印。
-	if (nRet != NO_ERR)
-	{
-		ShowCodeErrorTips(nRet, FromBits("设置水印失败."), pThis);
-	}
+// 	QImage img("waterMark.png");
+// 	int nRet = GetILive()->addWaterMark( WATER_MARK_TYPE_1280_720, img.bits(), img.width(), img.height() );//PC随心播只用到了这一种分辨率，所以，这里只设置一次水印。
+// 	if (nRet != NO_ERR)
+// 	{
+// 		ShowCodeErrorTips(nRet, FromBits("设置水印失败."), pThis);
+// 	}
 }
 
 void MainWindow::OniLiveLoginError( int code, const char *desc, void* data )

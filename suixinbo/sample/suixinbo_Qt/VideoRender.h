@@ -15,6 +15,7 @@ public:
 
 	void	enterFullScreen();//È«ÆÁ
 	void	exitFullScreen();//ÍË³öÈ«ÆÁ
+	std::string getId();
 
 signals:
 	void	applyFullScreen(VideoRender* pRender);

@@ -8,6 +8,7 @@ iLiveSDK(全称:Interactive Live SDK)整合了互动直播SDK(AVSDK)、即时通
 
 ## DEMO
 [随心播](https://github.com/zhaoyang21cn/iLiveSDK_PC_Suixinbo/tree/master/suixinbo)
+[随心播运行包下载](http://dldir1.qq.com/hudongzhibo/git/iLiveSDK_PC_Suixinbo/suixinbo_run.zip)
 
 ## API文档
 [API文档下载](https://github.com/zhaoyang21cn/iLiveSDK_PC_Demos/blob/master/doc/ILiveSDK_api.zip)

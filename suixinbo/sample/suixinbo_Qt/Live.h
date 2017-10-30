@@ -5,7 +5,6 @@
 #include "VideoRender.h"
 #include "WndList.h"
 
-#define MaxVideoRender 3
 #define MaxShowMembers 50
 
 enum E_RoomUserType
@@ -39,8 +38,6 @@ public:
 	void StartTimer();
 	void stopTimer();
 	void onMixStream(std::string streamCode);
-
-	void updateLater(int msec = 2000);
 
 	static void OnMemStatusChange(E_EndpointEventId event_id, const Vector<String> &ids, void* data);
 	static void OnRoomDisconnect(int reason, const char *errorinfo, void* data);
@@ -86,14 +83,11 @@ private slots:
 	void OnSbSkinWhiteChanged(int value);
 	void OnHsMediaFileRateChanged(int value);
 	void OnHeartBeatTimer();
-	void OnDelayUpdateTimer();
 	void OnFillFrameTimer();
 	void OnPlayMediaFileTimer();
 	void OnMemberListMenu(QPoint point);
 	void OnActInviteInteract();
 	void OnActCancelInteract();	
-	void OnVideoRenderFullScreen(VideoRender* pRender);
-	void OnExitVideoRenderFullScreen(VideoRender* pRender);
 	void on_btnMix_clicked();
 
 
@@ -103,10 +97,9 @@ protected:
 private:
 	//自定义私有函数
 	void updateCameraList();
-	VideoRender* getVideoRender(std::string szIdentifier);
-	void freeCameraVideoRenders(std::vector<std::string> arrNeedFreeRenders);
+	VideoRender* findVideoRender(std::string szIdentifier);
+	VideoRender* getFreeVideoRender(std::string szIdentifier);
 	void freeAllCameraVideoRender();
-	void freeScreenVideoRender();
 
 	void addMsgLab(QString msg);
 
@@ -219,15 +212,12 @@ private:
 
 	Vector< Pair<String/*id*/, String/*name*/> > m_cameraList;
 
-	std::vector<std::string> m_arrRemoteIdentifiers;
-	VideoRender*			 m_pRemoteVideoRenders[MaxVideoRender];	
-	bool					 m_bRemoteVideoRenderFrees[MaxVideoRender];
+	std::vector<VideoRender*>	m_pRemoteVideoRenders;
 
 	int					m_nRoomSize;
 	QVector<RoomMember> m_roomMemberList;
 
 	QTimer*			m_pTimer;
-	QTimer*			m_pDelayUpdateTimer;
 	QTimer*			m_pFillFrameTimer;
 	QTimer*			m_pPlayMediaFileTimer;
 	

@@ -3,6 +3,32 @@
 #include "json/json.h"
 #include "MixStreamHelper.h"
 
+//上下翻转RGB帧
+static bool reverseRGBFrame(LiveVideoFrame& frame)
+{
+	if (frame.desc.colorFormat != COLOR_FORMAT_RGB24)
+	{
+		return false;
+	}
+
+	LPBYTE backupBuf = (LPBYTE)malloc(frame.dataSize);
+	if (!backupBuf)
+	{
+		return false;
+	}
+	memcpy(backupBuf, frame.data, frame.dataSize);
+
+	const UINT nWidth = frame.desc.width;
+	const UINT nHeight = frame.desc.height;
+	for (UINT i=0; i<frame.desc.height; ++i)
+	{
+		memcpy( frame.data + i * nWidth * 3, backupBuf + (nHeight-1-i) * nWidth * 3, nWidth*3 );
+	}
+	free(backupBuf);
+
+	return true;
+}
+
 Live::Live( QWidget * parent /*= 0*/, Qt::WindowFlags f /*= 0*/ )
 	:QDialog(parent, f)
 {
@@ -10,27 +36,12 @@ Live::Live( QWidget * parent /*= 0*/, Qt::WindowFlags f /*= 0*/ )
 
 	m_userType =  E_RoomUserInvalid;
 
-	m_pLocalCameraRender = new VideoRender(this);
-	m_pScreenShareRender = new VideoRender(this);
-	m_ui.layoutLocalVideo->addWidget(m_pLocalCameraRender);
-	m_ui.layoutScreenShare->addWidget(m_pScreenShareRender);
-	connect( m_pLocalCameraRender, SIGNAL(applyFullScreen(VideoRender*)), this, SLOT(OnVideoRenderFullScreen(VideoRender*)) );
-	connect( m_pLocalCameraRender, SIGNAL(exitFullScreen(VideoRender*)), this, SLOT(OnExitVideoRenderFullScreen(VideoRender*)) );
-	connect( m_pScreenShareRender, SIGNAL(applyFullScreen(VideoRender*)), this, SLOT(OnVideoRenderFullScreen(VideoRender*)) );
-	connect( m_pScreenShareRender, SIGNAL(exitFullScreen(VideoRender*)), this, SLOT(OnExitVideoRenderFullScreen(VideoRender*)) );
-
-	for(int i=0; i<MaxVideoRender; ++i)
-	{
-		m_arrRemoteIdentifiers.push_back("");
-		m_pRemoteVideoRenders[i] = new VideoRender(this);	
-		m_bRemoteVideoRenderFrees[i] = true;
-		connect( m_pRemoteVideoRenders[i], SIGNAL(applyFullScreen(VideoRender*)), this, SLOT(OnVideoRenderFullScreen(VideoRender*)) );
-		connect( m_pRemoteVideoRenders[i], SIGNAL(exitFullScreen(VideoRender*)), this, SLOT(OnExitVideoRenderFullScreen(VideoRender*)) );
-	}
-	m_ui.layoutRemoteVideo0->addWidget(m_pRemoteVideoRenders[0]);
-	m_ui.layoutRemoteVideo1->addWidget(m_pRemoteVideoRenders[1]);
-	m_ui.layoutRemoteVideo2->addWidget(m_pRemoteVideoRenders[2]);
-
+	m_pLocalCameraRender = m_ui.widLocalVideo;
+	m_pScreenShareRender = m_ui.widScreenShare;
+	m_pRemoteVideoRenders.push_back( m_ui.widRemoteVideo0 );
+	m_pRemoteVideoRenders.push_back( m_ui.widRemoteVideo1 );
+	m_pRemoteVideoRenders.push_back( m_ui.widRemoteVideo2 );
+	
 	m_x0 = 0;
 	m_y0 = 0;
 	m_fps = 10;
@@ -50,7 +61,6 @@ Live::Live( QWidget * parent /*= 0*/, Qt::WindowFlags f /*= 0*/ )
 	m_nRoomSize = 0;
 
 	m_pTimer = new QTimer(this);
-	m_pDelayUpdateTimer = new QTimer(this);
 	m_pFillFrameTimer = new QTimer(this);
 	m_pPlayMediaFileTimer = new QTimer(this);
 
@@ -105,7 +115,6 @@ Live::Live( QWidget * parent /*= 0*/, Qt::WindowFlags f /*= 0*/ )
 	connect( m_ui.sbSkinWhite, SIGNAL(valueChanged(int)), this, SLOT(OnSbSkinWhiteChanged(int)) );
 	connect( m_ui.hsMediaFileRate, SIGNAL(valueChanged(int)), this, SLOT(OnHsMediaFileRateChanged(int)) );
 	connect( m_pTimer, SIGNAL(timeout()), this, SLOT(OnHeartBeatTimer()) );
-	connect( m_pDelayUpdateTimer, SIGNAL(timeout()), this, SLOT(OnDelayUpdateTimer()) );
 	connect( m_pFillFrameTimer, SIGNAL(timeout()), this, SLOT(OnFillFrameTimer()) );
 	connect( m_pPlayMediaFileTimer, SIGNAL(timeout()), this, SLOT(OnPlayMediaFileTimer()) );
 	connect( pActInviteInteract, SIGNAL(triggered()), this, SLOT(OnActInviteInteract()) );
@@ -276,10 +285,6 @@ void Live::dealCusMessage( const std::string& sender, int nUserAction, QString s
 			{
 				exitInteract();
 			}
-			else
-			{
-				updateLater();
-			}
 			break;
 		}
 	case AVIMCMD_Multi_Interact_Join: //主播收到观众接受连麦请求的回复
@@ -349,30 +354,47 @@ void Live::stopTimer()
 	m_pTimer->stop();
 }
 
-void Live::updateLater(int msec)
-{
-	m_pDelayUpdateTimer->start(msec);
-}
-
 void Live::OnMemStatusChange( E_EndpointEventId event_id, const Vector<String> &ids, void* data )
 {
 	Live* pLive = reinterpret_cast<Live*>(data);
 	switch(event_id)
 	{
+	case EVENT_ID_ENDPOINT_HAS_CAMERA_VIDEO:
+		{
+			for (int i=0; i<ids.size(); ++i)
+			{
+				VideoRender* pRender = (g_pMainWindow->getUserId() == ids[i].c_str()) ? pLive->m_pLocalCameraRender : pLive->getFreeVideoRender(ids[i].c_str());
+				if (pRender) pRender->setView(ids[i], VIDEO_SRC_TYPE_CAMERA);
+			}
+			break;
+		}
 	case EVENT_ID_ENDPOINT_NO_CAMERA_VIDEO:
 		{
-			std::vector<std::string> list;
-			for (auto i = ids.begin(); i != ids.end(); ++i)
+			for (int i=0; i<ids.size(); ++i)
 			{
-				list.push_back( std::string(i->c_str()) );
+				VideoRender* pRender = (g_pMainWindow->getUserId() == ids[i].c_str()) ? pLive->m_pLocalCameraRender : pLive->findVideoRender(ids[i].c_str());
+				if (pRender) pRender->remove();
 			}
-			pLive->freeCameraVideoRenders(list);
+			break;
+		}
+	case EVENT_ID_ENDPOINT_HAS_SCREEN_VIDEO:
+		{
+			pLive->m_pScreenShareRender->setView(ids[0], VIDEO_SRC_TYPE_SCREEN);
 			break;
 		}
 	case EVENT_ID_ENDPOINT_NO_SCREEN_VIDEO:
+		{
+			pLive->m_pScreenShareRender->remove();
+			break;
+		}
+	case EVENT_ID_ENDPOINT_HAS_MEDIA_VIDEO:
+		{
+			pLive->m_pScreenShareRender->setView(ids[0], VIDEO_SRC_TYPE_MEDIA);
+			break;
+		}
 	case EVENT_ID_ENDPOINT_NO_MEDIA_VIDEO:
 		{
-			pLive->freeScreenVideoRender();
+			pLive->m_pScreenShareRender->remove();
 			break;
 		}
 	default:
@@ -402,11 +424,11 @@ void Live::OnLocalVideo( const LiveVideoFrame* video_frame, void* custom_data )
 
 	if(video_frame->desc.srcType == VIDEO_SRC_TYPE_SCREEN || video_frame->desc.srcType == VIDEO_SRC_TYPE_MEDIA)
 	{
-		pLive->m_pScreenShareRender->DoRender(video_frame);
+		pLive->m_pScreenShareRender->doRender(video_frame);
 	}
 	else if (video_frame->desc.srcType == VIDEO_SRC_TYPE_CAMERA)
 	{
-		pLive->m_pLocalCameraRender->DoRender(video_frame);
+		pLive->m_pLocalCameraRender->doRender(video_frame);
 	}
 }
 
@@ -415,14 +437,14 @@ void Live::OnRemoteVideo( const LiveVideoFrame* video_frame, void* custom_data )
 	Live* pLive = reinterpret_cast<Live*>(custom_data);
 	if (video_frame->desc.srcType == VIDEO_SRC_TYPE_SCREEN || video_frame->desc.srcType == VIDEO_SRC_TYPE_MEDIA)
 	{
-		pLive->m_pScreenShareRender->DoRender(video_frame);
+		pLive->m_pScreenShareRender->doRender(video_frame);
 	}
 	else if(video_frame->desc.srcType == VIDEO_SRC_TYPE_CAMERA)
 	{
-		VideoRender* pRender = pLive->getVideoRender(video_frame->identifier.c_str());
+		VideoRender* pRender = pLive->findVideoRender(video_frame->identifier.c_str());
 		if (pRender)
 		{
-			pRender->DoRender(video_frame);
+			pRender->doRender(video_frame);
 		}
 		else
 		{
@@ -640,7 +662,8 @@ void Live::OnBtnCloseScreenShare()
 void Live::OnBtnOpenSystemVoiceInput()
 {
 	m_ui.btnOpenSystemVoiceInput->setEnabled(false);
-	GetILive()->openSystemVoiceInput();
+	//GetILive()->openSystemVoiceInput("D:\\Program Files (x86)\\KuGou\\KGMusic\\KuGou.exe"); //仅采集指定播放器的声音
+	GetILive()->openSystemVoiceInput();//采集系统中的所有声音
 }
 
 void Live::OnBtnCloseSystemVoiceInput()
@@ -850,12 +873,6 @@ void Live::OnHeartBeatTimer()
 	sxbRoomIdList();
 }
 
-void Live::OnDelayUpdateTimer()
-{
-	m_pDelayUpdateTimer->stop();
-	this->update();
-}
-
 void Live::OnFillFrameTimer()
 {
 	////////////////////////////////////////////////
@@ -892,6 +909,7 @@ void Live::OnFillFrameTimer()
 	frame.desc.width = bitmap.bmWidth;
 	frame.desc.height = bitmap.bmHeight;
 	frame.desc.rotate = 0;
+	reverseRGBFrame(frame);//由于BMP图片的数据是上下颠倒保存的，这里需要上下翻转下
 
 	int nRet = GetILive()->fillExternalCaptureFrame(frame);
 	if (nRet!=NO_ERR)
@@ -960,6 +978,7 @@ void Live::closeEvent( QCloseEvent* event )
 	{
 		m_pPlayMediaFileTimer->stop();
 	}
+
 	event->accept();
 }
 
@@ -974,69 +993,39 @@ void Live::updateCameraList()
 	m_ui.cbCamera->setCurrentIndex(0);
 }
 
-VideoRender* Live::getVideoRender( std::string szIdentifier )
+VideoRender* Live::findVideoRender( std::string szIdentifier )
 {
-	for(int i=0; i<MaxVideoRender; ++i)
+	for (unsigned i=0; i<m_pRemoteVideoRenders.size(); ++i)
 	{
-		if (m_arrRemoteIdentifiers[i]==szIdentifier)
+		if ( szIdentifier == m_pRemoteVideoRenders[i]->getIdentifier().c_str() )
 		{
-			return m_pRemoteVideoRenders[i];
-		}
-	}
-	for(int i=0; i<MaxVideoRender; ++i)
-	{
-		if (m_bRemoteVideoRenderFrees[i])
-		{
-			m_bRemoteVideoRenderFrees[i] = false;
-			m_arrRemoteIdentifiers[i] = szIdentifier;
 			return m_pRemoteVideoRenders[i];
 		}
 	}
 	return NULL;
 }
 
-void Live::freeCameraVideoRenders( std::vector<std::string> arrNeedFreeRenders )
+VideoRender* Live::getFreeVideoRender( std::string szIdentifier )
 {
-	for (size_t i=0; i<arrNeedFreeRenders.size(); ++i)
+	for (unsigned i=0; i<m_pRemoteVideoRenders.size(); ++i)
 	{
-		for (size_t j = 0; j<m_arrRemoteIdentifiers.size(); ++j)
+		if ( m_pRemoteVideoRenders[i]->isFree() )
 		{
-			std::string str1 = m_arrRemoteIdentifiers[j];
-			std::string str2 = arrNeedFreeRenders[i];
-			if (str1 == str2)
-			{
-				m_arrRemoteIdentifiers[j] = "";
-				m_bRemoteVideoRenderFrees[j] = true;
-				m_pRemoteVideoRenders[j]->update();
-			}
+			m_pRemoteVideoRenders[i]->setView( szIdentifier.c_str(), VIDEO_SRC_TYPE_CAMERA );
+			return m_pRemoteVideoRenders[i];
 		}
 	}
-	updateLater();
+	return NULL;
 }
 
 void Live::freeAllCameraVideoRender()
 {
-	m_pLocalCameraRender->Clear();
-	m_pScreenShareRender->Clear();
-	m_pLocalCameraRender->exitFullScreen();
-	m_pScreenShareRender->exitFullScreen();
-	m_pLocalCameraRender->recoverRender();
-	m_pScreenShareRender->recoverRender();
-	for (int i=0; i<MaxVideoRender; ++i)
+	m_pLocalCameraRender->remove();
+	m_pScreenShareRender->remove();
+	for (size_t i=0; i<m_pRemoteVideoRenders.size(); ++i)
 	{
-		m_pRemoteVideoRenders[i]->Clear();
-		m_pRemoteVideoRenders[i]->exitFullScreen();
-		m_pRemoteVideoRenders[i]->recoverRender();
-		m_arrRemoteIdentifiers[i] = "";
-		m_bRemoteVideoRenderFrees[i] = true;
+		m_pRemoteVideoRenders[i]->remove();
 	}
-}
-
-void Live::freeScreenVideoRender()
-{
-	m_pScreenShareRender->Clear();
-	m_pScreenShareRender->update();
-	updateLater();
 }
 
 void Live::addMsgLab( QString msg )
@@ -2080,43 +2069,6 @@ void Live::OnActCancelInteract()
 	}
 }
 
-void Live::OnVideoRenderFullScreen( VideoRender* pRender )
-{
-	pRender->recoverRender();
-	pRender->enterFullScreen();
-	if (m_pLocalCameraRender!=pRender)
-	{
-		m_pLocalCameraRender->pauseRender();
-		m_pLocalCameraRender->exitFullScreen();
-	}
-	if (m_pScreenShareRender!=pRender)
-	{
-		m_pScreenShareRender->pauseRender();
-		m_pScreenShareRender->exitFullScreen();
-	}
-	for (int i=0; i<MaxVideoRender; ++i)
-	{
-		if (m_pRemoteVideoRenders[i]!=pRender)
-		{
-			m_pRemoteVideoRenders[i]->pauseRender();
-			m_pRemoteVideoRenders[i]->exitFullScreen();
-		}
-	}
-}
-
-void Live::OnExitVideoRenderFullScreen( VideoRender* pRender )
-{
-	m_pLocalCameraRender->recoverRender();
-	m_pLocalCameraRender->exitFullScreen();
-	m_pScreenShareRender->recoverRender();
-	m_pScreenShareRender->exitFullScreen();
-	for (int i=0; i<MaxVideoRender; ++i)
-	{
-		m_pRemoteVideoRenders[i]->recoverRender();
-		m_pRemoteVideoRenders[i]->exitFullScreen();
-	}
-}
-
 void Live::OnStartRecordVideoSuc( void* data )
 {
 	Live* pThis = reinterpret_cast<Live*>(data);
@@ -2177,24 +2129,25 @@ void Live::OnStopPushStreamErr( int code, const char *desc, void* data )
 void Live::on_btnMix_clicked()
 {
 	std::vector<std::pair<std::string, bool>> list;
+
 	//aux
-	if (m_pScreenShareRender != nullptr && !m_pScreenShareRender->getId().empty())
+	if ( (m_pScreenShareRender != nullptr) && (!m_pScreenShareRender->getIdentifier().empty()) )
 	{
-		std::pair<std::string, bool> id(m_pScreenShareRender->getId(), true);		
+		std::pair<std::string, bool> id(m_pScreenShareRender->getIdentifier().c_str(), true);		
 		list.push_back(id);
 	}
 	//local camera
-	if (m_pLocalCameraRender != nullptr && !m_pLocalCameraRender->getId().empty())
+	if ( (m_pLocalCameraRender != nullptr) && (!m_pLocalCameraRender->getIdentifier().empty()) )
 	{
-		std::pair<std::string, bool> id(m_pLocalCameraRender->getId(), false);		
+		std::pair<std::string, bool> id(m_pLocalCameraRender->getIdentifier().c_str(), false);		
 		list.push_back(id);
 	}
 
 	//remote camera
-	for (sizet i = 0; i < m_arrRemoteIdentifiers.size(); ++i)
+	for (sizet i = 0; i < m_pRemoteVideoRenders.size(); ++i)
 	{
-		if (m_arrRemoteIdentifiers[i].empty()) continue;
-		std::pair<std::string, bool> id(m_arrRemoteIdentifiers[i], false);		
+		if ( m_pRemoteVideoRenders[i]->isFree() ) continue;
+		std::pair<std::string, bool> id(m_pRemoteVideoRenders[i]->getIdentifier().c_str(), false);		
 		list.push_back(id);
 	}
 	

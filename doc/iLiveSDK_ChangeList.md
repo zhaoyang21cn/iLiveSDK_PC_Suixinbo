@@ -1,5 +1,13 @@
 ## PC_iLiveSDK_ChangeList
 
+###### V1.7.1.2(2017-10-30)
+* 增加视频渲染模块;
+* 增加本地视频录制接口;
+* 增加音频数据回调接口;
+* 增加测速接口;
+* 系统声音采集，允许只采集某个进程的声音;
+* 代码优化及bug修正(生成stats_report_pb_file_name_1509354510类型临时文件问题、大咖模式收不到群消息问题);
+
 ###### V1.7.0.0(2017-09-25)
 * 升级到avsdk 1.9.5;
 * 支持大咖模式(先创建房间，主播和观众不分先后顺序加入房间,[使用说明](https://github.com/zhaoyang21cn/iLiveSDK_PC_Suixinbo/blob/master/doc/bigstar.md));

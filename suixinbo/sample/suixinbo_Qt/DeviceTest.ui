@@ -14,9 +14,7 @@
    <string>设备测试</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">#widRender{
-	background-color: rgb(128, 128, 128);
-}</string>
+   <string notr="true"/>
   </property>
   <widget class="QPushButton" name="btnCamera">
    <property name="geometry">
@@ -104,6 +102,9 @@
      <width>347</width>
      <height>260</height>
     </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: rgb(0, 0, 0);</string>
    </property>
   </widget>
   <widget class="QSlider" name="hsPlayerVol">

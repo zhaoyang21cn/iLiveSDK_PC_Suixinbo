@@ -5,49 +5,33 @@ class VideoRender : public QWidget
 {
 	Q_OBJECT
 public:
-	VideoRender(QWidget* parent = 0, Qt::WindowFlags f = 0);
+	VideoRender(QWidget *parent = NULL);
 	~VideoRender();
-	void	DoRender(const LiveVideoFrame *pFrameData);
-	void	Clear();
 
-	void	pauseRender();
-	void	recoverRender();
-
-	void	enterFullScreen();//全屏
-	void	exitFullScreen();//退出全屏
-	std::string getId();
-
-signals:
-	void	applyFullScreen(VideoRender* pRender);
-	void	exitFullScreen(VideoRender* pRender);
+	bool isFree();
+	String getIdentifier();
+	void setView(String identifier, E_VideoSrc type);
+	void setBackgroundColor(uint32 argb);
+	void doRender(const LiveVideoFrame* frame);
+	void remove();
 
 protected:
-	void	paintEvent(QPaintEvent * event) override;
-	void	mouseDoubleClickEvent( QMouseEvent * event ) override;
+	void showEvent(QShowEvent *event) override;
+	void paintEvent(QPaintEvent *event) override;
+	void mouseDoubleClickEvent(QMouseEvent * event) override;
 
 private:
-	void	paintPic(uint8* pData);
+	void enterFullScreen();	//进入全屏
+	void exitFullScreen();	//退出全屏
 
 private:
-	std::string	m_identifier;
-	E_ColorFormat m_colorFormat;
-	uint32		m_frameDataBufLen;	//帧数据长度
-	uint8*		m_pFrameDataBuf;	//帧数据缓存
-	uint8*		m_pBkgDataBuf;		//背景缓存
+	iLiveRootView*	m_pRootView;
+	String			m_identifier;
+	bool			m_bFree;
+	uint32			m_bgColor;
 
-	uint32		m_frameWidth;		//帧宽度
-	uint32		m_frameHeight;		//帧高度
-
-	uint32		m_nRenderDataBufLen;//渲染缓存大小
-	uint8*		m_pRenderDataBuf;	//渲染缓存
-
-	QWidget*	m_pParentWidget;
-	QRect		m_Rect;
-	bool		m_bPause;//是否暂停渲染	
-
-	clock_t		m_lastClock;
-	int			m_nFpsCounter;
-	int			m_nFps;
+	QWidget*		m_pParentWidget;
+	QRect			m_Rect;
 };
 
 #endif //VideoRender_h_

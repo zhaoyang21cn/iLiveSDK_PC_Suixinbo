@@ -410,16 +410,18 @@
    <property name="title">
     <string>辅路视频(屏幕分享/文件播放)</string>
    </property>
-   <widget class="QWidget" name="verticalLayoutWidget_2">
+   <widget class="VideoRender" name="widScreenShare" native="true">
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>20</y>
-      <width>211</width>
-      <height>161</height>
+      <y>30</y>
+      <width>210</width>
+      <height>150</height>
      </rect>
     </property>
-    <layout class="QVBoxLayout" name="layoutScreenShare"/>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(0, 0, 0);</string>
+    </property>
    </widget>
   </widget>
   <widget class="QGroupBox" name="localCameraVideoGB">
@@ -434,16 +436,18 @@
    <property name="title">
     <string>本地画面</string>
    </property>
-   <widget class="QWidget" name="verticalLayoutWidget_3">
+   <widget class="VideoRender" name="widLocalVideo" native="true">
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>20</y>
-      <width>211</width>
-      <height>171</height>
+      <y>30</y>
+      <width>210</width>
+      <height>150</height>
      </rect>
     </property>
-    <layout class="QVBoxLayout" name="layoutLocalVideo"/>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(0, 0, 0);</string>
+    </property>
    </widget>
   </widget>
   <widget class="QGroupBox" name="remoteCameraVideoGB">
@@ -458,38 +462,44 @@
    <property name="title">
     <string>远程画面</string>
    </property>
-   <widget class="QWidget" name="verticalLayoutWidget">
+   <widget class="VideoRender" name="widRemoteVideo0" native="true">
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>20</y>
-      <width>211</width>
-      <height>171</height>
+      <y>30</y>
+      <width>210</width>
+      <height>150</height>
      </rect>
     </property>
-    <layout class="QVBoxLayout" name="layoutRemoteVideo0"/>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(0, 0, 0);</string>
+    </property>
    </widget>
-   <widget class="QWidget" name="verticalLayoutWidget_4">
+   <widget class="VideoRender" name="widRemoteVideo1" native="true">
     <property name="geometry">
      <rect>
       <x>10</x>
       <y>200</y>
-      <width>211</width>
-      <height>161</height>
+      <width>210</width>
+      <height>150</height>
      </rect>
     </property>
-    <layout class="QVBoxLayout" name="layoutRemoteVideo1"/>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(0, 0, 0);</string>
+    </property>
    </widget>
-   <widget class="QWidget" name="verticalLayoutWidget_5">
+   <widget class="VideoRender" name="widRemoteVideo2" native="true">
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>369</y>
-      <width>211</width>
-      <height>171</height>
+      <y>370</y>
+      <width>210</width>
+      <height>150</height>
      </rect>
     </property>
-    <layout class="QVBoxLayout" name="layoutRemoteVideo2"/>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(0, 0, 0);</string>
+    </property>
    </widget>
   </widget>
   <widget class="QGroupBox" name="playerGB">
@@ -664,7 +674,7 @@
     </rect>
    </property>
    <property name="title">
-    <string>推流</string>
+    <string>旁路推流</string>
    </property>
    <widget class="QPushButton" name="btnStartPushStream">
     <property name="enabled">
@@ -1300,6 +1310,14 @@
    </property>
   </widget>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>VideoRender</class>
+   <extends>QWidget</extends>
+   <header>VideoRender.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections>
   <connection>

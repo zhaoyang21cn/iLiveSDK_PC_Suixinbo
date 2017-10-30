@@ -91,7 +91,12 @@ void MainWindow::initSDK()
 	GetILive()->setMessageCallBack(Live::OnMessage, m_pLive);
 	GetILive()->setForceOfflineCallback(onForceOffline);
 	GetILive()->setRemoteVideoCallBack(Live::OnRemoteVideo, m_pLive);
-
+	
+	iLiveRootView* pView = iLiveCreateRootView();
+	E_ColorFormat fmt = (pView->getRootViewType() ==ROOT_VIEW_TYPE_D3D) ? COLOR_FORMAT_I420 : COLOR_FORMAT_RGB24;
+	GetILive()->setVideoColorFormat(fmt);//iLiveSDK目前的渲染模块，D3D只支持I420格式，GDI只支持RGB24格式;
+	pView->destroy();
+	
 	int nRet = GetILive()->init(m_nAppId, m_nAccountType);
 	if (nRet != NO_ERR)
 	{

@@ -32,8 +32,13 @@ void DeviceTest::OnDeviceOperation( E_DeviceOperationType oper, int retCode, voi
 			{
 				ShowCodeErrorTips(retCode, "Open camera test failed.", pThis);
 			}
+			else
+			{
+				pThis->m_ui.widRender->setView( g_pMainWindow->getUserId().toStdString().c_str(), VIDEO_SRC_TYPE_CAMERA );
+			}
 			pThis->m_ui.btnCamera->setEnabled(true);
 			pThis->updateCameraState();
+			break;
 		}
 	case E_CloseCamera:
 		{
@@ -41,10 +46,12 @@ void DeviceTest::OnDeviceOperation( E_DeviceOperationType oper, int retCode, voi
 			{
 				ShowCodeErrorTips(retCode, "Close camera test failed.", pThis);
 			}
+			else
+			{
+				pThis->m_ui.widRender->remove();
+			}
 			pThis->m_ui.btnCamera->setEnabled(true);
 			pThis->updateCameraState();
-			pThis->m_ui.widRender->Clear();
-			pThis->m_ui.widRender->update();
 			break;
 		}
 	case E_OpenMic:
@@ -97,7 +104,7 @@ void DeviceTest::OnDeviceOperation( E_DeviceOperationType oper, int retCode, voi
 void DeviceTest::OnCameraVideo( const LiveVideoFrame* video_frame, void* data )
 {
 	DeviceTest* pThis = reinterpret_cast<DeviceTest*>(data);
-	pThis->m_ui.widRender->DoRender(video_frame);
+	pThis->m_ui.widRender->doRender(video_frame);
 }
 
 void DeviceTest::OnDeviceDetect( void* data )
@@ -129,7 +136,7 @@ void DeviceTest::showEvent( QShowEvent *event )
 
 void DeviceTest::closeEvent( QCloseEvent *event )
 {
-	m_ui.widRender->Clear();
+	m_ui.widRender->remove();
 	GetILive()->setDeviceOperationCallback(NULL, NULL);
 	GetILive()->setLocalVideoCallBack(NULL, NULL);
 	GetILive()->stopDeviceTest(NULL, NULL, NULL);

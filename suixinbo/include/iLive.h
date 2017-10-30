@@ -155,6 +155,9 @@ namespace ilive
 		COLOR_FORMAT_RGB16 = 7,
 		COLOR_FORMAT_RGB24 = 8,		///< rgb24格式(实际内存中存放方式是BGR888)
 		COLOR_FORMAT_RGB32 = 9,
+		COLOR_FORMAT_RGBA  = 10,
+		COLOR_FORMAT_ABGR  = 11,
+		COLOR_FORMAT_YUVA8888  = 21,
 	};
 
 	/**
@@ -219,15 +222,82 @@ namespace ilive
 	enum E_WaterMarkType
 	{
 		WATER_MARK_TYPE_NONE        = 0,
-		WATER_MARK_TYPE_320_240     = 1, //针对编码分辨率为320*240的视频设置水印。
-		WATER_MARK_TYPE_480_360     = 2, //针对编码分辨率为480*360的视频设置水印。
-		WATER_MARK_TYPE_640_480     = 3, //针对编码分辨率为640*480的视频设置水印。
-		WATER_MARK_TYPE_640_368     = 4, //针对编码分辨率为640*368的视频设置水印。
-		WATER_MARK_TYPE_960_540     = 5, //针对编码分辨率为960*540的视频设置水印。
-		WATER_MARK_TYPE_1280_720    = 6, //针对编码分辨率为1280*720的视频设置水印。
-		WATER_MARK_TYPE_192_144     = 7, //针对编码分辨率为192*144的视频设置水印。
-		WATER_MARK_TYPE_320_180     = 8, //针对编码分辨率为192*144的视频设置水印。
+		WATER_MARK_TYPE_320_240     = 1, ///< 针对编码分辨率为320*240的视频设置水印。
+		WATER_MARK_TYPE_480_360     = 2, ///< 针对编码分辨率为480*360的视频设置水印。
+		WATER_MARK_TYPE_640_480     = 3, ///< 针对编码分辨率为640*480的视频设置水印。
+		WATER_MARK_TYPE_640_368     = 4, ///< 针对编码分辨率为640*368的视频设置水印。
+		WATER_MARK_TYPE_960_540     = 5, ///< 针对编码分辨率为960*540的视频设置水印。
+		WATER_MARK_TYPE_1280_720    = 6, ///< 针对编码分辨率为1280*720的视频设置水印。
+		WATER_MARK_TYPE_192_144     = 7, ///< 针对编码分辨率为192*144的视频设置水印。
+		WATER_MARK_TYPE_320_180     = 8, ///< 针对编码分辨率为192*144的视频设置水印。
 		WATER_MARK_TYPE_MAX,
+	};
+
+	/**
+	@brief 测速通话类型。
+	*/
+	enum E_SPTCallType
+	{
+		SpeedTestCallType_Audio,		///< 纯音频
+		SpeedTestCallType_AudioVideo,	///< 音视频
+	};
+
+	/**
+	@brief 测速目的。
+	*/
+	enum E_SPTPurpose
+	{
+		SPTPurpose_EntTest,		///< 结束通话上报测速数据或其它一项专项白名单测速;
+		SPTPurpose_UserTest,	///< 用户主动点击测速，目的是测试当前网络状况;
+	};
+
+	/**
+	@brief 音频数据输入和输出类型。
+	*/
+	enum E_AudioDataSourceType
+	{
+		AUDIO_DATA_SOURCE_MIC           = 0, ///< 获取本地麦克风采集的音频数据。
+		AUDIO_DATA_SOURCE_MIXTOSEND     = 1, ///< 输入额外的音频数据，与本地发送的音频数据混音后发送出去。
+		AUDIO_DATA_SOURCE_SEND          = 2, ///< 获取发送方最终发送出去的音频数据。
+		AUDIO_DATA_SOURCE_MIXTOPLAY     = 3, ///< 输入额外的音频数据，与本地播放的音频数据混音后给扬声器播放出来。
+		AUDIO_DATA_SOURCE_PLAY          = 4, ///< 获取本地扬声器播放音频数据。
+		AUDIO_DATA_SOURCE_NETSTREM      = 5, ///< 获取接收方收到的音频数据。
+		AUDIO_DATA_SOURCE_VOICEDISPOSE  = 6, ///< 麦克风音频数据预处理。
+		AUDIO_DATA_SOURCE_SYNCMIXTOSEND = 7, ///< 发送混音输入，实时性更高。
+		AUDIO_DATA_SOURCE_AACRAWSTREAM  = 8, ///< 编码AAC数据获取，内部使用类型，暂不对外开放
+		AUDIO_DATA_SOURCE_END           = 9, ///< 结束标志。
+	};
+
+	/**
+	@brief 音频源类型(暂无效，预留)。
+	*/
+	enum E_AudioSrcType
+	{
+		AUDIO_SRC_TYPE_NONE			= 0,	///< 默认值，无意义。
+		AUDIO_SRC_TYPE_MIC			= 1,	///< 麦克风。
+		AUDIO_SRC_TYPE_ACCOMPANY	= 2,	///< 伴奏。
+		AUDIO_SRC_TYPE_MIX_INPUT	= 3,	///< 混音输入。
+		AUDIO_SRC_TYPE_MIX_OUTPUT	= 4,	///< 混音输出。
+	};
+
+	/**
+	@brief 视频渲染方式
+	*/
+	enum E_RootViewType
+	{
+		ROOT_VIEW_TYPE_NONE = 0,	///< 默认值，无意义。
+		ROOT_VIEW_TYPE_D3D	= 1,	///< Direct3D硬件加速
+		ROOT_VIEW_TYPE_GDI	= 2,	///< GDI
+	};
+
+	/**
+	@brief 渲染拉伸模式
+	*/
+	enum E_ViewMode
+	{
+		VIEW_MODE_NONE	= 0,		///< 默认值，无意义。
+		VIEW_MODE_FIT		= 1,	///< 按照显示区域的比例进行缩放后填满区域。
+		VIEW_MODE_HIDDEN	= 2,	///< 按照图像宽高的比例进行缩放后居中填充区域。
 	};
 
 	/// 音视频通话的通话能力权限位。
@@ -335,6 +405,16 @@ namespace ilive
 	@param [in] data 用户自定数据类型，回调函数中原封不动传回给业务侧
 	*/
 	typedef void (*iLiveQualityParamCallback)(const struct iLiveRoomStatParam& param, void* data);
+
+	/**
+    @brief 音频数据回调函数定义。
+    @param [in] audioFrame 音频数据。
+    @param [in] srcType 音频数据类型。
+    @param [in] data 用户自定数据类型，回调函数中原封不动传回给业务侧。
+    @details 回调处理要求是非阻塞的，SDK回调时间间隔稳定在20ms左右, 在回调中阻塞过长时间会导致声音异常等问题。
+	@remark 回调函数设定为专门处理数据用。函数回调在非主线程，请确保线程安全。特别是不要在回调函数中直接调用SDK接口。
+    */
+	typedef void (*iLiveAudioDataCallback)(struct iLiveAudioFrame* audioFrame, E_AudioDataSourceType srcType, void* data);
 
 	/**
 	@brief 消息中的图片
@@ -565,6 +645,7 @@ namespace ilive
 		iLiveRoomOption()
 			:audioCategory(AUDIO_CATEGORY_MEDIA_PLAY_AND_RECORD)//互动直播场景
 			,roomId(0)
+			,joinImGroup(true)
 			,authBits(AUTH_BITS_DEFAULT)
 			,autoRequestCamera(true)
 			,autoRequestScreen(true)
@@ -580,7 +661,8 @@ namespace ilive
 
 		E_AudioCategory			audioCategory;			///< 音视场景策略,详细信息见E_AudioCategory的定义.
 		uint32					roomId;					///< 房间ID,由业务侧创建并维护的房间ID
-		String					groupId;				///< IM群组ID;此字段只在大咖模式下使用;
+		String					groupId;				///< IM群组ID;此字段仅大咖模式下使用;
+		bool					joinImGroup;			///< 是否加入IM群组,此字段仅大咖模式下使用(默认为true，如果设置为false，需要业务侧后台将用户拉进IM群组);
 		uint64					authBits;				///< 通话能力权限位;主播应当设置为AUTH_BITS_DEFAULT,连麦观众设置为AUTH_BITS_DEFAULT & (~AUTH_BITS_CREATE_ROOM),观众设置为AUTH_BITS_JOIN_ROOM|AUTH_BITS_RECV_AUDIO|AUTH_BITS_RECV_CAMERA_VIDEO|AUTH_BITS_RECV_SCREEN_VIDEO
 		String					controlRole;			///< 角色名，web端音视频参数配置工具所设置的角色名
 		String					authBuffer;				///< 通话能力权限位的加密串
@@ -996,6 +1078,147 @@ namespace ilive
 		Vector<iLiveAudioDecodeParam> audioDecodeParams;	///< 音频解码参数(此参数暂时为0，后续会矫正)
 		iLiveAudioQosParam			  audioQosParam;        ///< 音频流控下发参数
 	};
+	
+	/**
+	@brief 每个IP对应的测速结果
+	*/
+	struct iLiveSpeedTestResult
+	{
+		uint32 			access_ip;		///< 接口机IP
+		uint32 			access_port;	///< 接口机端口
+		uint32 			clientip;		///< 客户端IP
+		uint32			test_cnt;		///< 此测速包个数
+		uint32			test_pkg_size;	///< 测速包大小
+		uint32			avg_rtt;		///< 平均往返时延
+		uint32			max_rtt;		///< 最大往返时延
+		uint32			min_rtt;		///< 最小往返时延
+		uint32			rtt0_50;		///< 0-50ms rtt区间个数
+		uint32			rtt50_100;		///< 50-100ms rtt区间个数
+		uint32			rtt100_200;		///< 100-200ms rtt区间个数
+		uint32			rtt200_300;		///< 200-300ms rtt区间个数
+		uint32			rtt300_700;		///< 300-700ms rtt区间个数
+		uint32			rtt700_1000;	///< 700-1000ms rtt区间个数
+		uint32			rtt1000;		///< 1000ms以上 rtt区间个数
+		uint32			jitter0_20;		///< 网络抖动0-20ms区间个数
+		uint32			jitter20_50;	///< 网络抖动20-50ms区间个数
+		uint32			jitter50_100;	///< 网络抖动50-100ms区间个数
+		uint32			jitter100_200;	///< 网络抖动100-200ms区间个数
+		uint32			jitter200_300;	///< 网络抖动200-300ms区间个数
+		uint32			jitter300_500;	///< 网络抖动300-500ms区间个数
+		uint32			jitter500_800;	///< 网络抖动500-800ms区间个数
+		uint32			jitter800;		///< 网络抖动大于800ms区间个数
+		uint32 			t1_uploss;		///< 上行丢包率×10000(例如：1111对应于11.11%)
+		uint32			t1_dwloss;		///< 下行丢包率×10000(例如：1111对应于11.11%)
+		uint32			up_cons_loss0;	///< 上行连续丢包为0的次数
+		uint32			up_cons_loss1;	///< 上行连续丢包为1的次数
+		uint32			up_cons_loss2;	///< 上行连续丢包为2的次数
+		uint32			up_cons_loss3;	///< 上行连续丢包为3的次数
+		uint32			up_cons_lossb3;	///< 上行连续丢包大于3的次数
+		uint32			dw_cons_loss0;	///< 下行连续丢包为0的次数
+		uint32			dw_cons_loss1;	///< 下行连续丢包为1的次数
+		uint32			dw_cons_loss2;	///< 下行连续丢包为2的次数
+		uint32			dw_cons_loss3;	///< 下行连续丢包为3的次数
+		uint32			dw_cons_lossb3;	///< 下行连续丢包大于3的次数
+		uint32			up_disorder;	///< 上行乱序次数
+		uint32			dw_disorder;	///< 下行乱序次数
+		Vector<uint32>	up_seq;			///< 上行包序列
+		Vector<uint32>	dw_seq;			///< 下行包序列
+	};
+
+	/**
+	@brief 测速接口回调参数类型
+	*/
+	struct iLiveSpeedTestResultReport
+	{
+		uint64			test_id;		///< 测速id
+		uint64			test_time;		///< 测试时间戳(s)
+		uint64			roomid;			///< 测试房间号
+		uint32			client_type;	///< 客户端类型 0:unknown  1:pc  2:android  3:iphone  4:ipad
+		uint32			net_type;		///< 网络类型(始终为1): 0:无网络  1:wifi  2:2G  3:3G  4:4G  10:WAP  255:unknow
+		String			net_name;		///< 运营商名字，能获取就上报,utf8(无效)
+		String			wifi_name;		///< wifi ssid，能获取就上报,utf8(无效)
+		double			longitude;		///< 经度(无效)
+		double			latitude;		///< 纬度(无效)
+		uint32			client_ip;		///< 客户端IP
+		uint32			call_type;		///< 通话类型，0:纯音频，1:音视频
+		uint32			sdkappid;		///< sdkappid
+		uint32			test_type;		///< 测试类型: 0x1:udp  0x2:tcp  0x4:http get  0x8:http post  0x10:trace route
+		Vector<iLiveSpeedTestResult>	results;	///< 测试结果列表
+		uint32			net_changecnt;	///< 测速过程中网络变化次数(无效)
+		uint32			access_ip;		///< 本次通话选择的accessip(无效)
+		uint32			access_port;	///< 本次通话选择的access port(无效)
+	};
+
+	/**
+	@brief 本地mp4录制委托基类。业务侧需要实现该基类来处理录制事件。
+	*/
+	struct iLiveLocalRecordDelegate
+	{
+		virtual ~iLiveLocalRecordDelegate(){}
+
+		/**
+        @brief 录制过程中发生错误的回调通知。
+        @details 开启录制之后，在录制过程中发生错误，即回调这个方法, 并且自动停止录制。
+        */
+		virtual void OnError(int32 result, const String& errInf) = 0;
+
+		/**
+        @brief 保存单个录制MP4文件时的回调通知, 和是否停止录制MP4无关。
+        @param [in] duration mp4文件时长，单位秒。单个MP4文件最大时长为1小时。
+        @param [in] width mp4文件视频图像宽度。
+        @param [in] height mp4文件视频图像高度。
+        @param [in] filePath mp4文件路径。
+        @details 开启录制之后，录制过程中完成一个MP4文件的录制，即回调这个方法。
+                 录制过程中有可能产生多个MP4文件, 即录制过程中可能会有多次OnRecorded回调。
+                 产生多个MP4文件是必要的, 原因是:<br/>
+                 1. SDK由于性能考虑，没有进行二次编码，而是直接将通话中的上行码流dump下来转成MP4。<br/>
+                 2. 由于通话过程中切角色, 视频参数有可能会变化，导致h264 sps pps发生改变(主要为视频分辨率改变)，从而必须重新保存。<br/>
+                 3. 特别的，由于通话过程中，屏幕分享区域变化，导致h264 sps pps发生改变(主要为视频分辨率改变)，从而必须重新保存。<br/>
+                 4. 考虑到码流转换mp4的时间和空间效率问题，单个文件最大时长为1小时，超过则重新保存。<br/>
+                 5. 摄像头和屏幕分享会同时录制保存，也会分开录制保存，摄像头MP4文件名以"main"开头，屏幕分享MP4文件名以"sub"开头<br/>
+                 6. 音频会固定转码为标准ACC (sample rate: 48000, channel: 2, bitrate: 64000),不会造成重新生成MP4的问题。<br/>
+                 所以，建议业务侧尽量使用固定分辨率，固定码率等参数，避免mp4文件保存个数过多。
+        */
+		virtual void OnRecorded(uint32 duration, uint32 width, uint32 height, const String& filePath) = 0;
+	};
+
+	/**
+	@brief 音频数据帧格式
+	*/
+	struct iLiveAudioFrameDesc
+	{
+		iLiveAudioFrameDesc()
+			: sampleRate(0)
+			, channelNum(0)
+			, bits(0)
+			, srcType(AUDIO_SRC_TYPE_NONE)
+		{
+		}
+
+		uint32			sampleRate;	///< 采样率，单位：赫兹(Hz)
+		uint32			channelNum;	///< 通道数，1表示单声道(mono)，2表示立体声(stereo)
+		uint32			bits;		///< 音频数据位宽。SDK1.6版本暂固定为16。
+		E_AudioSrcType	srcType;	///< 音频源类型。
+	};
+
+	/**
+	@brief 音频数据帧
+	*/
+	struct iLiveAudioFrame
+	{
+		iLiveAudioFrame()
+			: dataSize(0)
+			, data(NULL)
+			, timeStamp(0)
+		{
+		}
+
+		String				identifier; ///< 音频帧所属的房间成员id。
+		iLiveAudioFrameDesc	desc;		///< 音频帧描述。
+		uint32				dataSize;	///< 音频帧的数据缓冲区大小，单位：字节。
+		uint8*				data;		///< 音频帧的数据缓冲区，SDK内部会管理缓冲区的分配和释放。
+		uint64				timeStamp;	///< 音频帧的时间戳，SDK内部会自动填写好，utc时间，0为无效值。
+	};
 
 	/**
 	@brief 接口封装抽象接口
@@ -1082,6 +1305,14 @@ namespace ilive
 		@note 当摄像头、麦克风、扬声器等正在使用中时,设备被拔出，收到此回调前，还会收到相应设备关闭的回调;注意: 只有在房间中或设备测试中，才会收到此回调;
 		*/
 		virtual void setDeviceDetectCallback( iLiveDeviceDetectListener cb, void* data ) = 0;
+		/**
+		@brief 设置视频回调的颜色格式;
+		@details 设置视频回调(setLocalVideoCallBack()和setRemoteVideoCallBack()接口设置的回调)的视频帧颜色格式;
+		@param [in] fmt 颜色格式;
+		@return 操作结果，true成功，false失败;
+		@note 需要在进入房间\开启设备测试之前设置,否则返回false;
+		*/
+		virtual bool setVideoColorFormat(E_ColorFormat fmt) = 0;
 
 		/**
 		@brief 登录
@@ -1314,9 +1545,10 @@ namespace ilive
 		@note 
 		1、目前sdk支持的VideoFrame格式只有COLOR_FORMAT_RGB24和COLOR_FORMAT_I420,如果传入的视频帧不是此两种格式，将返回ERR_NOT_SUPPORT;<br/>
 		2、视频帧只能是这些辨率(176*144、192*144、320*240、480*360、640*368、640*480、960*540、1280*720、144*176、144*192、240*320、360*480、368*640、480*640、540*960、720*1280),否则返回AV_ERR_INVALID_ARGUMENT(错误码见github上的错误码表);<br/>
-		3、视频帧率最好在10-15帧左右;
+		3、最好按照后台SPEAR配置的视频帧率进行填充视频数据;<br/>
 		4、传入的视频帧分辨率如果大于控制台SPEAR引擎配置的值，视频将会被裁剪到SPEAR配置的分辨率(主播端预览画面和观众端画面大小将会不一致);<br/>
-		   如果小于控制台配置的值，将会按照传入的视频帧大小传入到观众端(即不会被放大到控制台配置的值);
+		   如果小于控制台配置的值，将会按照传入的视频帧大小传入到观众端(即不会被放大到控制台配置的值);<br/>
+		5、传入的LiveVideoFrame需要业务侧管理其生命周期，即用户需要注意frame.data字段的释放;
 		*/
 		virtual int fillExternalCaptureFrame( const LiveVideoFrame &frame ) = 0;
 		/**
@@ -1404,9 +1636,10 @@ namespace ilive
 		/**
 		@brief 打开系统声音采集。
 		@details 采集系统声音。
+		@param [in] szPlayerPath 播放器地址;如果用户此参数填空或不填，表示采集系统中的所有声音;如果填入exe程序(如:酷狗、QQ音乐)所在路径,将会启动此程序，并只采集此程序的声音;
 		@remark 文件播放和系统声音采集不应该同时打开，否则文件播放的声音又会被系统声音采集到，出现重音现象;
 		*/
-		virtual void openSystemVoiceInput() = 0;
+		virtual void openSystemVoiceInput(const String& szPlayerPath = "") = 0;
 		/**
 		@brief 关闭系统声音采集。
 		*/
@@ -1416,11 +1649,13 @@ namespace ilive
 		@param [in] value 设置目标音量,取值范围[0,100].
 		@return 操作结果，NO_ERR表示无错误;
 		@note 只有打开了系统声音采集才能进行设置,否则返回ERR_WRONG_STATE;
+		@remark 如果是采集整个系统声音，此音量表示绝对音量；如果是指定程序的播放，此音量为相对音量,即10为1倍，100为10倍，1为原来的1/10;
 		*/
 		virtual int	setSystemVoiceInputVolume( uint32 value ) = 0;
 		/**
 		@brief 获取系统声音采集音量。
 		@return 返回系统声音采集音量,未打开则返回0;
+		@remark 如果是采集整个系统声音，此音量表示绝对音量；如果是指定程序的播放，此音量为相对音量,即10为1倍，100为10倍，1为原来的1/10;
 		*/
 		virtual uint32 getSystemVoiceInputVolume() = 0;
 
@@ -1508,6 +1743,79 @@ namespace ilive
 		virtual bool setLogPath(const String& szLogPath) = 0;
 
 		/**
+		@brief 开始测速
+		@details 开始测速后，sdk会对几个接口机进行测速，并将测速结果回调给业务侧
+		@param [in] calltype 通话类型
+		@param [in] purpose 测速目的
+		@param [in] suc 成功带值回调
+		@param [in] err 失败回调
+		@param [in] data 用户自定义数据的指针，回调函数中原封不动地传回(通常为调用类的指针)
+		@remark 需要在登录后，才能调用测速接口;
+		*/
+		virtual void startSpeedTest( E_SPTCallType calltype, E_SPTPurpose purpose, Type<iLiveSpeedTestResultReport&>::iLiveValueSuccCallback suc, iLiveErrCallback err, void* data ) = 0;
+		/**
+		@brief 取消测速;
+		@details 开始测速后，可能需要取消测速任务，此时可以调用此接口
+		@param [in] suc 成功回调
+		@param [in] err 失败回调
+		@param [in] data 用户自定义数据的指针，回调函数中原封不动地传回(通常为调用类的指针);
+		*/
+		virtual void cancelSpeedTest(iLiveSucCallback suc, iLiveErrCallback err, void* data) = 0;
+
+		/**
+		@brief 开始本地视频录制;
+		@details 开始本地视频录制后，摄像头和屏幕分享及音频数据，会录制成mp4文件存放到本地;
+		@param [in] szDir 录制文件存放的路径,如"D:/";请确保输入路径是有效的，否则会回调OnError并停止录制;
+		@param [in] delegate 录制代理，录制过程中的回调将会通过此回调通知给业务侧;
+		@remark 在登录后，即可调用此接口，进入房间后，打开摄像头或者屏幕分享的画面都会自动录制成本地文件;
+		*/
+		virtual void startLocalRecord(const String& szDir, iLiveLocalRecordDelegate* delegate) = 0;
+		/**
+		@brief 停止本地视频录制;
+		*/
+		virtual void stopLocalRecord() = 0;
+
+		/**
+		@brief 注册指定类型的音频数据回调
+		@details 注册指定类型的音频数据回调后，音频数据将会分片回调给业务侧;
+		@param [in] srcType 音频数据类型
+		@param [in] callback 回调函数
+		@param [in] data 用户自定义数据的指针，回调函数中原封不动地传回(通常为调用类的指针);
+		@return 操作结果。NO_ERR表示成功;
+		@remark 必须在房间内才能注册音频数据回调,否则返回ERR_WRONG_STATE错误码;
+		*/
+		virtual int registAudioDataCallback(E_AudioDataSourceType srcType, iLiveAudioDataCallback callback, void* data) = 0;
+		/**
+		@brief 反注册具体数据类型的回调函数
+		@param [in] srcType 音频数据类型
+		@return 操作结果。NO_ERR表示成功;
+		@remark 必须在房间内进行此操作,否则返回ERR_WRONG_STATE错误码;
+		*/
+		virtual int unregistAudioDataCallback(E_AudioDataSourceType srcType) = 0;
+		/**
+		@brief 反注册所有数据类型的回调函数
+		@return 操作结果。NO_ERR表示成功;
+		@remark 必须在房间内进行此操作,否则返回ERR_WRONG_STATE错误码;
+		*/
+		virtual int unregistAllAudioDataCallback() = 0;
+		/**
+		@brief 设置某类型的音频格式参数。
+		@param [in] srcType 音频数据类型。
+		@param [in] desc 音频数据的格式。
+		@return 操作结果。NO_ERR表示成功;
+		@remark 必须在房间内进行此操作,否则返回ERR_WRONG_STATE错误码;
+		*/
+		virtual int setAudioDataFormat(E_AudioDataSourceType srcType, const iLiveAudioFrameDesc& desc) = 0;
+		/**
+		@brief 获取某类型的音频格式参数。
+		@param [in] srcType 音频数据类型。
+		@param [out] desc 音频数据的格式。
+		@return 操作结果。NO_ERR表示成功;
+		@remark 必须在房间内进行此操作,否则返回ERR_WRONG_STATE错误码;
+		*/
+		virtual int getAudioDataFormat(E_AudioDataSourceType srcType, iLiveAudioFrameDesc& desc) = 0;
+
+		/**
 		@brief 获取当前摄像头状态
 		@return true:打开 false：关闭
 		*/
@@ -1551,6 +1859,120 @@ namespace ilive
 	*/
 	extern "C" iLiveAPI iLive* GetILive();
 
+	/**
+	@brief 视频显示view。
+	@details 用于表示一路视频的显示区域和显示方式,并且会帮助APP自动做视频图像的角度旋转
+	*/
+	struct iLiveView
+	{
+		iLiveView() : mode(VIEW_MODE_NONE), exclusive(false), x(0), y(0), width(0), height(0), zorder(5){}
 
+		E_ViewMode	mode;      ///< 渲染拉伸模式。
+		bool		exclusive; ///< 是否独占整个窗口，为true时, (x, y, width, height) 等价于 (0，0，窗口宽度，窗口高度)。
+		uint32		x;         ///< 显示区域左上角坐标x。
+		uint32		y;         ///< 显示区域左上角坐标y。
+		uint32		width;     ///< 显示区域像素宽。
+		uint32		height;    ///< 显示区域像素高。
+		uint32		zorder;    ///< zorder, 用于表示显示区域层级关系。
+	};
+
+	/**
+	@brief 视频渲染的封装类
+	@details 
+		- 提供2种渲染实现：D3D和GDI
+		- D3D仅支持渲染i420格式,不占用CPU资源。D3D使用条件是PC支持DirectX硬件加速。绝大部分支持，特殊模式下(比如安全模式)不支持。
+		- GDI仅支持渲染RGB24格式，有明显的CPU开销。GDI无使用条件。
+		- SDK内部默认优先使用D3D渲染，如果不支持，自动选择GDI;
+	@remark 渲染模块多线程不安全，所有方法应该在主线程调用。
+	*/
+	struct iLiveRootView
+	{
+		/**
+		@brief 初始化
+		@details 通过用户传入的窗口句柄，进行初始化
+		@param [in] hwnd 要渲染画面的窗口句柄
+		@return 操作结果;true成功，false失败;
+		*/
+		virtual bool init(HWND hwnd) = 0;
+		/**
+		@brief 释放
+		@details 在销毁iLiveRootView前，需要先释放;
+		*/
+		virtual void uninit() = 0;
+		/**
+		@brief 销毁
+		*/
+		virtual void destroy() = 0;
+		/**
+		@brief 获取当前渲染类型(D3D或GDI)
+		@return 渲染类型
+		*/
+		virtual E_RootViewType getRootViewType() = 0;
+		/**
+		@brief 设置渲染窗口背景色。
+		@param [in] argb 背景颜色
+		*/
+		virtual void setBackgroundColor(uint32 argb) = 0;
+		/**
+		@brief 渲染视频帧
+		@details 
+			- 直接在SDK视频回调中调用doRender，即可进行视频渲染。
+			- 会根据角度自动做视频图像的旋转。
+		@param [in] frame 要渲染的视频帧
+		@remark 没有setView()不会渲染。
+		*/
+		virtual void doRender(const LiveVideoFrame* frame) = 0;
+		/**
+		@brief 获取设置的iLiveView个数。
+		@return 返回设置的iLiveView的个数。
+		@remark 用于遍历添加过的iLiveView。
+		*/
+		virtual uint32 getViewCount() = 0;
+		/**
+		@brief 获取指定索引的iLiveView
+		@param [in] index 要获取的iLiveView索引
+		@param [out] identifier 获取到的iLiveView对应的用户id
+		@param [out] type 获取到的iLiveView对应的视频数据类型
+		@param [out] view 获取到的iLiveView
+		@return 返回获取是否成功，如果下标越界，则返回false。
+		*/
+		virtual bool getView(uint32 index, String& identifier, E_VideoSrc& type, iLiveView& view) = 0;
+		/**
+		@brief 添加iLiveView。
+		@param [in] identifier 要添加iLiveView对应的用户id。
+		@param [in] type 添加的iLiveView对应的视频数据类型。
+		@param [in] view 要添加的iLiveView。
+		@param [in] paint 是否立即刷新绘制窗口。
+		@remark 
+			- 如果之前添加过，则为更新iLiveView状态。
+			- 慎用paint，频繁调用会导致绘制窗口闪烁，建议在必要的时候刷新。
+		*/
+		virtual void setView(const String& identifier, E_VideoSrc type, const iLiveView& view, bool paint = true) = 0;
+		/**
+		@brief 移除的iLiveView。
+		@param [in] identifier 移除iLiveView对应的用户id。
+		@param [in] type 移除iLiveView对应的视频数据类型。
+		@param [in] paint 是否立即刷新绘制窗口。
+		*/
+		virtual void removeView(const String& identifier, E_VideoSrc type, bool paint = true) = 0;
+		/**
+		@brief 移除所有iLiveView。
+		@param [in] paint 是否立即刷新绘制窗口。
+		*/
+		virtual void removeAllView(bool paint = true) = 0;
+		/**
+		@brief 是否已添加iLiveView。
+		@param [in] identifier 视频源用户id
+		@param [in] type 视频数据类型
+		@return 是否已添加iLiveView;
+		*/
+		virtual bool hasView(const String& identifier, E_VideoSrc type) = 0;
+	};
+
+	/**
+	@brief 创建iLiveRootView对象
+	@return iLiveRootView对象指针
+	*/
+	extern "C" iLiveAPI iLiveRootView* iLiveCreateRootView();
 }
 #endif //iLive_h_

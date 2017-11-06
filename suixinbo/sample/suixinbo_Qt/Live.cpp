@@ -714,7 +714,8 @@ void Live::OnBtnStartRecord()
 
 void Live::OnBtnStopRecord()
 {
-	GetILive()->stopRecord( OnStopRecordSuc, OnStopRecordVideoErr, this);
+	E_RecordDataType recordDataType = (E_RecordDataType)m_ui.cbRecordDataType->itemData( m_ui.cbRecordDataType->currentIndex() ).value<int>();
+	GetILive()->stopRecord( recordDataType, OnStopRecordSuc, OnStopRecordVideoErr, this);
 }
 
 void Live::OnBtnStartPushStream()
@@ -727,7 +728,8 @@ void Live::OnBtnStartPushStream()
 
 void Live::OnBtnStopPushStream()
 {
-	GetILive()->stopPushStream(m_channelId, OnStopPushStreamSuc, OnStopPushStreamErr, this);
+	E_PushDataType pushDataType = (E_PushDataType)m_ui.cbPushDataType->itemData( m_ui.cbPushDataType->currentIndex() ).value<int>();
+	GetILive()->stopPushStream(m_channelId, pushDataType, OnStopPushStreamSuc, OnStopPushStreamErr, this);
 }
 
 void Live::OnBtnPraise()

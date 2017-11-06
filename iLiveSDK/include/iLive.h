@@ -105,7 +105,7 @@ namespace ilive
 	enum E_RecordDataType
 	{
 		E_RecordCamera = 0, ///< 录制摄像头
-		E_RecordScreen,		///< 录制辅流(屏幕分享)
+		E_RecordScreen,		///< 录制辅流(屏幕分享/文件播放)
 	};
 
 	/**
@@ -130,7 +130,7 @@ namespace ilive
 	enum E_PushDataType
 	{
 		E_PushCamera = 0,///< 摄像头
-		E_PushScreen,	 ///< 辅流(屏幕分享)
+		E_PushScreen,	 ///< 辅流(屏幕分享/文件播放)
 	};
 
 	/**
@@ -298,6 +298,15 @@ namespace ilive
 		VIEW_MODE_NONE	= 0,		///< 默认值，无意义。
 		VIEW_MODE_FIT		= 1,	///< 按照显示区域的比例进行缩放后填满区域。
 		VIEW_MODE_HIDDEN	= 2,	///< 按照图像宽高的比例进行缩放后居中填充区域。
+	};
+
+	/**
+	@brief 推流机器环境类型
+	*/
+	enum E_PushSvrType
+	{
+		E_CustomSupport,	///< 0: 自研
+		E_CloudSupport,		///< 1: 云支持
 	};
 
 	/// 音视频通话的通话能力权限位。
@@ -734,6 +743,8 @@ namespace ilive
 			,encode(HLS)
 			,recordFileType(RecordFile_NONE)
 			,bOnlyPushAudio(false)
+			,pushSvrType(E_CloudSupport)
+			,recordId(0)
 		{
 		}
 
@@ -752,6 +763,9 @@ namespace ilive
 			(2)使用纯音频推流时，pushDataType设置为E_PushCamera和E_PushScreen，效果一样，建议使用默认值E_PushCamera;
 		*/
 		bool						bOnlyPushAudio;		///< 纯音频推流,纯音频推流时，如果要录制文件，需要将recordFileType指定为RecordFile_MP3
+		
+		E_PushSvrType				pushSvrType;		///< 推流机器环境类型;
+		uint32						recordId;			///< 用户自定义RecordId;
 	};
 
 	/**
@@ -775,7 +789,7 @@ namespace ilive
 		}
 
 		Vector<LiveUrl>		urls;		///< Url列表
-		uint64				channelId;	///< 频道ID
+		uint64				channelId;	///< 频道ID,直播码模式下，始终为0;
 		uint32				tapeTaskId; ///< 录制标记为录制的时候带回录制task_id有效
 	};
 
@@ -1445,11 +1459,12 @@ namespace ilive
 		/**
 		@brief 结束推流
 		@param [in] channelId 频道id(在推流成功的的回调中返回的频道id)
+		@param [in] pushDataType 要停止推流的数据类型
 		@param [in] suc 成功回调
 		@param [in] err 失败回调
 		@param [in] data 用户自定义数据的指针，回调函数中原封不动地传回(通常为调用类的指针)
 		*/
-		virtual void stopPushStream( uint64 channelId, iLiveSucCallback suc, iLiveErrCallback err, void* data ) = 0;
+		virtual void stopPushStream( uint64 channelId, E_PushDataType pushDataType, iLiveSucCallback suc, iLiveErrCallback err, void* data ) = 0;
 
 		/**
 		@brief 开始录制。
@@ -1462,12 +1477,13 @@ namespace ilive
 
 		/**
 		@brief 停止录制。
+		@param [in] recordDataType 要停止录制的数据类型
 		@param [in] suc 成功回调
 		@param [in] err 失败回调
 		@param [in] data 用户自定义数据的指针，回调函数中原封不动地传回(通常为调用类的指针)
 		@remark 停止录制成功回调，返回录制视频文件的ID列表; 业务侧开起自动录制时，将返回空列表，用户可直接到后台查询。
 		*/
-		virtual void stopRecord(Type<Vector<String>&>::iLiveValueSuccCallback suc, iLiveErrCallback err, void* data) = 0;
+		virtual void stopRecord(E_RecordDataType recordDataType, Type<Vector<String>&>::iLiveValueSuccCallback suc, iLiveErrCallback err, void* data) = 0;
 
 		/**
 		@brief 结束推流

@@ -1,3 +1,6 @@
+# iLiveSDK 1.7.2.0 更新说明
+之前版本，停止推流和停止录制接口，无法指定主路，还是辅路，此版本对stopPushStream()\stopRecord()接口增加了一个参数pushDataType\recordDataType，详情见接口说明;
+
 # iLiveSDK 1.5.1 更新说明
 iLiveRoomOption中增加了权限配置位，可直接以连麦观众身份加入房间，升级sdk时，需要指定相应权限，详情见api文档;
 

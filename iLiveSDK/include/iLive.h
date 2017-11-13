@@ -330,7 +330,13 @@ namespace ilive
 	*/
 	typedef void (*onNetworkCallback)();
 
-
+	/**
+	@brief 操作完成回调函数指针类型;
+	@param [in] result 操作结果,NO_ERR表示成功
+	@param [in] errInfo 错误描述
+	@param [in] data 自定义指针
+	*/
+	typedef void (*iLiveCompleteCallback)(int result, const char *errInfo, void* data);
 	
 	/**
 	@brief 成功带值回调函数指针类型的封装
@@ -814,13 +820,7 @@ namespace ilive
 		uint32			height;			///< 高度，单位：像素。
 		bool			externalData;	///< 数据是否来自外部摄像头。
 		E_VideoSrc		srcType;		///< 视频源类型，详情见VideoSrcType的定义。
-		/**
-		画面旋转的角度：
-		- source_type为VIDEO_SRC_TYPE_CAMERA时，表示视频源为摄像头。
-		  在终端上，摄像头画面是支持旋转的，App需要根据旋转角度调整渲染层的处理，以保证画面的正常显示。
-		- source_type为其他值时，rotate恒为0。
-		*/
-		uint32			rotate;
+		uint32			rotate;			///< 视频画面旋转角度，在渲染时需要考虑此角度值，0、1、2、3分别表示0°、90°、180°、270°
 	};
 
 	/**
@@ -1832,6 +1832,25 @@ namespace ilive
 		virtual int getAudioDataFormat(E_AudioDataSourceType srcType, iLiveAudioFrameDesc& desc) = 0;
 
 		/**
+		@brief 跨房连麦
+		@details 和其他房间的人连麦，双方房间里的所有人都能获取到连麦两人的视频和音频数据。
+		@param [in] roomId 连麦的房间号
+		@param [in] userId 连麦的用户id
+		@param [in] authBuffer 跨房间连麦鉴权加密串
+		@param [in] cb 操作完成的回调函数
+		@param [in] data 自定义指针
+		@remark 最多和另外三个房间的人连麦, 每个房间只允许有一个人参与跨房间连麦。
+		*/
+		virtual void linkRoom(uint32 roomId, const String& userId, const String& authBuffer, iLiveCompleteCallback cb, void* data) = 0;
+		/**
+		@brief 取消跨房连麦
+		@details 取消所有跨房间连麦。
+		@param [in] cb 操作完成的回调函数
+		@param [in] data 自定义指针
+		*/
+		virtual void unlinkRoom(iLiveCompleteCallback cb, void* data) = 0;
+
+		/**
 		@brief 获取当前摄像头状态
 		@return true:打开 false：关闭
 		*/
@@ -1866,7 +1885,6 @@ namespace ilive
 		@return true:打开 false：关闭
 		*/
 		virtual bool getCurSystemVoiceInputState() = 0;
-
 	};
 
 	/**

@@ -1,5 +1,8 @@
 ## PC_iLiveSDK_ChangeList
 
+###### V1.7.3.0(2017-11-13)
+* 增加跨房连麦接口;
+
 ###### V1.7.2.0(2017-11-06)
 * 视频渲染模块，带角度的帧会花屏----BUG修正;
 * 停止推流、停止录制接口,无法指定主路\辅路----BUG修正([接口有改动](https://github.com/zhaoyang21cn/iLiveSDK_PC_Suixinbo/blob/master/iLiveSDK/README.md));

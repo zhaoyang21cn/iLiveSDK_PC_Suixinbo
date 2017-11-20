@@ -990,7 +990,7 @@ void Live::updateCameraList()
 	m_ui.cbCamera->clear();
 	for(int i=0; i<m_cameraList.size(); ++i)
 	{
-		m_ui.cbCamera->addItem( QString::fromStdString(m_cameraList[i].second.c_str()) );
+		m_ui.cbCamera->addItem( FromBits(m_cameraList[i].second.c_str()) );
 	}
 	m_ui.cbCamera->setCurrentIndex(0);
 }

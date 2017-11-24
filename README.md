@@ -20,7 +20,7 @@ iLiveSDK(全称:Interactive Live SDK)整合了互动直播SDK(AVSDK)、即时通
 [角色配置](https://www.qcloud.com/document/product/268/10620)<br/>
 [如何录制混流视频](https://www.qcloud.com/document/product/268/10526)<br/>
 [大咖模式](https://github.com/zhaoyang21cn/iLiveSDK_PC_Suixinbo/blob/master/doc/bigstar.md)<br/>
-[跨房连麦](https://github.com/zhaoyang21cn/iLiveSDK_PC_Suixinbo/blob/master/doc/linkRoom.md)
+[跨房连麦](https://github.com/zhaoyang21cn/iLiveSDK_PC_Suixinbo/blob/master/doc/linkRoom.md)<br/>
 [视频渲染](https://github.com/zhaoyang21cn/iLiveSDK_PC_Suixinbo/blob/master/doc/videoRender.md)
 
 ## 关键路径LOG

@@ -46,7 +46,8 @@ public:
 	static void OnRemoteVideo(const LiveVideoFrame* video_frame, void* custom_data);
 	static void OnMessage( const Message& msg, void* data );
 	static void OnDeviceOperation(E_DeviceOperationType oper, int retCode, void* data);
-	
+	static void OnQualityParamCallback(const iLiveRoomStatParam& param, void* data);
+
 private slots:
 	void OnBtnOpenCamera();
 	void OnBtnCloseCamera();

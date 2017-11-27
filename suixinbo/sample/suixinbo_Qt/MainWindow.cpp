@@ -503,6 +503,7 @@ void MainWindow::iLiveCreateRoom()
 	roomOption.controlRole = LiveMaster;
 	roomOption.roomDisconnectListener = Live::OnRoomDisconnect;
 	roomOption.memberStatusListener = Live::OnMemStatusChange;
+	//roomOption.qualityParamCallback = Live::OnQualityParamCallback;
 	roomOption.data = m_pLive;
 	GetILive()->createRoom( roomOption, OniLiveCreateRoomSuc, OniLiveCreateRoomErr, this );
 }

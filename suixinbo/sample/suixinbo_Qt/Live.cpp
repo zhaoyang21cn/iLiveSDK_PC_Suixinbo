@@ -540,6 +540,11 @@ void Live::OnDeviceOperation( E_DeviceOperationType oper, int retCode, void* dat
 	}
 }
 
+void Live::OnQualityParamCallback( const iLiveRoomStatParam& param, void* data )
+{
+	printf( "%s\n", param.getInfoString().c_str() );
+}
+
 void Live::OnBtnOpenCamera()
 {
 	if (m_cameraList.size()==0)

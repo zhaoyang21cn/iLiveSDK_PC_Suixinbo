@@ -1,5 +1,9 @@
 ## PC_iLiveSDK_ChangeList
 
+###### V1.7.4.0(2017-11-27)
+* iLiveRoomOption中增加硬编解码开关字段(enableHwEnc\enableHwDec\enableHwScreenEnc\enableHwScreenDec);
+* 房间内直播质量数据详细化,[接口有改动](https://github.com/zhaoyang21cn/iLiveSDK_PC_Suixinbo/blob/master/iLiveSDK/README.md);
+
 ###### V1.7.3.0(2017-11-13)
 * 增加跨房连麦接口;
 

@@ -13,6 +13,10 @@
   <property name="windowTitle">
    <string>我的直播间</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="res.qrc">
+    <normaloff>:/res/Resources/logo.ico</normaloff>:/res/Resources/logo.ico</iconset>
+  </property>
   <property name="whatsThis">
    <string/>
   </property>
@@ -1318,7 +1322,9 @@
    <container>1</container>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="res.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>liMembers</sender>

@@ -93,7 +93,6 @@ namespace ilive
 	{
 		HLS = 0x01,			///< 请求FLV编码的视频流URL
 		FLV = 0x02,			///< 请求HLS编码的视频流URL
-		HLS_AND_FLV = 0x03, ///< 同时请求HLS和FLV编码的视频流URL
 		RAW = 0X04,			///< RAW码流
 		RTMP = 0X05,		///< RTMP
 		HLS_AND_RTMP = 0X06,///< HLS AND RTMP
@@ -666,6 +665,10 @@ namespace ilive
 			,autoRequestScreen(true)
 			,autoRequestMediaFile(true)
 			,timeElapse(1000)
+			,enableHwEnc(true)
+			,enableHwDec(true)
+			,enableHwScreenEnc(true)
+			,enableHwScreenDec(true)
 			,roomDisconnectListener(NULL)
 			,memberStatusListener(NULL)
 			,deviceDetectListener(NULL)
@@ -685,6 +688,10 @@ namespace ilive
 		bool					autoRequestScreen;		///< 房间内有成员打开屏幕分享时，是否自动请求画面;
 		bool					autoRequestMediaFile;	///< 房间内有成员打开播片时，是否自动请求画面;
 		uint32					timeElapse;				///< sdk执行qualityParamCallback回调的时间间隔,单位毫秒(SDK内部1秒更新一次，所以,timeElapse小于1000将会被修正到1000)。
+		bool					enableHwEnc;			///< 摄像头是否使用硬件编码。
+		bool					enableHwDec;			///< 摄像头是否使用硬件解码。
+		bool					enableHwScreenEnc;		///< 屏幕分享是否使用硬件编码。
+		bool					enableHwScreenDec;		///< 屏幕分享是否使用硬件解码。
 
 		/**
 		@brief SDK主动退出房间回调;
@@ -770,8 +777,8 @@ namespace ilive
 		*/
 		bool						bOnlyPushAudio;		///< 纯音频推流,纯音频推流时，如果要录制文件，需要将recordFileType指定为RecordFile_MP3
 		
-		E_PushSvrType				pushSvrType;		///< 推流机器环境类型;
-		uint32						recordId;			///< 用户自定义RecordId;
+		E_PushSvrType				pushSvrType;		///< 推流机器环境类型(暂时无效，使用默认值即可);
+		uint32						recordId;			///< 用户自定义RecordId(对应录制视频给业务侧服务器回调的字段stream_param的cliRecoId);
 	};
 
 	/**
@@ -853,11 +860,186 @@ namespace ilive
 	};
 
 	/**
+	@brief 网络运行时参数
+	*/
+	struct iLiveNetworkStatParam
+	{
+		iLiveNetworkStatParam()
+			: kbpsSend(0)
+			, lossRateSend(0)
+			, lossRateSendUdt(0)
+			, packetSend(0)
+			, lossModelSend(0)
+
+			, kbpsRecv(0)
+			, lossRateRecvUdt(0)
+			, lossRateRecv(0)
+			, packetRecv(0)
+			, unsendUdt(0)
+			, interfaceIP(0)
+			, interfacePort(0)
+			, clientIP(0)
+			, isTcp(false)
+			, lossModelRecv(0)
+
+			, cpuRateApp(0)
+			, cpuRateSys(0)
+			, rtt(0)
+
+			, udtSMode(0)
+			, udtRMode(0)
+			, udtSendq(0)
+			, udtRecvq(0)
+			, udtEnable(false)
+		{
+		}
+
+		/**
+		@brief 将此参数结果转换为String，方便打印输出
+		@param [in] pre 输出每行的前缀;
+		@return 输出的String
+		*/
+		String getInfoString(const String& pre) const
+		{
+			String szRet;
+
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(kbpsSend), kbpsSend);
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(lossRateSend), lossRateSend);
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(lossRateSendUdt), lossRateSendUdt);
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(packetSend), packetSend);
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(lossModelSend), lossModelSend);
+
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(kbpsRecv), kbpsRecv);
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(lossRateRecvUdt), lossRateRecvUdt);
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(lossRateRecv), lossRateRecv);
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(packetRecv), packetRecv);
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(unsendUdt), unsendUdt);
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(interfaceIP), interfaceIP);
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(interfacePort), interfacePort);
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(clientIP), clientIP);
+			szRet += String::Format("%s%s: %d\n", pre.c_str(), NAME(isTcp), isTcp);
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(lossModelRecv), lossModelRecv);
+
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(cpuRateApp), cpuRateApp);
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(cpuRateSys), cpuRateSys);
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(rtt), rtt);
+
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(udtSMode), udtSMode);
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(udtRMode), udtRMode);
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(udtSendq), udtSendq);
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(udtRecvq), udtRecvq);
+			szRet += String::Format("%s%s: %d\n", pre.c_str(), NAME(udtEnable), udtEnable);
+
+			return szRet;
+		}
+
+		uint32	kbpsSend;			///< 发包速率,单位kbps
+		uint16	lossRateSend;		///< 上行丢包率，从Hello的回包中获得
+		uint16	lossRateSendUdt;	///< udt后上行丢包率
+		uint32	packetSend;			///< 发包速率,每秒发包的个数
+		uint16	lossModelSend;		///< 上行平均连续丢包个数，从Hello的回包中获得
+
+		uint32	kbpsRecv;			///< 收包速率,单位kbps
+		uint16	lossRateRecvUdt;	///< udt后下行丢包率
+		uint16	lossRateRecv;		///< 下行丢包率
+		uint32	packetRecv;			///< 收包速率,每秒收包的个数
+		uint32	unsendUdt;			///< udt未发送包数
+		uint32	interfaceIP;		///< 接口机ip
+		uint16	interfacePort;		///< 与接口机连接的端口
+		uint32	clientIP;			///< 客户端ip
+		bool	isTcp;				///< 是否为tcp
+		uint16	lossModelRecv;		///< 下行平均连续丢包个数
+
+		uint16	cpuRateApp;			///< App进程的CPU使用率×10000(例如：3456对应于34.56%)
+		uint16	cpuRateSys;			///< 当前系统的CPU使用率×10000(例如：3456对应于34.56%)
+		uint32	rtt;				///< 往返时延（Round-Trip Time），单位毫秒，统计方法：Hello SendData 的时候记一个 TickCount，Hello Reply 的时候记一个 TickCount，两者的差值为时延
+
+		uint16	udtSMode;			///< udt发送端模式
+		uint16	udtRMode;			///< udt接收端模式
+		uint16	udtSendq;			///< udt发送端队列最大时间长度
+		uint16	udtRecvq;			///< udt接收端队列最大时间长度
+		bool	udtEnable;			///< udt switch
+	};
+
+	/**
+	@brief 视频采集参数
+	*/
+	struct iLiveVideoCaptureParam
+	{
+		iLiveVideoCaptureParam():width(0), height(0), fps(0) {}
+		
+		/**
+		@brief 将此参数结果转换为String，方便打印输出
+		@param [in] pre 输出每行的前缀;
+		@return 输出的String
+		*/
+		String getInfoString(const String& pre) const
+		{
+			String szRet;
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(width), width);
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(height), height);
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(fps), fps);
+			return szRet;
+		}
+
+		uint32	width;    ///< 视频宽
+		uint32	height;   ///< 视频高
+		uint32	fps;      ///< 帧率
+	};
+
+	/**
+	@brief GOP相关编码器设置参数
+	*/
+	struct iLiveVideoEncNewGOPInterParam
+	{
+		iLiveVideoEncNewGOPInterParam()
+			: reffrmInterval(0)
+			, encIFrmNum(0)
+			, reqIFrmNum(0)
+			, recvNACKNum(0)
+			, recvFailedFrmInfNum(0)
+			, lossrate2S(0)
+			, weigth20SLossRate(0)
+		{
+		}
+
+		/**
+		@brief 将此参数结果转换为String，方便打印输出
+		@param [in] pre 输出每行的前缀;
+		@return 输出的String
+		*/
+		String getInfoString(const String& pre) const
+		{
+			String szRet;
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(reffrmInterval), reffrmInterval);
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(encIFrmNum), encIFrmNum);
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(reqIFrmNum), reqIFrmNum);
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(recvNACKNum), recvNACKNum);
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(recvFailedFrmInfNum), recvFailedFrmInfNum);
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(lossrate2S), lossrate2S);
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(weigth20SLossRate), weigth20SLossRate);
+			return szRet;
+		}
+
+		uint32	reffrmInterval;     //编码器设置的参考帧跨帧个数
+		uint32	encIFrmNum;
+		uint32	reqIFrmNum;
+		uint32	recvNACKNum;
+		uint32	recvFailedFrmInfNum;
+		uint32	lossrate2S;
+		uint32	weigth20SLossRate;
+	};
+
+	/**
 	@brief 视频编码相关参数
 	*/
 	struct iLiveVideoEncodeParam
 	{
-		iLiveVideoEncodeParam():viewType(0),width(0),height(0),fps(0),bitrate(0),angle(0){}
+		iLiveVideoEncodeParam()
+			: viewType(0), width(0), height(0), fps(0)
+			, bitrate(0), angle(0), encodeType(0), hw(0)
+		{
+		}
 
 		/**
 		@brief 将此参数结果转换为String，方便打印输出
@@ -873,6 +1055,12 @@ namespace ilive
 			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(fps), fps);
 			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(bitrate), bitrate);
 			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(angle), angle);
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(encodeType), encodeType);
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(hw), hw);
+
+			szRet += "gopparam:\n";
+			szRet += gopparam.getInfoString(pre + "   ");
+
 			return szRet;
 		}
 
@@ -882,6 +1070,53 @@ namespace ilive
 		uint32 fps;         ///< 视频编码实时帧率×10
 		uint32 bitrate;     ///< 视频编码码率(无包头)
 		uint32 angle;       ///< 角度
+		uint32 encodeType;	///< 视频编码类型
+		uint32 hw;			///< 是否开硬件编码
+
+		iLiveVideoEncNewGOPInterParam gopparam; //新的GOP参数
+	};
+
+	/**
+	@brief 视频发送参数
+	*/
+	struct iLiveVideoSendParam
+	{
+		iLiveVideoSendParam()
+			:lossRate(0)
+			,iFec(0)
+			,spFec(0)
+			,pkt(0)
+			,STnSBGainLoss12s(0)
+			,STnSBDecLostMaxConcal12s(0)
+			,STnSBBreakSmallBreakContiPlc12s(0)
+		{
+		}
+
+		/**
+		@brief 将此参数结果转换为String，方便打印输出
+		@param [in] pre 输出每行的前缀;
+		@return 输出的String
+		*/
+		String getInfoString(const String& pre) const
+		{
+			String szRet;
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(lossRate), lossRate);
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(iFec), iFec);
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(spFec), spFec);
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(pkt), pkt);
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(STnSBGainLoss12s), STnSBGainLoss12s);
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(STnSBDecLostMaxConcal12s), STnSBDecLostMaxConcal12s);
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(STnSBBreakSmallBreakContiPlc12s), STnSBBreakSmallBreakContiPlc12s);
+			return szRet;
+		}
+
+		uint32 lossRate;						///< 视频发送参数丢包率
+		uint32 iFec;							///< 视频发送参数I帧fec
+		uint32 spFec;							///< 视频发送参数sp帧
+		uint32 pkt;								///< 视频发送包数
+		uint32 STnSBGainLoss12s;				///< 人为补零、人为丢包
+		uint32 STnSBDecLostMaxConcal12s;		///< 解码端统计的丢包、jitter中统计的EOS、大于一定数量的连续丢包
+		uint32 STnSBBreakSmallBreakContiPlc12s;	///< 卡顿次数、可能的小卡顿次数、连续plc
 	};
 
 	/**
@@ -889,7 +1124,17 @@ namespace ilive
 	*/
 	struct iLiveVideoDecodeParam
 	{
-		iLiveVideoDecodeParam():viewType(0),width(0),height(0),fps(0),bitrate(0){}
+		iLiveVideoDecodeParam()
+			: viewType(0)
+			, width(0)
+			, height(0)
+			, fps(0)
+			, bitrate(0)
+			, hw(0)
+			, codecType(0)
+			, hwdecDelay(0)
+		{
+		}
 
 		/**
 		@brief 将此参数结果转换为String，方便打印输出
@@ -905,6 +1150,9 @@ namespace ilive
 			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(height), height);
 			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(fps), fps);
 			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(bitrate), bitrate);
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(hw), hw);
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(codecType), codecType);
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(hwdecDelay), hwdecDelay);
 			return szRet;
 		}
 
@@ -914,6 +1162,35 @@ namespace ilive
 		uint32 height;		///< 视频解码高
 		uint32 fps;			///< 视频解码出的帧率×10
 		uint32 bitrate;		///< 视频解码出的码率(无包头)
+		uint32 hw;			///< 是否开启硬编解
+		uint32 codecType;	///< 解码类型
+		uint32 hwdecDelay;	///< 解码延迟
+	};
+
+	/**
+	@brief 视频接收参数
+	*/
+	struct iLiveVideoRecvParam
+	{
+		iLiveVideoRecvParam():lossRate(0.f), dwJitterR(0), dwBRR(0){}
+		
+		/**
+		@brief 将此参数结果转换为String，方便打印输出
+		@param [in] pre 输出每行的前缀;
+		@return 输出的String
+		*/
+		String getInfoString(const String& pre) const
+		{
+			String szRet;
+			szRet += String::Format("%s%s: %02f\n", pre.c_str(), NAME(lossRate), lossRate);
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(dwJitterR), dwJitterR);
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(dwBRR), dwBRR);
+			return szRet;
+		}
+
+		float	lossRate;		///< 视频接收丢包率
+		uint32	dwJitterR;		///< 视频接收抖动
+		uint32	dwBRR;			///< 视频接收码率
 	};
 
 	/**
@@ -921,7 +1198,13 @@ namespace ilive
 	*/
 	struct iLiveVideoQosParam
 	{
-		iLiveVideoQosParam():width(0),height(0),fps(0),bitrate(0){}
+		iLiveVideoQosParam()
+			: width(0), height(0), fps(0), bitrate(0), encodeType(0), minQp(0), maxQp(0)
+			, fectype(0), iFecPrecent(0), spFecPrecent(0), pFecPrecent(0), iMtu(0)
+			, spMtu(0), pMtu(0), iFecMinPkg(0), spFecMinPkg(0), pFecMinPkg(0), iFecMinSize(0)
+			, spFecMinSize(0), pFecMinSize(0), gopType(0), gop(0), encMode(0), hw(0)
+		{
+		}
 		
 		/**
 		@brief 将此参数结果转换为String，方便打印输出
@@ -935,13 +1218,77 @@ namespace ilive
 			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(height), height);
 			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(fps), fps);
 			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(bitrate), bitrate);
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(encodeType), encodeType);
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(minQp), minQp);
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(maxQp), maxQp);
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(fectype), fectype);
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(iFecPrecent), iFecPrecent);
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(spFecPrecent), spFecPrecent);
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(pFecPrecent), pFecPrecent);
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(iMtu), iMtu);
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(spMtu), spMtu);
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(pMtu), pMtu);
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(iFecMinPkg), iFecMinPkg);
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(spFecMinPkg), spFecMinPkg);
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(pFecMinPkg), pFecMinPkg);
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(iFecMinSize), iFecMinSize);
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(spFecMinSize), spFecMinSize);
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(pFecMinSize), pFecMinSize);
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(gopType), gopType);
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(gop), gop);
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(encMode), encMode);
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(hw), hw);
 			return szRet;
 		}
 
-		uint32 width;    ///< 视频宽
-		uint32 height;   ///< 视频高
-		uint32 fps;      ///< 帧率
-		uint32 bitrate;  ///< 码率
+		uint32 width;			///< 视频宽
+		uint32 height;			///< 视频高
+		uint32 fps;				///< 帧率
+		uint32 bitrate;			///< 码率
+		uint32 encodeType;		///<视频流控下发参数编码类型
+		uint32 minQp;			///<视频流控下发最小质量
+		uint32 maxQp;			///<视频流控下发最大质量
+		uint32 fectype;			///<视频流控下发参数fec类型
+		uint32 iFecPrecent;		///<视频流控下发i帧fec
+		uint32 spFecPrecent;	///<视频流控下发sp帧fec
+		uint32 pFecPrecent;		///<视频流控下发p帧fec
+		uint32 iMtu;			///<视频流控下发参数I帧mtu
+		uint32 spMtu;			///<视频流控下发参数sp帧mtu
+		uint32 pMtu;			///<视频流控下发参数p帧mtu
+		uint32 iFecMinPkg;		///<视频流控下发参数i帧最小包
+		uint32 spFecMinPkg;		///<视频流控下发参数sp帧最小包
+		uint32 pFecMinPkg;		///<视频流控下发参数p帧最小包
+		uint32 iFecMinSize;		///<视频流控下发参数i帧最小包大小
+		uint32 spFecMinSize;	///<视频流控下发参数sp帧最小包大小
+		uint32 pFecMinSize;		///<视频流控下发参数p帧最小包大小
+		uint32 gopType;			///<视频流控下发参数gop类型
+		uint32 gop;				///<视频流控下发参数gop
+		uint32 encMode;			///<视频流控下发编码模式
+		uint32 hw;				///< 0:不启用硬件加速；1:启用硬件加速
+	};
+
+	/**
+	@brief 音频采集参数
+	*/
+	struct iLiveAudioCaptureParam
+	{
+		iLiveAudioCaptureParam():sampleRate(0),channelCount(0){}
+		
+		/**
+		@brief 将此参数结果转换为String，方便打印输出
+		@param [in] pre 输出每行的前缀;
+		@return 输出的String
+		*/
+		String getInfoString(const String& pre) const
+		{
+			String szRet;
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(sampleRate), sampleRate);
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(channelCount), channelCount);
+			return szRet;
+		}
+
+		uint32 sampleRate;		///< 采样率
+		uint32 channelCount;	///< 通道数，1表示单声道(mono)，2表示立体声(stereo)
 	};
 
 	/**
@@ -949,7 +1296,7 @@ namespace ilive
 	*/
 	struct iLiveAudioEncodeParam
 	{
-		iLiveAudioEncodeParam():encodeBitrate(0){}
+		iLiveAudioEncodeParam():encodeType(0), encodeBitrate(0), vad(0){}
 
 		/**
 		@brief 将此参数结果转换为String，方便打印输出
@@ -959,11 +1306,45 @@ namespace ilive
 		String getInfoString(const String& pre) const
 		{
 			String szRet;
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(encodeType), encodeType);
 			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(encodeBitrate), encodeBitrate);
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(vad), vad);
 			return szRet;
 		}
 
+		uint32	encodeType;		///< 音频编码类型
 		uint32	encodeBitrate;	///< 音频编码码率
+		uint32	vad;			///< 音频编码vad参数
+	};
+
+	/**
+	@brief 音频发送参数
+	*/
+	struct iLiveAudioSendParam
+	{
+		iLiveAudioSendParam():lossRate(0), FEC(0), jitter(0), sendBr(0), sendBrUdt(0){}
+		
+		/**
+		@brief 将此参数结果转换为String，方便打印输出
+		@param [in] pre 输出每行的前缀;
+		@return 输出的String
+		*/
+		String getInfoString(const String& pre) const
+		{
+			String szRet;
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(lossRate), lossRate);
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(FEC), FEC);
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(jitter), jitter);
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(sendBr), sendBr);
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(sendBrUdt), sendBrUdt);
+			return szRet;
+		}
+
+		uint32	lossRate;		///< 音频发送丢包率
+		uint32	FEC;			///< 音频发送FEC
+		uint32	jitter;			///< 音频发送抖动
+		uint32	sendBr;			///< 音频发送发送码率
+		uint32	sendBrUdt;		///< 音频发送发送码率+header
 	};
 
 	/**
@@ -971,7 +1352,7 @@ namespace ilive
 	*/
 	struct iLiveAudioDecodeParam
 	{
-		iLiveAudioDecodeParam():sampleRate(0),channelCount(0){}
+		iLiveAudioDecodeParam():decodeType(0),sampleRate(0),channelCount(0){}
 
 		/**
 		@brief 将此参数结果转换为String，方便打印输出
@@ -982,22 +1363,68 @@ namespace ilive
 		{
 			String szRet;
 			szRet += String::Format("%s%s: %s\n", pre.c_str(), NAME(userId), userId.c_str());
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(decodeType), decodeType);
 			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(sampleRate), sampleRate);
 			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(channelCount), channelCount);
 			return szRet;
 		}
 
 		String userId;       ///< 音频解码用户
+		uint32 decodeType;   ///< 音频解码类型
 		uint32 sampleRate;   ///< 音频编码采样率
 		uint32 channelCount; ///< 通道数，1表示单声道(mono)，2表示立体声(stereo)
 	};
 	
 	/**
+	@brief 音频接收参数
+	*/
+	struct iLiveAudioRecvParam
+	{
+		iLiveAudioRecvParam():playDelay(0), lossRate(0), recvBr(0){}
+		
+		/**
+		@brief 将此参数结果转换为String，方便打印输出
+		@param [in] pre 输出每行的前缀;
+		@return 输出的String
+		*/
+		String getInfoString(const String& pre) const
+		{
+			String szRet;
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(playDelay), playDelay);
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(lossRate), lossRate);
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(recvBr), recvBr);
+			return szRet;
+		}
+
+		uint32 playDelay;	///< 音频接收播放时延
+		uint32 lossRate;	///< 音频接收丢包率
+		uint32 recvBr;		///< 音频Receive码率
+	};
+
+	/**
 	@brief 音频下发调控参数,与在后台Spear上配置的参数相关
 	*/
 	struct iLiveAudioQosParam
 	{
-		iLiveAudioQosParam():sampleRate(0),channelCount(0),bitrate(0),aecEnable(0),agcEnable(0){}
+		iLiveAudioQosParam()
+			:sampleRate(0)
+			,channelCount(0)
+			,codecType(0)
+			,bitrate(0)
+			,aecEnable(0)
+			,agcEnable(0)
+			,fec(0)
+			,vad(0)
+			,packDuration(0)
+			,recn(0)
+			,recm(0)
+			,audioMtu(0)
+			,jitterMinDelay(0)
+			,jitterMinMaxDelay(0)
+			,jitterMaxMaxDelay(0)
+			,jitterDropScale(0)
+		{
+		}
 		
 		/**
 		@brief 将此参数结果转换为String，方便打印输出
@@ -1009,17 +1436,39 @@ namespace ilive
 			String szRet;
 			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(sampleRate), sampleRate);
 			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(channelCount), channelCount);
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(codecType), codecType);
 			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(bitrate), bitrate);
 			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(aecEnable), aecEnable);
 			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(agcEnable), agcEnable);
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(fec), fec);
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(vad), vad);
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(packDuration), packDuration);
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(recn), recn);
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(recm), recm);
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(audioMtu), audioMtu);
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(jitterMinDelay), jitterMinDelay);
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(jitterMinMaxDelay), jitterMinMaxDelay);
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(jitterMaxMaxDelay), jitterMaxMaxDelay);
+			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(jitterDropScale), jitterDropScale);
 			return szRet;
 		}
 
 		uint32 sampleRate;             ///< 采样率
 		uint32 channelCount;           ///< 通道数，1表示单声道(mono)，2表示立体声(stereo)
+		uint32 codecType;              ///< 编码类型
 		uint32 bitrate;                ///< 码率
 		uint8  aecEnable;              ///< AEC功能是否开启
 		uint8  agcEnable;              ///< AGC功能是否开启
+		uint32 fec;                    ///< 音频流控下发fec
+		uint32 vad;                    ///< 音频流控下发vad
+		uint32 packDuration;          ///< 音频流控下发pack
+		uint32 recn;                   ///< 音频流控下发recn
+		uint32 recm;                   ///< 音频流控下发recm
+		uint32 audioMtu;              ///< 音频流控下发mtu
+		uint32 jitterMinDelay;       ///< Jitter的最小延时，单位毫秒
+		uint32 jitterMinMaxDelay;   ///< Jitter最大延时的最小阀值
+		uint32 jitterMaxMaxDelay;   ///< Jitter最大延时的最大阀值
+		uint32 jitterDropScale;      ///< Jitter最大延时的损失比例，百分比eg:10%为10,50%为50
 	};
 
 	/**
@@ -1027,7 +1476,16 @@ namespace ilive
 	*/
 	struct iLiveRoomStatParam
 	{
-		iLiveRoomStatParam():exeCpuRate(0),sysCpuRate(0),rtt(0){}
+		iLiveRoomStatParam()
+			: tickCountBegin(0)
+			, tickCountEnd(0)
+			, avsdkVersion("")
+			, exeCpuRate(0)
+			, sysCpuRate(0)
+			, isAnchor(false)
+			, audioCategory(0)
+		{
+		}
 
 		/**
 		@brief 将此参数结果转换为String，方便打印输出
@@ -1037,10 +1495,18 @@ namespace ilive
 		{
 			String szRet;
 
-			szRet += String::Format("%s: %.02f%%\n", NAME(exeCpuRate), exeCpuRate/100.f);
-			szRet += String::Format("%s: %.02f%%\n", NAME(sysCpuRate), sysCpuRate/100.f);
+			szRet += String::Format("%s: %llu\n", NAME(tickCountBegin), tickCountBegin);
+			szRet += String::Format("%s: %llu\n", NAME(tickCountEnd), tickCountEnd);
 
-			szRet += String::Format("%s: %ums\n", NAME(rtt), rtt);
+			szRet += String::Format("%s: %s\n", NAME(avsdkVersion), avsdkVersion.c_str());
+			szRet += String::Format("%s: %u\n", NAME(exeCpuRate), exeCpuRate);
+			szRet += String::Format("%s: %u\n", NAME(sysCpuRate), sysCpuRate);
+			
+			szRet += "networkParams:\n";
+			szRet += networkParams.getInfoString("   ");
+			
+			szRet += "videoCaptureParam:\n";
+			szRet += videoCaptureParam.getInfoString("   ");
 			
 			szRet += String::Format( "%s: %d\n", NAME(videoEncodeParams.size), videoEncodeParams.size() );
 			for (int i=0; i<videoEncodeParams.size(); ++i)
@@ -1049,6 +1515,9 @@ namespace ilive
 				szRet += videoEncodeParams[i].getInfoString("   ");
 			}
 
+			szRet += "videoSendParam:\n";
+			szRet += videoSendParam.getInfoString("   ");
+			
 			szRet += String::Format( "%s: %d\n", NAME(videoDecodeParams.size), videoDecodeParams.size() );
 			for (int i=0; i<videoDecodeParams.size(); ++i)
 			{
@@ -1056,15 +1525,30 @@ namespace ilive
 				szRet += videoDecodeParams[i].getInfoString("   ");
 			}
 
+			szRet += String::Format( "%s: %d\n", NAME(videoRecvParams.size), videoRecvParams.size() );
+			for (int i=0; i<videoRecvParams.size(); ++i)
+			{
+				szRet += String::Format("videoRecvParams[%d]:\n", i);
+				szRet += videoRecvParams[i].getInfoString("   ");
+			}
+
+			szRet += String::Format("%s: %d\n", NAME(isAnchor), isAnchor);
+			
 			szRet += "videoMainQosParam:\n";
 			szRet += videoMainQosParam.getInfoString("   ");
 
 			szRet += "videoAuxQosParam:\n";
 			szRet += videoAuxQosParam.getInfoString("   ");
 
+			szRet += "audioCaptureParam:\n";
+			szRet += audioCaptureParam.getInfoString("   ");
+			
 			szRet += "audioEncodeParams:\n";
 			szRet += audioEncodeParams.getInfoString("   ");
 
+			szRet += "audioSendParam:\n";
+			szRet += audioSendParam.getInfoString("   ");
+			
 			szRet += String::Format( "%s: %d\n", NAME(audioDecodeParams.size), audioDecodeParams.size() );
 			for (int i=0; i<audioDecodeParams.size(); ++i)
 			{
@@ -1072,25 +1556,45 @@ namespace ilive
 				szRet += audioDecodeParams[i].getInfoString("   ");
 			}
 
+			szRet += "audioRecvParam:\n";
+			szRet += audioRecvParam.getInfoString("   ");
+			
 			szRet += "audioQosParam:\n";
 			szRet += audioQosParam.getInfoString("   ");
+			
+			szRet += String::Format("%s: %u\n", NAME(audioCategory), audioCategory);
 			
 			return szRet;
 		}
 
-		uint16 exeCpuRate;	///< 应用CPU使用率×10000(例如：3456对应于34.56%)
-		uint16 sysCpuRate;	///< 系统CPU使用率×10000(例如：3456对应于34.56%)
+		uint64							tickCountBegin;		///< 统计开始时时间点，使用本地TickCount
+		uint64							tickCountEnd;		///< 统计结束的时间点，使用本地TickCount
+
+		String							avsdkVersion;		///< avsdk版本号
+		uint16							exeCpuRate;			///< 应用CPU使用率×10000(例如：3456对应于34.56%)
+		uint16							sysCpuRate;			///< 系统CPU使用率×10000(例如：3456对应于34.56%)
 		
-		uint32 rtt;         ///< 往返时延（Round-Trip Time），单位毫秒;
+		iLiveNetworkStatParam			networkParams;		///<  网络层相关的统计参数
 
-		Vector<iLiveVideoEncodeParam> videoEncodeParams;	///< 视频编码参数
-		Vector<iLiveVideoDecodeParam> videoDecodeParams;	///< 视频解码参数
-		iLiveVideoQosParam videoMainQosParam;				///< 主路视频流控下发参数
-		iLiveVideoQosParam videoAuxQosParam;				///< 辅路视频流控下发参数
+		iLiveVideoCaptureParam			videoCaptureParam;	///< 视频采集参数			
+		Vector<iLiveVideoEncodeParam>	videoEncodeParams;	///< 视频编码参数
+		iLiveVideoSendParam				videoSendParam;		///< 视频发送参数
 
-		iLiveAudioEncodeParam		  audioEncodeParams;	///< 音频编码参数(此参数暂时为0，后续会矫正)
-		Vector<iLiveAudioDecodeParam> audioDecodeParams;	///< 音频解码参数(此参数暂时为0，后续会矫正)
-		iLiveAudioQosParam			  audioQosParam;        ///< 音频流控下发参数
+		Vector<iLiveVideoDecodeParam>	videoDecodeParams;	///< 视频解码参数
+		Vector<iLiveVideoRecvParam>		videoRecvParams;	///< 视频接收参数
+		bool							isAnchor;			///< 是否为主播(只要有视频上行就认为是主播)
+
+		iLiveVideoQosParam				videoMainQosParam;	///< 主路视频流控下发参数
+		iLiveVideoQosParam				videoAuxQosParam;	///< 辅路视频流控下发参数
+
+		iLiveAudioCaptureParam			audioCaptureParam;	///< 音频采集信息
+		iLiveAudioEncodeParam			audioEncodeParams;	///< 音频编码参数(此参数暂时为0，后续会修正)
+		iLiveAudioSendParam				audioSendParam;		///< 音频发送信息
+
+		Vector<iLiveAudioDecodeParam>	audioDecodeParams;	///< 音频解码参数(此参数暂时为0，后续会修正)
+		iLiveAudioRecvParam				audioRecvParam;		///< 音频接收信息
+		iLiveAudioQosParam				audioQosParam;		///< 音频流控下发参数
+		uint32							audioCategory;		///< 音频场景
 	};
 	
 	/**

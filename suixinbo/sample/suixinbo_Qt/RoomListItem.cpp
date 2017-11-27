@@ -81,6 +81,7 @@ void RoomListItem::iLiveJoinRoom()
 	roomOption.controlRole = Guest;
 	roomOption.memberStatusListener = Live::OnMemStatusChange;
 	roomOption.roomDisconnectListener = Live::OnRoomDisconnect;
+	//roomOption.qualityParamCallback = Live::OnQualityParamCallback;
 	roomOption.data = g_pMainWindow->getLiveView();
 	GetILive()->joinRoom( roomOption, OniLiveJoinRoomSuc, OniLiveJoinRoomErr, this );
 }

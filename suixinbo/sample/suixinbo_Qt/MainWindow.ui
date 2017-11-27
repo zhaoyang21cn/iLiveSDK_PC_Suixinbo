@@ -19,6 +19,10 @@
   <property name="windowTitle">
    <string>随心播</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="res.qrc">
+    <normaloff>:/res/Resources/logo.ico</normaloff>:/res/Resources/logo.ico</iconset>
+  </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QTabWidget" name="tabWidget">
     <property name="geometry">
@@ -322,6 +326,8 @@
   <tabstop>edBLTitle</tabstop>
   <tabstop>btnBeginLive</tabstop>
  </tabstops>
- <resources/>
+ <resources>
+  <include location="res.qrc"/>
+ </resources>
  <connections/>
 </ui>

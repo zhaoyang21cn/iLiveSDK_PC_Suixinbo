@@ -18,7 +18,8 @@ while( GetMessage(&msg, NULL, 0, 0) )
 ## Qt项目发布问题
 Qt项目在发布程序时，需要将使用到的Qt库一并带上，比如下图错误，就是因为缺少platforms下的qwindows.dll,
 ![](https://mc.qcloudimg.com/static/img/d02789098baddec63c21cd7102793805/image.png)
-此时，可以将qt安装目录下的platforms文件夹拷贝到运行目录下,具体做法参考[随心播的运行包](http://dldir1.qq.com/hudongzhibo/git/iLiveSDK_PC_Suixinbo/suixinbo_run.zip);
-如果是Qt比较新的版本(如5.8.0)，qt自带了部署工具windeployqt.exe，使用方法如下图,
+<br/>此时，可以将qt安装目录下的platforms文件夹拷贝到运行目录下,具体做法参考[随心播的运行包](http://dldir1.qq.com/hudongzhibo/git/iLiveSDK_PC_Suixinbo/suixinbo_run.zip);
+如果是Qt比较新的版本(如5.8.0)，qt自带了部署工具windeployqt.exe，使用方法如下图,<br/>
 ![](https://mc.qcloudimg.com/static/img/a5a569f419220aa4b161697bd8126fec/image.png)
+<br/>
 此命令，即可将指定exe依赖的所有qt库复制到exe所在目录;

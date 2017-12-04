@@ -255,7 +255,7 @@ namespace ilive
 	*/
 	enum E_AudioDataSourceType
 	{
-		AUDIO_DATA_SOURCE_MIC           = 0, ///< 获取本地麦克风采集的音频数据。
+		AUDIO_DATA_SOURCE_MIC           = 0, ///< 获取本地麦克风采集的音频数据(注意: 注册此类型回调后，即使没有打开麦克风，也会开始回调麦克风音频数据)。
 		AUDIO_DATA_SOURCE_MIXTOSEND     = 1, ///< 输入额外的音频数据，与本地发送的音频数据混音后发送出去。
 		AUDIO_DATA_SOURCE_SEND          = 2, ///< 获取发送方最终发送出去的音频数据。
 		AUDIO_DATA_SOURCE_MIXTOPLAY     = 3, ///< 输入额外的音频数据，与本地播放的音频数据混音后给扬声器播放出来。
@@ -2287,7 +2287,8 @@ namespace ilive
 		@details 开始本地视频录制后，摄像头和屏幕分享及音频数据，会录制成mp4文件存放到本地;
 		@param [in] szDir 录制文件存放的路径,如"D:/";请确保输入路径是有效的，否则会回调OnError并停止录制;
 		@param [in] delegate 录制代理，录制过程中的回调将会通过此回调通知给业务侧;
-		@remark 在登录后，即可调用此接口，进入房间后，打开摄像头或者屏幕分享的画面都会自动录制成本地文件;
+		@remark 在登录后，即可调用此接口，进入房间后，打开摄像头或者屏幕分享的画面都会自动录制成本地文件;<br/>
+		推荐在进房间成功回调中开始录制,在退出房间回调中结束录制，注意，这里说的退出房间包括sdk强制退出房间回调;
 		*/
 		virtual void startLocalRecord(const String& szDir, iLiveLocalRecordDelegate* delegate) = 0;
 		/**

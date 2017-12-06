@@ -1058,7 +1058,7 @@ namespace ilive
 			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(encodeType), encodeType);
 			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(hw), hw);
 
-			szRet += "gopparam:\n";
+			szRet += pre + "gopparam:\n";
 			szRet += gopparam.getInfoString(pre + "   ");
 
 			return szRet;
@@ -1182,7 +1182,7 @@ namespace ilive
 		String getInfoString(const String& pre) const
 		{
 			String szRet;
-			szRet += String::Format("%s%s: %02f\n", pre.c_str(), NAME(lossRate), lossRate);
+			szRet += String::Format("%s%s: %.2f\n", pre.c_str(), NAME(lossRate), lossRate);
 			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(dwJitterR), dwJitterR);
 			szRet += String::Format("%s%s: %u\n", pre.c_str(), NAME(dwBRR), dwBRR);
 			return szRet;
@@ -1820,7 +1820,7 @@ namespace ilive
 		/**
 		@brief 设置设备插拔监听函数;
 		@details 当摄像头、麦克风、扬声器设备的接入及拔出时，sdk会通过此回调通知给业务侧，收到此回调需要更新设备列表;参见iLiveDeviceDetectListener定义。
-		@note 当摄像头、麦克风、扬声器等正在使用中时,设备被拔出，收到此回调前，还会收到相应设备关闭的回调;注意: 只有在房间中或设备测试中，才会收到此回调;
+		@note 当摄像头、麦克风、扬声器等正在使用中时,设备被拔出，收到此回调前，还会收到相应设备关闭的回调;
 		*/
 		virtual void setDeviceDetectCallback( iLiveDeviceDetectListener cb, void* data ) = 0;
 		/**
@@ -1855,8 +1855,8 @@ namespace ilive
 		@param [in] suc 成功回调
 		@param [in] err 失败回调
 		@param [in] data 用户自定义数据的指针，回调函数中原封不动地传回(通常为调用类的指针);
-		@param [in] preWidth 设置打开摄像头测试时,视频帧的宽度;
-		@param [in] preHeight 设置打开摄像头测试时,视频帧的高度;
+		@param [in] preWidth 设置打开摄像头测试时,视频帧的宽度(此参数已废弃，sdk使用摄像头支持默认宽度);
+		@param [in] preHeight 设置打开摄像头测试时,视频帧的高度(此参数已废弃，sdk使用摄像头支持默认高度);
 		@remark 设备测试时，美颜、美白功能可用;
 		*/
 		virtual void startDeviceTest(iLiveSucCallback suc, iLiveErrCallback err, void* data, int preWidth = 640, int preHeight = 480) = 0;
@@ -2354,6 +2354,21 @@ namespace ilive
 		@param [in] data 自定义指针
 		*/
 		virtual void unlinkRoom(iLiveCompleteCallback cb, void* data) = 0;
+
+		/**
+		@brief 设置房间内音频数据白名单。
+		@details 设置音频白名单后，将只接收白名单列表中成员的音频数据;
+		@param [in] identifiers 希望接收其音频数据的成员列表;
+		@return 操作结果。NO_ERR表示成功;其他值表示失败，可能是因为房间不存在,个别成员不在房间内或者转换tinyid失败等(这种情况下名单内若有成员id转换成功，仍然会被加入白名单且白名单生效)。
+		@remark 每次最多设置6个成员id，超过6个将添加vector最后6个到白名单，开启白名单时，若identifiers为空，则默认丢弃任所有音频数据；每次调用，白名单将被重置为新的成员列表，而不是累加。需要定制想接收的音频数据才需要调用，不调用则默认接收房间内所有音频数据;
+		*/
+		virtual int requestAudioList(const Vector<String>& identifiers) = 0;
+		/**
+		@brief 关闭音频数据白名单。
+		@details 关闭音频数据白名单后，将恢复接收房间内所有成员的音频数据;
+		@return 操作结果。NO_ERR表示成功;
+		*/
+		virtual int cancelAudioList() = 0;
 
 		/**
 		@brief 获取当前摄像头状态

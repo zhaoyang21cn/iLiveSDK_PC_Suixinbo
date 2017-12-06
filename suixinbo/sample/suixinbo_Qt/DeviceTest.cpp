@@ -281,8 +281,11 @@ void DeviceTest::updateCameraList()
 		{
 			m_ui.cbCamera->addItem( FromBits( m_cameraList[i].second.c_str() ) );
 		}
-		m_nCurCameraIndex = iliveClamp( m_nCurCameraIndex, 0, m_cameraList.size()-1 );
-		m_ui.cbCamera->setCurrentIndex(m_nCurCameraIndex);
+		if ( m_cameraList.size() > 0 )
+		{
+			m_nCurCameraIndex = iliveClamp( m_nCurCameraIndex, 0, m_cameraList.size()-1 );
+			m_ui.cbCamera->setCurrentIndex(m_nCurCameraIndex);
+		}
 	}
 }
 

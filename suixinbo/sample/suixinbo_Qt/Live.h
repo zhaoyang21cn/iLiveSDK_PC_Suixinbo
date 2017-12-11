@@ -104,8 +104,6 @@ private:
 
 	void addMsgLab(QString msg);
 
-	void addRequestViews( const std::vector<AVStream> &views );
-
 	void updateMemberList();
 	void updateMsgs();
 

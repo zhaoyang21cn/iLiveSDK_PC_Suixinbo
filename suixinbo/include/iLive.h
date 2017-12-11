@@ -2012,6 +2012,17 @@ namespace ilive
 		*/
 		virtual int setSkinWhitenessGrade(int grade) = 0;
 		/**
+		@brief 设置水印
+		@param [in] filePath 水印文件路径;支持 BMP, GIF, JPEG, PNG, TIFF, Exif, WMF, and EMF 格式;如果传 NULL，则代表去掉水印;
+		@param [in] xOffset  左上角x轴偏移，TODO 取值范围
+		@param [in] yOffset  左上角y轴偏移，TODO 取值范围
+		@param [in] fWidthRatio 水印占x轴的比例，TODO 取值范围
+		@return 返回值为NO_ERR时表示成功，否则表示失败
+		@note 此接口设置的水印,只对本地摄像\屏幕分享画面有效，SDK不会对自定义采集画面设置水印;
+		*/
+		virtual int setWaterMark(const String& filePath, float xOffset, float yOffset, float fWidthRatio) = 0;
+
+		/**
 		@brief 获取可用摄像头列表
 		@param [out] cameraList 传回获取到的摄像头列表,第一个(索引0)为系统默认设备;
 		@return 操作结果,NO_ERR表示无错误;如果没有可用摄像头,返回AV_ERR_DEVICE_NOT_EXIST错误码(错误码见github上的错误码表);
@@ -2252,7 +2263,9 @@ namespace ilive
 		3、为了性能考虑，设置了水印后，主播自己的预览画面不会显示水印，观众端才会显示水印。<br/>
 		4、水印大小限制规则为: 水印宽度不大于画面宽度的1/4,高度不能大于1/6,且水印宽高都必须为2的倍数;<br/>
 		5、sdk暂时只支持对主路视频设置水印,不支持对辅路设置水印;
+		@todo 此接口限制较多，不推荐用户使用，建议使用setWaterMark接口;
 		*/
+		Deprecated
 		virtual int addWaterMark(E_WaterMarkType waterMarkType, uint8* argbData, uint32 width, uint32 height) = 0;
 
 		/**

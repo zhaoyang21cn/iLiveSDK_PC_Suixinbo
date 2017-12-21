@@ -688,10 +688,10 @@ namespace ilive
 		bool					autoRequestScreen;		///< 房间内有成员打开屏幕分享时，是否自动请求画面;
 		bool					autoRequestMediaFile;	///< 房间内有成员打开播片时，是否自动请求画面;
 		uint32					timeElapse;				///< sdk执行qualityParamCallback回调的时间间隔,单位毫秒(SDK内部1秒更新一次，所以,timeElapse小于1000将会被修正到1000)。
-		bool					enableHwEnc;			///< 摄像头是否使用硬件编码。
-		bool					enableHwDec;			///< 摄像头是否使用硬件解码。
-		bool					enableHwScreenEnc;		///< 屏幕分享是否使用硬件编码。
-		bool					enableHwScreenDec;		///< 屏幕分享是否使用硬件解码。
+		bool					enableHwEnc;			///< 摄像头是否使用硬件编码(极速模式下，请勿使用硬编解)。
+		bool					enableHwDec;			///< 摄像头是否使用硬件解码(极速模式下，请勿使用硬编解)。
+		bool					enableHwScreenEnc;		///< 屏幕分享是否使用硬件编码(极速模式下，请勿使用硬编解)。
+		bool					enableHwScreenDec;		///< 屏幕分享是否使用硬件解码(极速模式下，请勿使用硬编解)。
 
 		/**
 		@brief SDK主动退出房间回调;

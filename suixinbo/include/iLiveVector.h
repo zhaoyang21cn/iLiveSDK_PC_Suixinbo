@@ -774,7 +774,7 @@ namespace ilive
 	template<typename T, bool NeedConstruct, bool NeedDestruct> inline void
 	Vector<T, NeedConstruct, NeedDestruct>::_move(int from, int to)
 	{
-		iliveMemMove( m_pData+to, m_pData+from, sizeof(T)*(m_size-from) );
+		iliveMemMove( (char*)(m_pData+to), (char*)(m_pData+from), sizeof(T)*(m_size-from) );
 	}
 
 }

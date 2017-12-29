@@ -91,8 +91,8 @@ namespace ilive
 	*/
 	enum E_iLiveStreamEncode
 	{
-		HLS = 0x01,			///< 请求FLV编码的视频流URL
-		FLV = 0x02,			///< 请求HLS编码的视频流URL
+		HLS = 0x01,			///< 请求HLS编码的视频流URL
+		FLV = 0x02,			///< 请求FLV编码的视频流URL
 		RAW = 0X04,			///< RAW码流
 		RTMP = 0X05,		///< RTMP
 		HLS_AND_RTMP = 0X06,///< HLS AND RTMP
@@ -665,10 +665,10 @@ namespace ilive
 			,autoRequestScreen(true)
 			,autoRequestMediaFile(true)
 			,timeElapse(1000)
-			,enableHwEnc(true)
-			,enableHwDec(true)
-			,enableHwScreenEnc(true)
-			,enableHwScreenDec(true)
+			,enableHwEnc(false)
+			,enableHwDec(false)
+			,enableHwScreenEnc(false)
+			,enableHwScreenDec(false)
 			,roomDisconnectListener(NULL)
 			,memberStatusListener(NULL)
 			,deviceDetectListener(NULL)
@@ -2014,9 +2014,9 @@ namespace ilive
 		/**
 		@brief 设置水印
 		@param [in] filePath 水印文件路径;支持 BMP, GIF, JPEG, PNG, TIFF, Exif, WMF, and EMF 格式;如果传 NULL，则代表去掉水印;
-		@param [in] xOffset  左上角x轴偏移，TODO 取值范围
-		@param [in] yOffset  左上角y轴偏移，TODO 取值范围
-		@param [in] fWidthRatio 水印占x轴的比例，TODO 取值范围
+		@param [in] xOffset  左上角x轴偏移,取值范围[0,1]
+		@param [in] yOffset  左上角y轴偏移,取值范围[0,1]
+		@param [in] fWidthRatio 水印占x轴的比例,取值范围[0,1]
 		@return 返回值为NO_ERR时表示成功，否则表示失败
 		@note 此接口设置的水印,只对本地摄像\屏幕分享画面有效，SDK不会对自定义采集画面设置水印;
 		*/

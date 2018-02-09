@@ -2,9 +2,15 @@
 iLiveSDK(全称:Interactive Live SDK)整合了互动直播SDK(AVSDK)、即时通讯SDK(IMSDK)两大模块，致力于提供一套完整的音视频即时通讯解决方案，打造跨平台的直播场景。iLiveSDK 提供了账号登录，音视频互动，屏幕共享，收发消息等功能。旨在无限可能地降低用户接入成本，全方位考虑用户接入体验，并提供接入服务技术支持。
 
 ## iLiveSDK导入
-[iLiveSDK导入参考](https://github.com/zhaoyang21cn/iLiveSDK_PC_Demos/blob/master/doc/iLiveSDK_README.md)<br/>
-[版本更新说明](https://github.com/zhaoyang21cn/iLiveSDK_PC_Demos/blob/master/doc/iLiveSDK_ChangeList.md)
+[iLiveSDK导入参考](https://github.com/zhaoyang21cn/iLiveSDK_PC_Demos/blob/master/doc/iLiveSDK_README.md)
 
+## SDK最近更新说明
+### V1.8.1.10(2018-02-09)
+* 获取设备列表为空时，统一返回错误码ERR_NOT_FOUND(8022);
+* 增加获取麦克风\扬声器动态音量接口(getMicDynamicVolume\getPlayerDynamicVolume);
+* SDK内部优化;
+
+[更多版本更新信息](https://github.com/zhaoyang21cn/iLiveSDK_PC_Demos/blob/master/doc/iLiveSDK_ChangeList.md)
 
 ## DEMO
 [随心播编译及运行](https://github.com/zhaoyang21cn/iLiveSDK_PC_Suixinbo/tree/master/suixinbo)<br/>

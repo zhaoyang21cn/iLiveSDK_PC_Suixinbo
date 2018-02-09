@@ -27,9 +27,17 @@ typedef unsigned short		uint16;
 typedef unsigned int		uint32;
 typedef unsigned long long	uint64;
 
-#define SafeFree(p) { free(p); (p) = 0; }
-#define SafeDelete(p) {delete (p); (p) = 0;}
-#define SafeDeleteArr(pArr) {delete[] (pArr); (pArr) = 0;}
+#ifndef SafeFree
+#define SafeFree(p) { free(p); (p) = NULL; }
+#endif //SafeFree
+
+#ifndef SafeDelete
+#define SafeDelete(p) { delete (p); (p) = NULL; }
+#endif //SafeDelete
+
+#ifndef SafeDeleteArr
+#define SafeDeleteArr(p) { delete[] (p); (p) = NULL; }
+#endif //SafeDeleteArr
 
 #define NAME(X) #X
 

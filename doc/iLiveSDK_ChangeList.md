@@ -1,5 +1,10 @@
 ## PC_iLiveSDK_ChangeList
 
+###### V1.8.1.10(2018-02-09)
+* 获取设备列表为空时，统一返回错误码ERR_NOT_FOUND(8022);
+* 增加获取麦克风\扬声器动态音量接口(getMicDynamicVolume\getPlayerDynamicVolume);
+* SDK内部优化;
+
 ###### V1.8.1.6(2017-12-29)
 * SDK默认不使用硬编解功能(解决偶现上下行异常问题);
 * api接口注释修正;

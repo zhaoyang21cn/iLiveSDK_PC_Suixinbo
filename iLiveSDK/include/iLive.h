@@ -2108,6 +2108,11 @@ namespace ilive
 		*/
 		virtual void closeMic() = 0;
 		/**
+		@brief 获得当前麦克风动态音量。
+		@return 返回当前麦克风动态音量,取值范围[0,100]; 如果未打开麦克风，返回0;
+		*/
+		virtual uint32 getMicDynamicVolume() = 0;
+		/**
 		@brief 打开扬声器。
 		@param [in] szPlayerId 通过getPlayerList()函数获取的扬声器列表中的某个扬声器id。
 		@note 打开扬声器成功，如果用户有接收音频权限，便会自动开始播放远端音频。
@@ -2129,6 +2134,11 @@ namespace ilive
 		@brief 关闭当前打开的扬声器。
 		*/
 		virtual void closePlayer() = 0;
+		/**
+		@brief 获得当前扬声器动态音量。
+		@return 返回当前扬声器动态音量,取值范围[0,100];如果未打开扬声器，返回0;
+		*/
+		virtual uint32 getPlayerDynamicVolume() = 0;
 		/**
 		@brief 打开屏幕分享(指定窗口)。
 		@param [in] hWnd 所要捕获的窗口句柄(NULL表示全屏)。如果传入的hWnd不是有效窗口句柄\窗口不可见\窗口处于最小化状态，将会返回ERR_INVALID_PARAM;

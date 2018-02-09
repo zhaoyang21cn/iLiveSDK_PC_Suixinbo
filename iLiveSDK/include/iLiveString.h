@@ -281,7 +281,7 @@ namespace ilive
 			return;
 		}
 		int slen = iliveStrLen(buf);
-		if (len<0 || len>slen)
+		if (len<0)
 		{
 			len = slen;
 		}

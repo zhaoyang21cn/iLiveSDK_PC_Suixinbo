@@ -1,5 +1,12 @@
 ## PC_iLiveSDK_ChangeList
 
+###### V1.8.2.0(2018-04-08)
+* 更新avsdk 1.9.8.2;
+* 视频播放支持到720p;
+* 允许指定创建房间所用的IM群类型;
+* 登录接口增加默认spear配置参数;
+* 去掉SkinBeauty.dll(此dll经常被360杀掉);
+
 ###### V1.8.1.10(2018-02-09)
 * 获取设备列表为空时，统一返回错误码ERR_NOT_FOUND(8022);
 * 增加获取麦克风\扬声器动态音量接口(getMicDynamicVolume\getPlayerDynamicVolume);

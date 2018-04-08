@@ -66,6 +66,17 @@ namespace ilive
 	};
 
 	/**
+	@brief IM群类型
+	*/
+	enum E_IMGroupType
+	{
+		E_Private_Group,
+		E_Public_Group,
+		E_ChatRoom_Group,
+		E_AVChatRoom_Group,
+	};
+
+	/**
 	@brief 消息类型。
 	*/
 	enum E_MessageElemType
@@ -594,7 +605,7 @@ namespace ilive
 			}
 		}
 
-		Message& Message::operator=(const Message& other)
+		Message& operator=(const Message& other)
 		{
 			if (&other == this) return *this;
 			sender = other.sender;
@@ -659,6 +670,7 @@ namespace ilive
 		iLiveRoomOption()
 			:audioCategory(AUDIO_CATEGORY_MEDIA_PLAY_AND_RECORD)//互动直播场景
 			,roomId(0)
+			,groupType(E_AVChatRoom_Group)
 			,joinImGroup(true)
 			,authBits(AUTH_BITS_DEFAULT)
 			,autoRequestCamera(true)
@@ -679,6 +691,7 @@ namespace ilive
 
 		E_AudioCategory			audioCategory;			///< 音视场景策略,详细信息见E_AudioCategory的定义.
 		uint32					roomId;					///< 房间ID,由业务侧创建并维护的房间ID
+		E_IMGroupType			groupType;				///< 创建房间时，所创建的IM群类型
 		String					groupId;				///< IM群组ID;此字段仅大咖模式下使用;
 		bool					joinImGroup;			///< 是否加入IM群组,此字段仅大咖模式下使用(默认为true，如果设置为false，需要业务侧后台将用户拉进IM群组);
 		uint64					authBits;				///< 通话能力权限位;主播应当设置为AUTH_BITS_DEFAULT,连麦观众设置为AUTH_BITS_DEFAULT & (~AUTH_BITS_CREATE_ROOM),观众设置为AUTH_BITS_JOIN_ROOM|AUTH_BITS_RECV_AUDIO|AUTH_BITS_RECV_CAMERA_VIDEO|AUTH_BITS_RECV_SCREEN_VIDEO
@@ -1839,8 +1852,10 @@ namespace ilive
 		@param [in] suc 成功回调
 		@param [in] err 失败回调
 		@param [in] data 用户自定义数据的指针，回调函数中原封不动地传回(通常为调用类的指针);
+		@param [in] spearCfg 默认spear配置(拉不到网络配置时生效,一般适用于海外);使用详情见https://github.com/zhaoyang21cn/iLiveSDK_PC_Suixinbo/blob/master/doc/defaultSpearCfg.md
+		@remark 设置默认spear配置失败时，不会回调登录失败，只会在ilivesdk日志中打印出相应错误信息;
 		*/
-		virtual void login(const char *userId, const char *userSig, iLiveSucCallback suc, iLiveErrCallback err, void* data) = 0;
+		virtual void login(const char *userId, const char *userSig, iLiveSucCallback suc, iLiveErrCallback err, void* data, const char* spearCfg = "") = 0;
 		/**
 		@brief 登出
 		@param [in] suc 成功回调
@@ -2212,7 +2227,7 @@ namespace ilive
 		*.mp2v, *.tp,*.tpr,*.ts,*.m4b,*.m4p,*.m4v,*.mp4,*.mpeg4,*.3g2,*.3gp,*.3gp2,
 		*.3gpp,*.mov,*.pva,*.dat,*.m1v,*.m2p,*.m2t,*.m2ts,*.m2v,*.mp2v,*.pss,*.pva,
 		*.ifo,*.vob,*.divx,*.evo,*.ivm,*.mkv,*.mod,*.mts,*.ogm,*.scm,*.tod,*.vp6,*.webm,*.xlmv。<br/>
-		2、目前sdk会对大于640*480的视频裁剪到640*480;<br/>
+		2、目前sdk会对大于1280*720的视频裁剪到1280*720;<br/>
 		3、文件播放和系统声音采集不应该同时打开，否则文件播放的声音又会被系统声音采集到，出现重音现象;
 		@note
 		屏幕分享和播片功能都是通过辅路流传输，所以屏幕分享和播片互斥使用;

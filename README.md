@@ -5,10 +5,12 @@ iLiveSDK(全称:Interactive Live SDK)整合了互动直播SDK(AVSDK)、即时通
 [iLiveSDK导入参考](https://github.com/zhaoyang21cn/iLiveSDK_PC_Demos/blob/master/doc/iLiveSDK_README.md)
 
 ## SDK最近更新说明
-### V1.8.1.10(2018-02-09)
-* 获取设备列表为空时，统一返回错误码ERR_NOT_FOUND(8022);
-* 增加获取麦克风\扬声器动态音量接口(getMicDynamicVolume\getPlayerDynamicVolume);
-* SDK内部优化;
+### V1.8.2.0(2018-04-08)
+* 更新avsdk 1.9.8.2;
+* 视频播放支持到720p;
+* 允许指定创建房间所用的IM群类型;
+* 登录接口增加默认spear配置参数;
+* 去掉SkinBeauty.dll(此dll经常被360杀掉);
 
 [更多版本更新信息](https://github.com/zhaoyang21cn/iLiveSDK_PC_Demos/blob/master/doc/iLiveSDK_ChangeList.md)
 

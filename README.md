@@ -35,6 +35,7 @@ iLiveSDK(全称:Interactive Live SDK)整合了互动直播SDK(AVSDK)、即时通
 
 ## QAVSDK下载
 iLiveSDK内部集成了腾讯云的IMSDK和QAVSDK。使用iLiveSDK的用户不需要额外集成IMSDK或QAVSDK，就可以直接使用其所有功能。
+
 对于仍在集成QAVSDK的老用户，也可以在这里获取QAVSDK的最新版本:
 
 [QAVSDK_1.9.8.2](http://dldir1.qq.com/hudongzhibo/git/iLiveSDK_PC_Suixinbo/AVSDK/QAVOPENSDK_1.9.8.2_Windows_Publish.zip)

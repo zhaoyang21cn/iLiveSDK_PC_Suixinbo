@@ -1767,9 +1767,10 @@ namespace ilive
 		@param [in] appId 在腾讯云申请的sdkappid
 		@param [in] accountType 在腾讯云申请的accountType
 		@param [in] imSupport 是否需要聊天等即时通讯功能
+		@param [in] testEnv 是否进入测试环境
 		@return 返回操作结果,成功则返回NO_ERR
 		*/
-		virtual int init(const int appId, const int accountType, bool imSupport = true) = 0;
+		virtual int init(const int appId, const int accountType, bool imSupport = true, bool testEnv = false) = 0;
 		/**
 		@brief 释放
 		@details 使用完ilive后需要释放资源。
@@ -1779,6 +1780,12 @@ namespace ilive
 		@remark 此函数会清理7天前的所有日志文件(iLiveSDK、AVSDK、IMSDK)。
 		*/
 		virtual void release(iLiveSucCallback suc = NULL, iLiveErrCallback err = NULL, void* data = NULL) = 0;
+		/**
+		@brief 是否已初始化
+		@return 是否已初始化
+		*/
+		virtual bool isInited() = 0;
+
 		/**
 		@brief 设置被踢下线监听
 		@details 每个账号不能同时登录多台设备，当其他设备登录相同账号时会收到这个通知
@@ -1796,8 +1803,9 @@ namespace ilive
 		@brief 设置网络连接监听
 		@param [in] onConn 联网成功回调
 		@param [in] onDisconn 断连回调
-		@note 建议成功联网回调后再进行登录等其他业务逻辑
+		@note 可以在联网成功回调后再进行登录等其他业务逻辑(此接口已废弃，不再推荐使用)
 		*/
+		Deprecated
 		virtual void setConnListener( onNetworkCallback onConn, onNetworkCallback onDisconn ) = 0;
 
 		/**
@@ -1863,6 +1871,11 @@ namespace ilive
 		@param [in] data 用户自定义数据的指针，回调函数中原封不动地传回(通常为调用类的指针);
 		*/
 		virtual void logout(iLiveSucCallback suc, iLiveErrCallback err, void* data) = 0;
+		/**
+		@brief 是否已登录
+		@return 是否已登录
+		*/
+		virtual bool isLogin() = 0;
 
 		/**
 		@brief 开始设备测试
@@ -1883,6 +1896,12 @@ namespace ilive
 		@remark 在开始设备测试后，需要停止设备测试，才能进入房间，否则会返回相应错误码;
 		*/
 		virtual void stopDeviceTest(iLiveSucCallback suc, iLiveErrCallback err, void* data) = 0;
+
+		/**
+		@brief 是否处于设备测试状态
+		@return 是否处于设备测试状态
+		*/
+		virtual bool isInDeviceTest() = 0;
 		
 		/**
 		@brief 创建直播房间
@@ -1901,12 +1920,27 @@ namespace ilive
 		*/
 		virtual void joinRoom(const iLiveRoomOption& roomOption, iLiveSucCallback suc, iLiveErrCallback err, void* data) = 0;
 		/**
+		@brief 切换房间
+		@param [in] roomId 要切换到的房间id
+		@param [in] suc 成功回调
+		@param [in] err 失败回调
+		@param [in] data 用户自定义数据的指针，回调函数中原封不动地传回(通常为调用类的指针);
+		@remark 1、只有在房间内才能切换房间; 2、房间拥有者(主播)不能切换房间;
+		*/
+		virtual void switchRoom(uint32 roomId, iLiveSucCallback suc, iLiveErrCallback err, void* data) = 0;
+		/**
 		@brief 退出直播房间
 		@param [in] suc 成功回调
 		@param [in] err 失败回调
 		@param [in] data 用户自定义数据的指针，回调函数中原封不动地传回(通常为调用类的指针);
 		*/
 		virtual void quitRoom(iLiveSucCallback suc, iLiveErrCallback err, void* data) = 0;
+		/**
+		@brief 是否在房间中
+		@return 是否在房间中
+		*/
+		virtual bool isEnterRoom() = 0;
+
 		/**
 		@brief 请求一个或多个成员的视频画面
 		@param [in] streams 请求的流

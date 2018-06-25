@@ -5,8 +5,13 @@ iLiveSDK(全称:Interactive Live SDK)整合了互动直播SDK(AVSDK)、即时通
 [iLiveSDK导入参考](https://github.com/zhaoyang21cn/iLiveSDK_PC_Demos/blob/master/doc/iLiveSDK_README.md)
 
 ## SDK最近更新说明
-### V1.8.2.1(2018-04-18)
-* sdk强制退出房间，没有自动关闭摄像头----bug修正;
+### V1.8.3.0(2018-06-25)
+* 更新avsdk 1.9.8.22;
+* 更新imsdk 2.5.13653.608;
+* 增加当前状态获取接口(是否初始化、是否登录、是否设备测试中、是否在房间内);
+* 增加进入测试环境接口;
+* 增加切换房间接口;
+* sdk内部优化;
 
 [更多版本更新信息](https://github.com/zhaoyang21cn/iLiveSDK_PC_Demos/blob/master/doc/iLiveSDK_ChangeList.md)
 

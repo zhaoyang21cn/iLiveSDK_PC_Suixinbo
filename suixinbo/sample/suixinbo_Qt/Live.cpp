@@ -2171,10 +2171,8 @@ void Live::on_btnMix_clicked()
 
 void Live::onMixStream(std::string streamCode)
 {
-	std::stringstream ss;
-	ss << "ffplay rtmp://8525.liveplay.myqcloud.com/live/" << streamCode;	
-	std::string url = ss.str();
-	
-	system(url.c_str());
+	std::string url = std::string("rtmp://8525.liveplay.myqcloud.com/live/") + streamCode;
+	QString szTipText = FromBits("混流成功，播放地址: ") + FromStdStr(url);
+	addMsgLab(szTipText);
 }
 

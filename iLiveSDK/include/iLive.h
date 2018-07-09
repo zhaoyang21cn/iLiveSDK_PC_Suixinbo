@@ -319,6 +319,27 @@ namespace ilive
 		E_CloudSupport,		///< 1: 云支持
 	};
 
+	/**
+	@brief sdk通信通道类型
+	*/
+	enum E_ChannelMode
+	{
+		E_ChannelIMRestAPI,	///< IMSDKRestAPI通道,必须在进房时带上tls加密版本的AuthBuffer(默认)
+		E_ChannelIMSDK,		///< IMSDK通道(iLiveSDK 1.9.0之前的版本所用的通道)
+	};
+
+	/**
+	@brief 自定义数据类型。
+	*/
+	enum E_CustomDataMode
+	{
+		E_CUSTOMDATA_NOT_AUTOPUSH = 0,	///< (预留类型，业务侧不要使用！！！)自动推送，独立信令不自动推动，需接收端主动请求，独立信令
+		E_CUSTOMDATA_AUTOPUSH = 1,		///< (预留类型，业务侧不要使用！！！)自动推送，独立信令自动推送，独立信令
+		E_CUSTOMDATA_WITH_AVDATA = 2,	///< 跟随音视频数据发送
+		E_CUSTOMDATA_WITH_SEIDATA = 3,	///< 附带在视频帧的SEI段内发送，在转码后台会被以SEI段的形式插入到旁路流中，payload type为0xf3
+		E_CUSTOMDATA_WITH_NALU = 4,		///< 附带在视频帧的SEI段内发送一端NALU，在转码后台会被以视频参考帧的形式插入到旁路流中
+	};
+
 	/// 音视频通话的通话能力权限位。
 	const uint64 AUTH_BITS_DEFAULT              = -1;			///< 所有权限。
 	const uint64 AUTH_BITS_CREATE_ROOM          = 0x00000001;	///< 创建房间权限。
@@ -440,6 +461,11 @@ namespace ilive
 	@remark 回调函数设定为专门处理数据用。函数回调在非主线程，请确保线程安全。特别是不要在回调函数中直接调用SDK接口。
     */
 	typedef void (*iLiveAudioDataCallback)(struct iLiveAudioFrame* audioFrame, E_AudioDataSourceType srcType, void* data);
+
+	/**
+	@param [in] data 自定义数据。
+	*/
+	typedef void (*iLiveCustomDataCallback)(struct sCustomData& data);
 
 	/**
 	@brief 消息中的图片
@@ -694,7 +720,12 @@ namespace ilive
 		E_IMGroupType			groupType;				///< 创建房间时，所创建的IM群类型
 		String					groupId;				///< IM群组ID;此字段仅大咖模式下使用;
 		bool					joinImGroup;			///< 是否加入IM群组,此字段仅大咖模式下使用(默认为true，如果设置为false，需要业务侧后台将用户拉进IM群组);
-		uint64					authBits;				///< 通话能力权限位;主播应当设置为AUTH_BITS_DEFAULT,连麦观众设置为AUTH_BITS_DEFAULT & (~AUTH_BITS_CREATE_ROOM),观众设置为AUTH_BITS_JOIN_ROOM|AUTH_BITS_RECV_AUDIO|AUTH_BITS_RECV_CAMERA_VIDEO|AUTH_BITS_RECV_SCREEN_VIDEO
+		/**
+		@brief 通话能力权限位;
+		@details 主播应当设置为AUTH_BITS_DEFAULT,连麦观众设置为AUTH_BITS_DEFAULT & (~AUTH_BITS_CREATE_ROOM),观众设置为AUTH_BITS_JOIN_ROOM|AUTH_BITS_RECV_AUDIO|AUTH_BITS_RECV_CAMERA_VIDEO|AUTH_BITS_RECV_SCREEN_VIDEO;
+		@note 1.9.0.0开始，sdk默认使用E_ChannelIMRestAPI通道，此通道模式下，authBits参数无效，应当通过privateMapKey控制权限位;参见setChannelMode接口定义.
+		*/
+		uint64					authBits;
 		String					controlRole;			///< 角色名，web端音视频参数配置工具所设置的角色名
 		String					authBuffer;				///< 通话能力权限位的加密串
 		bool					autoRequestCamera;		///< 房间内有成员打开摄像头时，是否自动请求画面;
@@ -705,6 +736,7 @@ namespace ilive
 		bool					enableHwDec;			///< 摄像头是否使用硬件解码(极速模式下，请勿使用硬编解)。
 		bool					enableHwScreenEnc;		///< 屏幕分享是否使用硬件编码(极速模式下，请勿使用硬编解)。
 		bool					enableHwScreenDec;		///< 屏幕分享是否使用硬件解码(极速模式下，请勿使用硬编解)。
+		String					bussInfo;				///< 业务侧自定义数据
 
 		/**
 		@brief SDK主动退出房间回调;
@@ -1752,6 +1784,24 @@ namespace ilive
 	};
 
 	/**
+	@brief 自定义数据结构
+	*/
+	struct sCustomData
+	{
+		sCustomData()
+			: dataSize(0)
+			, data(NULL)
+			, pushMode(E_CUSTOMDATA_AUTOPUSH)
+		{
+		}
+
+		String				id;			///< 调用fillCustomData时，不需要填写，sdk会自动填充
+		uint32				dataSize;
+		uint8*				data; 
+		E_CustomDataMode	pushMode;
+	};
+
+	/**
 	@brief 接口封装抽象接口
 	*/
 	struct iLive
@@ -1786,6 +1836,17 @@ namespace ilive
 		*/
 		virtual bool isInited() = 0;
 
+		/**
+		@brief 设置通道类型
+		@details 设置SDK内部通道。
+		老用户(2018年07月09日前接入的用户)需要调用本接口设置为E_ChannelIMSDK，才能和旧版本(1.9.0.0之前的版本)互通;
+		默认通道为E_ChannelIMRestAPI,在进房间时，必须带上tls加密版本的AuthBuffer(进房时参数iLiveRoomOption的authBuffer),
+		authBuffer生成规则参考: https://cloud.tencent.com/document/product/454/16914 文档中privateMapKey的计算方法;
+		@param [in] mode 通道类型
+		@param [in] host 自定义域名(目前此参数无效);
+		@note 必须在登录之前调用，否则无效。
+		*/
+		virtual void setChannelMode(E_ChannelMode mode, const String& host = "") = 0;
 		/**
 		@brief 设置被踢下线监听
 		@details 每个账号不能同时登录多台设备，当其他设备登录相同账号时会收到这个通知
@@ -1852,6 +1913,12 @@ namespace ilive
 		@note 需要在进入房间\开启设备测试之前设置,否则返回false;
 		*/
 		virtual bool setVideoColorFormat(E_ColorFormat fmt) = 0;
+
+		/**
+		@brief 设置接收自定义数据的回调函数
+		@param [in] cb 回调函数 
+		*/
+		virtual void setCustomDataCallback(iLiveCustomDataCallback cb) = 0;
 
 		/**
 		@brief 登录
@@ -2441,6 +2508,14 @@ namespace ilive
 		@return 操作结果。NO_ERR表示成功;
 		*/
 		virtual int cancelAudioList() = 0;
+
+		/**
+		@brief 自定义数据传输,跟随音视频数据传输
+		@details 根据customData的pushMode不一样决定是向接收方发送自定义数据或是附带数据到视频的SEI段
+		@param [in] data 自定义数据对象。
+		@return NO_ERR 表示操作成功
+		*/
+		virtual int fillCustomData(const sCustomData& data) = 0;
 
 		/**
 		@brief 获取当前摄像头状态

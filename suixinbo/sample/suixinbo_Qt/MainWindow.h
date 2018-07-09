@@ -23,10 +23,13 @@ class MainWindow : public QMainWindow
 public:
 	MainWindow( QWidget * parent = 0, Qt::WindowFlags flags = 0 );
 	QString getUserId();
+	QString getUserPassword();
 	QString	getServerUrl();
 	QString getToken();
 	E_LoginState getLoginState();
 	Live*	getLiveView();
+	void setUserSig(QString userSig);
+	void setToken(QString token);
 
 	void setCurRoomIdfo(const Room& roominfo);
 	const Room& getCurRoomInfo();
@@ -51,12 +54,14 @@ private:
 	void sxbLogin();
 	void sxbLogout();
 	void sxbCreateRoom();
+	void sxbAuthPrivMap();
 	void sxbReportroom();
 	void sxbCreatorJoinRoom();//主播加入房间
 	void sxbRoomList();
 	static void OnSxbLogin(int errorCode, QString errorInfo, QVariantMap datamap, void* pCusData);
 	static void OnSxbLogout(int errorCode, QString errorInfo, QVariantMap datamap, void* pCusData);
 	static void OnSxbCreateRoom(int errorCode, QString errorInfo, QVariantMap datamap, void* pCusData);
+	static void OnSxbAuthPrivMap(int errorCode, QString errorInfo, QVariantMap datamap, void* pCusData);
 	static void OnSxbReportroom(int errorCode, QString errorInfo, QVariantMap datamap, void* pCusData);
 	static void OnSxbCreatorJoinRoom(int errorCode, QString errorInfo, QVariantMap datamap, void* pCusData);
 	static void OnSxbRoomList(int errorCode, QString errorInfo, QVariantMap datamap, void* pCusData);

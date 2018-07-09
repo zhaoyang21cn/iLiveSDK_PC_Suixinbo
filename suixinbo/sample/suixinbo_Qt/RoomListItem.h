@@ -17,6 +17,7 @@ struct Room
 		QString cover;
 		int thumbup;//点赞数
 		int memsize;//房间人员数
+		QString authBuffer;
 	}info;
 };
 
@@ -32,7 +33,9 @@ private slots:
 
 private:
 	void sxbWatcherJoinRoom(); //普通观众加入房间
+	void sxbWatcherAuthPrivMap();
 	static void OnSxbWatcherJoinRoom(int errorCode, QString errorInfo, QVariantMap datamap, void* pCusData);
+	static void OnSxbWatcherAuthPrivMap(int errorCode, QString errorInfo, QVariantMap datamap, void* pCusData);
 
 	void iLiveJoinRoom();
 	static void OniLiveJoinRoomSuc(void* data);

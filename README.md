@@ -6,7 +6,7 @@ iLiveSDK(全称:Interactive Live SDK)整合了互动直播SDK(AVSDK)、即时通
 
 ## SDK最近更新说明
 ### V1.9.0.0(2018-07-09)
-* 修改SDK内部默认通道为云上环境(**老用户需要在初始化SDK后将通道设置为IMSDK通道，否则无法与旧版本互通**);
+* 修改SDK内部默认通道为云上环境(**老用户需要在初始化SDK后将通道设置为IMSDK通道，否则无法与旧版本互通;云上环境authBuffer即privateMapKey为必填字段**);
 * 增加设置通道接口setChannelMode;
 * 增加自定义数据透传接口fillCustomData;
 

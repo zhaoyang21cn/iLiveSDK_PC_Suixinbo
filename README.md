@@ -1,5 +1,5 @@
 # iLiveSDK
-iLiveSDK(全称:Interactive Live SDK)整合了互动直播SDK(AVSDK)、即时通讯SDK(IMSDK)两大模块，致力于提供一套完整的音视频即时通讯解决方案，打造跨平台的直播场景。iLiveSDK 提供了账号登录，音视频互动，屏幕共享，收发消息等功能。旨在无限可能地降低用户接入成本，全方位考虑用户接入体验，并提供接入服务技术支持。
+iLiveSDK整合了音视频SDK(AVSDK)、即时通讯SDK(IMSDK)两大模块，致力于提供一套完整的音视频即时通讯解决方案。iLiveSDK 提供了账号登录，音视频互动，屏幕共享，收发消息等功能。旨在无限可能地降低用户接入成本，全方位考虑用户接入体验，并提供接入服务技术支持。
 
 ## iLiveSDK导入
 [iLiveSDK导入参考](https://github.com/zhaoyang21cn/iLiveSDK_PC_Demos/blob/master/doc/iLiveSDK_README.md)

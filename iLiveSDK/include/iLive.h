@@ -324,7 +324,7 @@ namespace ilive
 	*/
 	enum E_ChannelMode
 	{
-		E_ChannelIMRestAPI,	///< IMSDKRestAPI通道,必须在进房时带上tls加密版本的AuthBuffer(默认)
+		E_ChannelIMRestAPI,	///< IMSDKRestAPI通道,必须在进房时带上tls加密版本的privateMapKey(默认)
 		E_ChannelIMSDK,		///< IMSDK通道(iLiveSDK 1.9.0之前的版本所用的通道)
 	};
 
@@ -727,7 +727,7 @@ namespace ilive
 		*/
 		uint64					authBits;
 		String					controlRole;			///< 角色名，web端音视频参数配置工具所设置的角色名
-		String					authBuffer;				///< 通话能力权限位的加密串
+		String					privateMapKey;			///< 通话能力权限位的加密串
 		bool					autoRequestCamera;		///< 房间内有成员打开摄像头时，是否自动请求画面;
 		bool					autoRequestScreen;		///< 房间内有成员打开屏幕分享时，是否自动请求画面;
 		bool					autoRequestMediaFile;	///< 房间内有成员打开播片时，是否自动请求画面;
@@ -1840,8 +1840,8 @@ namespace ilive
 		@brief 设置通道类型
 		@details 设置SDK内部通道。
 		老用户(2018年07月09日前接入的用户)需要调用本接口设置为E_ChannelIMSDK，才能和旧版本(1.9.0.0之前的版本)互通;
-		默认通道为E_ChannelIMRestAPI,在进房间时，必须带上tls加密版本的AuthBuffer(进房时参数iLiveRoomOption的authBuffer),
-		authBuffer生成规则参考: https://cloud.tencent.com/document/product/454/16914 文档中privateMapKey的计算方法;
+		默认通道为E_ChannelIMRestAPI,此通道下,在进房间时，必须带上tls加密版本的privateMapKey(进房时参数iLiveRoomOption的privateMapKey),
+		privateMapKey生成规则参考: https://cloud.tencent.com/document/product/454/16914 文档中privateMapKey的计算方法;
 		@param [in] mode 通道类型
 		@param [in] host 自定义域名(目前此参数无效);
 		@note 必须在登录之前调用，否则无效。

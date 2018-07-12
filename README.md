@@ -5,8 +5,11 @@ iLiveSDK(全称:Interactive Live SDK)整合了互动直播SDK(AVSDK)、即时通
 [iLiveSDK导入参考](https://github.com/zhaoyang21cn/iLiveSDK_PC_Demos/blob/master/doc/iLiveSDK_README.md)
 
 ## SDK最近更新说明
-### V1.9.0.1(2018-07-11)
-* sdk内部BUG修正;
+### V1.9.0.2(2018-07-12)
+* 修改SDK内部默认通道为云上环境(**老用户需要在初始化SDK后将通道设置为IMSDK通道，否则无法与旧版本互通;云上环境privateMapKey为必填字段**);
+* 增加设置通道接口setChannelMode;
+* 增加自定义数据透传接口fillCustomData;
+* 修改进房参数RoomOption的authBuffer字段为privateMapKey;
 
 [更多版本更新信息](https://github.com/zhaoyang21cn/iLiveSDK_PC_Demos/blob/master/doc/iLiveSDK_ChangeList.md)
 

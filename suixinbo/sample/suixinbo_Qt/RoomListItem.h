@@ -17,7 +17,7 @@ struct Room
 		QString cover;
 		int thumbup;//点赞数
 		int memsize;//房间人员数
-		QString authBuffer;
+		QString privateMapKey;
 	}info;
 };
 

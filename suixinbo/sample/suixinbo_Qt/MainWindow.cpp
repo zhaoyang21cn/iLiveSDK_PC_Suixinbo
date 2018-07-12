@@ -398,7 +398,7 @@ void MainWindow::OnSxbAuthPrivMap(int errorCode, QString errorInfo, QVariantMap 
 	}
 	if (datamap.contains("privMapEncrypt"))
 	{
-		pMainWindow->m_curRoomInfo.info.authBuffer = datamap.value("privMapEncrypt").toString();
+		pMainWindow->m_curRoomInfo.info.privateMapKey = datamap.value("privMapEncrypt").toString();
 	}
 
 	if (errorCode==E_SxbOK)
@@ -557,7 +557,7 @@ void MainWindow::iLiveCreateRoom()
 	roomOption.controlRole = LiveMaster;
 	roomOption.roomDisconnectListener = Live::OnRoomDisconnect;
 	roomOption.memberStatusListener = Live::OnMemStatusChange;
-	roomOption.authBuffer = String(m_curRoomInfo.info.authBuffer.toStdString().data(), m_curRoomInfo.info.authBuffer.toStdString().length());
+	roomOption.privateMapKey = String(m_curRoomInfo.info.privateMapKey.toStdString().data(), m_curRoomInfo.info.privateMapKey.toStdString().length());
 	//roomOption.qualityParamCallback = Live::OnQualityParamCallback;
 	roomOption.data = m_pLive;
 	GetILive()->createRoom( roomOption, OniLiveCreateRoomSuc, OniLiveCreateRoomErr, this );

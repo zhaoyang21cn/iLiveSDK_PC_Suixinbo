@@ -95,7 +95,7 @@ void RoomListItem::OnSxbWatcherAuthPrivMap(int errorCode, QString errorInfo, QVa
 	}
 	if (datamap.contains("privMapEncrypt"))
 	{
-		pRoomListItem->m_room.info.authBuffer = datamap.value("privMapEncrypt").toString();
+		pRoomListItem->m_room.info.privateMapKey = datamap.value("privMapEncrypt").toString();
 	}
 
 	if (errorCode==E_SxbOK)
@@ -120,7 +120,7 @@ void RoomListItem::iLiveJoinRoom()
 	roomOption.controlRole = Guest;
 	roomOption.memberStatusListener = Live::OnMemStatusChange;
 	roomOption.roomDisconnectListener = Live::OnRoomDisconnect;
-	roomOption.authBuffer = String(m_room.info.authBuffer.toStdString().data(), m_room.info.authBuffer.toStdString().length());
+	roomOption.privateMapKey = String(m_room.info.privateMapKey.toStdString().data(), m_room.info.privateMapKey.toStdString().length());
 	//roomOption.qualityParamCallback = Live::OnQualityParamCallback;
 	roomOption.data = g_pMainWindow->getLiveView();
 	GetILive()->joinRoom( roomOption, OniLiveJoinRoomSuc, OniLiveJoinRoomErr, this );

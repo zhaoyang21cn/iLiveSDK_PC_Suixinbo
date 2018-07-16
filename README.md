@@ -18,7 +18,7 @@ iLiveSDK整合了音视频SDK(AVSDK)、即时通讯SDK(IMSDK)两大模块，致�
 [随心播运行包下载](http://dldir1.qq.com/hudongzhibo/git/iLiveSDK_PC_Suixinbo/suixinbo_run.zip)
 
 ## API文档
-[API文档下载](https://github.com/zhaoyang21cn/iLiveSDK_PC_Demos/blob/master/doc/ILiveSDK_api.zip)
+[API文档下载](https://zhaoyang21cn.github.io/iLiveSDK_Help/pc_help/index.html)
 
 ## 错误码
 [错误码表](https://github.com/zhaoyang21cn/ILiveSDK_Android_Demos/blob/master/doc/ILiveSDK/error.md)

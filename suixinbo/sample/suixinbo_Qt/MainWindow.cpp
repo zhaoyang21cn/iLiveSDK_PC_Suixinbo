@@ -45,11 +45,6 @@ QString MainWindow::getUserId()
 	return m_szUserId;
 }
 
-QString MainWindow::getUserPassword()
-{
-	return m_szUserPassword;
-}
-
 QString MainWindow::getServerUrl()
 {
 	return m_szServerUrl;
@@ -68,16 +63,6 @@ E_LoginState MainWindow::getLoginState()
 Live* MainWindow::getLiveView()
 {
 	return m_pLive;
-}
-
-void MainWindow::setUserSig(QString userSig)
-{
-	m_szUserSig = userSig;
-}
-
-void MainWindow::setToken(QString token)
-{
-	m_szUserToken = token;
 }
 
 void MainWindow::setCurRoomIdfo( const Room& roominfo )
@@ -106,6 +91,7 @@ void MainWindow::initSDK()
 	GetILive()->setMessageCallBack(Live::OnMessage, m_pLive);
 	GetILive()->setForceOfflineCallback(onForceOffline);
 	GetILive()->setRemoteVideoCallBack(Live::OnRemoteVideo, m_pLive);
+	GetILive()->setChannelMode(E_ChannelIMSDK);
 	
 	iLiveRootView* pView = iLiveCreateRootView();
 	E_ColorFormat fmt = (pView->getRootViewType() ==ROOT_VIEW_TYPE_D3D) ? COLOR_FORMAT_I420 : COLOR_FORMAT_RGB24;
@@ -266,18 +252,6 @@ void MainWindow::sxbCreateRoom()
 	SxbServerHelper::request(varmap, "live", "create", OnSxbCreateRoom, this);
 }
 
-void MainWindow::sxbAuthPrivMap()
-{
-	QVariantMap varmap;
-	varmap.insert("identifier", m_szUserId);
-	varmap.insert("pwd", m_szUserPassword);
-	varmap.insert("appid", QString::number(m_nAppId));
-	varmap.insert("accounttype", m_nAccountType);
-	varmap.insert("roomnum", m_curRoomInfo.info.roomnum);
-	varmap.insert("privMap", qint64(AUTH_BITS_DEFAULT) );
-	SxbServerHelper::request(varmap, "account", "authPrivMap", OnSxbAuthPrivMap, this);
-}
-
 void MainWindow::sxbReportroom()
 {
 	QVariantMap varmap;
@@ -375,39 +349,12 @@ void MainWindow::OnSxbCreateRoom( int errorCode, QString errorInfo, QVariantMap 
 
 	if (errorCode==E_SxbOK)
 	{
-		pMainWindow->sxbAuthPrivMap();
+		pMainWindow->iLiveCreateRoom();
 	}
 	else
 	{
 		ShowCodeErrorTips( errorCode, errorInfo, pMainWindow, FromBits("创建房间出错") );
 		pMainWindow->setUseable(true);
-	}
-}
-
-void MainWindow::OnSxbAuthPrivMap(int errorCode, QString errorInfo, QVariantMap datamap, void* pCusData)
-{
-	MainWindow* pMainWindow = reinterpret_cast<MainWindow*>(pCusData);
-	
-	if (datamap.contains("userSig"))
-	{
-		pMainWindow->m_szUserSig = datamap.value("userSig").toString();
-	}
-	if (datamap.contains("token"))
-	{
-		pMainWindow->m_szUserToken = datamap.value("token").toString();
-	}
-	if (datamap.contains("privMapEncrypt"))
-	{
-		pMainWindow->m_curRoomInfo.info.privateMapKey = datamap.value("privMapEncrypt").toString();
-	}
-
-	if (errorCode==E_SxbOK)
-	{
-		pMainWindow->iLiveCreateRoom();
-	}
-	else
-	{
-		ShowCodeErrorTips( errorCode, errorInfo, pMainWindow, FromBits("获取authBuffer失败") );
 	}
 }
 
@@ -553,11 +500,10 @@ void MainWindow::iLiveCreateRoom()
 	iLiveRoomOption roomOption;
 	roomOption.audioCategory = AUDIO_CATEGORY_MEDIA_PLAY_AND_RECORD;//互动直播场景
 	roomOption.roomId = m_curRoomInfo.info.roomnum;
-	//roomOption.authBits = AUTH_BITS_DEFAULT;
+	roomOption.authBits = AUTH_BITS_DEFAULT;
 	roomOption.controlRole = LiveMaster;
 	roomOption.roomDisconnectListener = Live::OnRoomDisconnect;
 	roomOption.memberStatusListener = Live::OnMemStatusChange;
-	roomOption.privateMapKey = String(m_curRoomInfo.info.privateMapKey.toStdString().data(), m_curRoomInfo.info.privateMapKey.toStdString().length());
 	//roomOption.qualityParamCallback = Live::OnQualityParamCallback;
 	roomOption.data = m_pLive;
 	GetILive()->createRoom( roomOption, OniLiveCreateRoomSuc, OniLiveCreateRoomErr, this );

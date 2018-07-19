@@ -54,49 +54,9 @@ void RoomListItem::sxbWatcherJoinRoom()
 	SxbServerHelper::request(varmap, "live", "reportmemid", OnSxbWatcherJoinRoom, this);
 }
 
-void RoomListItem::sxbWatcherAuthPrivMap()
-{
-	QVariantMap varmap;
-	varmap.insert("identifier", g_pMainWindow->getUserId());
-	varmap.insert("pwd", g_pMainWindow->getUserPassword());
-	varmap.insert("appid", QString::number(SuixinboAppid));
-	varmap.insert("accounttype", SuixinboAccountType);
-	varmap.insert("roomnum", m_room.info.roomnum);
-	varmap.insert("privMap", qint64(AUTH_BITS_DEFAULT) );
-	SxbServerHelper::request(varmap, "account", "authPrivMap", OnSxbWatcherAuthPrivMap, this);
-}
-
 void RoomListItem::OnSxbWatcherJoinRoom( int errorCode, QString errorInfo, QVariantMap datamap, void* pCusData )
 {
 	RoomListItem* pRoomListItem = reinterpret_cast<RoomListItem*>(pCusData);
-
-	if (errorCode==E_SxbOK)
-	{
-		pRoomListItem->sxbWatcherAuthPrivMap();
-	}
-	else
-	{
-		ShowCodeErrorTips( errorCode, errorInfo, pRoomListItem, FromBits("观众加入房间失败") );
-		g_pMainWindow->setUseable(true);
-	}
-}
-
-void RoomListItem::OnSxbWatcherAuthPrivMap(int errorCode, QString errorInfo, QVariantMap datamap, void* pCusData)
-{
-	RoomListItem* pRoomListItem = reinterpret_cast<RoomListItem*>(pCusData);
-
-	if (datamap.contains("userSig"))
-	{
-		g_pMainWindow->setUserSig( datamap.value("userSig").toString() );
-	}
-	if (datamap.contains("token"))
-	{
-		g_pMainWindow->setToken( datamap.value("token").toString() );
-	}
-	if (datamap.contains("privMapEncrypt"))
-	{
-		pRoomListItem->m_room.info.privateMapKey = datamap.value("privMapEncrypt").toString();
-	}
 
 	if (errorCode==E_SxbOK)
 	{
@@ -104,7 +64,8 @@ void RoomListItem::OnSxbWatcherAuthPrivMap(int errorCode, QString errorInfo, QVa
 	}
 	else
 	{
-		ShowCodeErrorTips( errorCode, errorInfo, pRoomListItem, FromBits("获取authBuffer失败") );
+		ShowCodeErrorTips( errorCode, errorInfo, pRoomListItem, FromBits("观众加入房间失败") );
+		g_pMainWindow->setUseable(true);
 	}
 }
 
@@ -116,11 +77,10 @@ void RoomListItem::iLiveJoinRoom()
 	iLiveRoomOption roomOption;
 	roomOption.audioCategory = AUDIO_CATEGORY_MEDIA_PLAY_AND_RECORD;//互动直播场景
 	roomOption.roomId = m_room.info.roomnum;
-	//roomOption.authBits = AUTH_BITS_JOIN_ROOM|AUTH_BITS_RECV_AUDIO|AUTH_BITS_RECV_CAMERA_VIDEO|AUTH_BITS_RECV_SCREEN_VIDEO;
+	roomOption.authBits = AUTH_BITS_JOIN_ROOM|AUTH_BITS_RECV_AUDIO|AUTH_BITS_RECV_CAMERA_VIDEO|AUTH_BITS_RECV_SCREEN_VIDEO;
 	roomOption.controlRole = Guest;
 	roomOption.memberStatusListener = Live::OnMemStatusChange;
 	roomOption.roomDisconnectListener = Live::OnRoomDisconnect;
-	roomOption.privateMapKey = String(m_room.info.privateMapKey.toStdString().data(), m_room.info.privateMapKey.toStdString().length());
 	//roomOption.qualityParamCallback = Live::OnQualityParamCallback;
 	roomOption.data = g_pMainWindow->getLiveView();
 	GetILive()->joinRoom( roomOption, OniLiveJoinRoomSuc, OniLiveJoinRoomErr, this );

@@ -1,4 +1,4 @@
-# 特殊版本说明
+# 需要特别注意的接口变动说明
 ## iLiveSDK 1.7.4.0
 * 1.7.4.0版本对房间内直播质量数据进行了扩展,之前版本iLiveRoomStatParam中的rtt字段放到其成员变量networkParams中了,其他常用字段，如，networkParams的kbpsSend为上行总码率,kbpsRecv为下行总码率;
 * 之前版本枚举类型E_iLiveStreamEncode的HLS_AND_FLV是没有意义的，已经将其删除;

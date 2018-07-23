@@ -1,10 +1,10 @@
 ## PC_iLiveSDK_ChangeList
 
 ###### V1.9.0.2(2018-07-12)
-* 修改SDK内部默认通道为云上环境(**老用户需要在初始化SDK后将通道设置为IMSDK通道，否则无法与旧版本互通;云上环境privateMapKey为必填字段**),[升级说明](https://github.com/zhaoyang21cn/iLiveSDK_PC_Suixinbo/blob/master/iLiveSDK/README.md);
-* 增加设置通道接口setChannelMode;
-* 修改进房参数RoomOption的authBuffer字段为privateMapKey;
-* 增加自定义数据透传接口fillCustomData;
+* 修改SDK内部默认通道为云上环境(**老用户需要在初始化SDK后将通道设置为IMSDK通道，否则无法与旧版本互通；云上环境privateMapKey为必填字段**)，[升级说明](https://github.com/zhaoyang21cn/iLiveSDK_PC_Suixinbo/blob/master/iLiveSDK/README.md)；
+* 增加设置通道接口setChannelMode；
+* 修改进房参数RoomOption的authBuffer字段为privateMapKey；
+* 增加自定义数据透传接口fillCustomData；
 
 ###### V1.8.3.1(2018-06-28)
 * 修正imsdk依赖vs2015运行时问题;

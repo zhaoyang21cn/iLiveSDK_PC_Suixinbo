@@ -1,10 +1,10 @@
 # 需要特别注意的接口变动说明
 
 ## iLiveSDK 1.9.0.2
-从1.9.0开始，SDK后台有两套环境(云上环境和非云上环境),两套环境不互通的;<br/>
-云上环境是腾讯视频云为优化海外节点准备的一套新的音视频环境，所以，1.9.0版本开始，SDK默认使用云上环境;使用云上环境，进房参数iLiveRoomOption中的
-privateMapKey为必填字段,privateMapKey生成规则参考: https://cloud.tencent.com/document/product/454/16914 文档中privateMapKey的计算方法;<br/>
-对于老用户(已使用iLiveSDK 1.9.0之前的版本上线运营),建议暂不使用云上版本;此时需要调用接口切换回非云上版本,即在初始化后，调用如下代码: 
+从1.9.0开始，SDK后台有两套环境(云上环境和非云上环境),两套环境不互通的;
+* 云上环境是腾讯视频云为优化海外节点准备的一套新的音视频环境，所以，1.9.0版本开始，SDK默认使用云上环境;使用云上环境，进房参数iLiveRoomOption中的
+privateMapKey为必填字段,privateMapKey生成规则参考: https://cloud.tencent.com/document/product/454/16914 文档中privateMapKey的计算方法;
+* 对于老用户(已使用iLiveSDK 1.9.0之前的版本上线运营),建议暂不使用云上版本;此时需要调用接口切换回非云上版本,即在初始化后，调用如下代码: 
 
 ```c++
 GetILive()->setChannelMode(E_ChannelIMSDK);

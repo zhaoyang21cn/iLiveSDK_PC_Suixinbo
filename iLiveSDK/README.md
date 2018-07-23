@@ -7,7 +7,7 @@ privateMapKey为必填字段,privateMapKey生成规则参考: https://cloud.tenc
 对于老用户(已使用iLiveSDK 1.9.0之前的版本上线运营),建议暂不使用云上版本;此时需要调用接口切换回非云上版本,即在初始化后，调用如下代码: 
 
 ```c++
-	GetILive()->setChannelMode(E_ChannelIMSDK);
+GetILive()->setChannelMode(E_ChannelIMSDK);
 ```
 
 ## iLiveSDK 1.7.4.0

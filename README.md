@@ -22,7 +22,7 @@ iLiveSDK整合了音视频SDK(AVSDK)、即时通讯SDK(IMSDK)两大模块，致�
 [API文档](https://zhaoyang21cn.github.io/iLiveSDK_Help/pc_help/annotated.html)
 
 ## 错误码
-[错误码表](https://github.com/zhaoyang21cn/ILiveSDK_Android_Demos/blob/master/doc/ILiveSDK/error.md)
+[错误码表](https://github.com/zhaoyang21cn/iLiveSDK_Android_LiveDemo/blob/master/doc/ILiveSDK/error.md)
 
 ## 相关知识
 [角色配置](https://www.qcloud.com/document/product/268/10620)<br/>

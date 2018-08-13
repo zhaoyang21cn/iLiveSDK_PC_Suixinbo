@@ -211,8 +211,10 @@ namespace ilive
 		E_DeviceOperationNone,		///< 默认值，无意义
 		E_OpenCamera,				///< 打开摄像头
 		E_CloseCamera,				///< 关闭摄像头
-		E_OpenExternalCapture,		///< 打开自定义采集
-		E_CloseExternalCapture,		///< 关闭自定义采集
+		E_OpenExternalCapture,		///< 打开主路自定义采集
+		E_CloseExternalCapture,		///< 关闭主路自定义采集
+		E_OpenExternalCaptureSub,	///< 打开辅路自定义采集
+		E_CloseExternalCaptureSub,	///< 关闭辅路自定义采集
 		E_OpenMic,					///< 打开麦克风
 		E_CloseMic,					///< 关闭麦克风
 		E_OpenPlayer,				///< 打开扬声器
@@ -333,11 +335,21 @@ namespace ilive
 	*/
 	enum E_CustomDataMode
 	{
-		E_CUSTOMDATA_NOT_AUTOPUSH = 0,	///< (预留类型，业务侧不要使用！！！)自动推送，独立信令不自动推动，需接收端主动请求，独立信令
-		E_CUSTOMDATA_AUTOPUSH = 1,		///< (预留类型，业务侧不要使用！！！)自动推送，独立信令自动推送，独立信令
 		E_CUSTOMDATA_WITH_AVDATA = 2,	///< 跟随音视频数据发送
 		E_CUSTOMDATA_WITH_SEIDATA = 3,	///< 附带在视频帧的SEI段内发送，在转码后台会被以SEI段的形式插入到旁路流中，payload type为0xf3
 		E_CUSTOMDATA_WITH_NALU = 4,		///< 附带在视频帧的SEI段内发送一端NALU，在转码后台会被以视频参考帧的形式插入到旁路流中
+	};
+	
+	/**
+	@brief IMSDK图片消息，图片文件格式。
+	*/
+	enum E_ImageFormat
+	{
+		E_IMAGE_FORMAT_JPG = 0x1,
+		E_IMAGE_FORMAT_GIF = 0x2,
+		E_IMAGE_FORMAT_PNG = 0x3,
+		E_IMAGE_FORMAT_BMP = 0x4,
+		E_IMAGE_FORMAT_UNKNOWN = 0xff,
 	};
 
 	/// 音视频通话的通话能力权限位。
@@ -546,13 +558,14 @@ namespace ilive
 	*/
 	struct MessageImageElem : public MessageElem
 	{
-		MessageImageElem(const String& _path) : path(_path)
+		MessageImageElem(const String& _path) : format(E_IMAGE_FORMAT_UNKNOWN), path(_path)
 		{
 			type = IMAGE;
 		}
 		MessageImageElem(const MessageImageElem& other)
 			:MessageElem(other)
 		{
+			format = other.format;
 			path = other.path;
 			for (int i = 0; i < other.images.size(); ++i)
 			{
@@ -570,9 +583,9 @@ namespace ilive
 			}
 		}
 
+		E_ImageFormat format; ///< 图片文件格式，发送时不用填写，sdk自动根据文件名检测
 		String path;///< 发送图片的本地地址，仅发送有效
 		Vector<Image*> images;///< 接收的图片，仅接收有效
-
 	};
 
 	/**
@@ -1791,7 +1804,7 @@ namespace ilive
 		sCustomData()
 			: dataSize(0)
 			, data(NULL)
-			, pushMode(E_CUSTOMDATA_AUTOPUSH)
+			, pushMode(E_CUSTOMDATA_WITH_AVDATA)
 		{
 		}
 
@@ -2000,8 +2013,9 @@ namespace ilive
 		@param [in] suc 成功回调
 		@param [in] err 失败回调
 		@param [in] data 用户自定义数据的指针，回调函数中原封不动地传回(通常为调用类的指针);
+		@param [in] bQuitIM 退出房间时，是否解散群(房间拥有者)\退出群(房间加入者);
 		*/
-		virtual void quitRoom(iLiveSucCallback suc, iLiveErrCallback err, void* data) = 0;
+		virtual void quitRoom(iLiveSucCallback suc, iLiveErrCallback err, void* data, bool bQuitIM = true) = 0;
 		/**
 		@brief 是否在房间中
 		@return 是否在房间中
@@ -2176,18 +2190,18 @@ namespace ilive
 		*/
 		virtual void closeCamera() = 0;
 		/**
-		@brief 打开自定义采集
+		@brief 打开主路自定义采集
 		@note 
 		1、打开自定义采集成功，如果用户有上传视频权限，用户通过fillExternalCaptureFrame()填入的每一帧画面将会通过sdk上传;<br/>
-		2、打开摄像头操作和打开自定义采集是互斥的操作;如果同时打开，会返回错误AV_ERR_EXCLUSIVE_OPERATION(错误码见github上的错误码表);
+		2、打开摄像头操作和打开主路自定义采集是互斥的操作;如果同时打开，会返回错误AV_ERR_EXCLUSIVE_OPERATION(错误码见github上的错误码表);
 		*/
 		virtual void openExternalCapture() = 0;
 		/**
-		@brief 关闭自定义采集
+		@brief 关闭主路自定义采集
 		*/
 		virtual void closeExternalCapture() = 0;
 		/**
-		@brief 外部输入视频数据接口。
+		@brief 外部输入主路视频数据接口。
 		@return 操作结果，NO_ERR表示无错误;
 		@note 
 		1、目前sdk支持的VideoFrame格式只有COLOR_FORMAT_RGB24和COLOR_FORMAT_I420,如果传入的视频帧不是此两种格式，将返回ERR_NOT_SUPPORT;<br/>
@@ -2198,6 +2212,26 @@ namespace ilive
 		5、传入的LiveVideoFrame需要业务侧管理其生命周期，即用户需要注意frame.data字段的释放;
 		*/
 		virtual int fillExternalCaptureFrame( const LiveVideoFrame &frame ) = 0;
+		/**
+		@brief 打开辅路自定义采集
+		@note 
+		1、打开自定义采集成功，如果用户有上传视频权限，用户通过fillExternalCaptureFrame()填入的每一帧画面将会通过sdk上传;<br/>
+		2、屏幕分享和文件播放走辅路，所以，打开辅路自定义采集和屏幕分享、文件播放是互斥的操作;如果同时打开，会返回错误AV_ERR_EXCLUSIVE_OPERATION(错误码见github上的错误码表);
+		*/
+		virtual void openExternalCaptureSub() = 0;
+		/**
+		@brief 关闭辅路自定义采集
+		*/
+		virtual void closeExternalCaptureSub() = 0;
+		/**
+		@brief 外部输入辅路视频数据接口。
+		@return 操作结果，NO_ERR表示无错误;
+		@note 
+		1、目前sdk支持的VideoFrame格式只有COLOR_FORMAT_RGB24和COLOR_FORMAT_I420,如果传入的视频帧不是此两种格式，将返回ERR_NOT_SUPPORT;<br/>
+		2、传入的LiveVideoFrame需要业务侧管理其生命周期，即用户需要注意frame.data字段的释放;
+		*/
+		virtual int fillExternalCaptureFrameSub( const LiveVideoFrame &frame ) = 0;
+
 		/**
 		@brief 打开麦克风。
 		@param [in] szMicId 通过getMicList()函数获取的麦克风列表中的某个麦克风id。
@@ -2257,7 +2291,7 @@ namespace ilive
 		virtual uint32 getPlayerDynamicVolume() = 0;
 		/**
 		@brief 打开屏幕分享(指定窗口)。
-		@param [in] hWnd 所要捕获的窗口句柄(NULL表示全屏)。如果传入的hWnd不是有效窗口句柄\窗口不可见\窗口处于最小化状态，将会返回ERR_INVALID_PARAM;
+		@param [in] hWnd 所要捕获的窗口句柄。如果传入的hWnd不是有效窗口句柄\窗口不可见\窗口处于最小化状态，将会返回ERR_INVALID_PARAM;
 		@param [in] fps 捕获帧率,取值范围[1,10]。注意: 此参数暂无意义，sdk会根据网络情况，动态调整fps;
 		@note
 		屏幕分享和播片功能都是通过辅路流传输，所以屏幕分享和播片互斥使用;
@@ -2523,10 +2557,15 @@ namespace ilive
 		*/
 		virtual bool getCurCameraState() = 0;
 		/**
-		@brief 获取自定义采集状态。
+		@brief 获取主路自定义采集状态。
 		@return true:打开 false：关闭
 		*/
 		virtual bool getExternalCaptureState() = 0;
+		/**
+		@brief 获取辅路自定义采集状态。
+		@return true:打开 false：关闭
+		*/
+		virtual bool getExternalCaptureStateSub() = 0;
 		/**
 		@brief 获取当前麦克风状态
 		@return true:打开 false：关闭

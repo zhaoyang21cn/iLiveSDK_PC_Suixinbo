@@ -1,5 +1,10 @@
 ## PC_iLiveSDK_ChangeList
 
+###### V1.9.1.0(2018-08-13)
+* 支持辅路视频自定义采集；
+* 支持获取图片消息文件格式；
+* 支持退出房间主播不解散IM群、观众不退出IM群；
+
 ###### V1.9.0.2(2018-07-12)
 * 修改SDK内部默认通道为云上环境(**老用户需要在初始化SDK后将通道设置为IMSDK通道，否则无法与旧版本互通；云上环境privateMapKey为必填字段**)，[升级说明](https://github.com/zhaoyang21cn/iLiveSDK_PC_Suixinbo/blob/master/iLiveSDK/README.md)；
 * 增加设置通道接口setChannelMode；

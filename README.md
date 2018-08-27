@@ -41,6 +41,7 @@ iLiveSDK内部集成了腾讯云的IMSDK和QAVSDK。使用iLiveSDK的用户不�
 对于仍在集成QAVSDK的老用户，也可以在这里获取QAVSDK的最新版本:
 
 [QAVSDK_1.9.8](http://dldir1.qq.com/hudongzhibo/git/iLiveSDK_PC_Suixinbo/AVSDK/QAVOPENSDK_1.9.8.2_Windows_Publish.zip)
+
 [QAVSDK_1.9.9](http://dldir1.qq.com/hudongzhibo/git/iLiveSDK_PC_Suixinbo/AVSDK/QAVOPENSDK_1.9.9.1015_Windows_Publish.zip)
 
 ## 技术交流群

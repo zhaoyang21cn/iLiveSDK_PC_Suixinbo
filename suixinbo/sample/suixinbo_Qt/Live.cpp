@@ -542,7 +542,27 @@ void Live::OnDeviceOperation( E_DeviceOperationType oper, int retCode, void* dat
 
 void Live::OnQualityParamCallback( const iLiveRoomStatParam& param, void* data )
 {
-	printf( "%s\n", param.getInfoString().c_str() );
+	//printf( "%s\n", param.getInfoString().c_str() );
+
+	system("cls");
+	printf("上行总码率:%u  下行总码率: %u \n", param.networkParams.kbpsSend, param.networkParams.kbpsRecv);
+
+	printf("编码: \n");
+	for(int i=0; i<param.videoEncodeParams.size(); ++i)
+	{
+		const iLiveVideoEncodeParam& pa = param.videoEncodeParams[i];
+		if (pa.viewType == 0 )
+		{
+			printf("\t分辨率:\t%u*%u \n\tFPS:\t%.1f \n\t码率:\t%u\n\n", pa.width, pa.height, pa.fps/10.f, pa.bitrate);
+		}
+	}
+
+	printf("解码: \n");
+	for(int i=0; i<param.videoDecodeParams.size(); ++i)
+	{
+		const iLiveVideoDecodeParam& pa = param.videoDecodeParams[i];
+		printf("\t用户ID:\t%s \n\t分辨率:\t%u*%u \n\tFPS:\t%.1f \n\t码率:\t%u\n\n", pa.userId.c_str(), pa.width, pa.height, pa.fps / 10.f, pa.bitrate);
+	}
 }
 
 void Live::OnBtnOpenCamera()

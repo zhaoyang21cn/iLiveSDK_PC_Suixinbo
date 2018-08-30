@@ -95,7 +95,6 @@ private:
 	
 	QSettings*			m_pSetting;
 	int					m_nAppId;
-	int					m_nAccountType;
 	QString				m_szServerUrl;
 
 	E_LoginState		m_eLoginState;

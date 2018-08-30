@@ -246,24 +246,6 @@ namespace ilive
 	};
 
 	/**
-	@brief 测速通话类型。
-	*/
-	enum E_SPTCallType
-	{
-		SpeedTestCallType_Audio,		///< 纯音频
-		SpeedTestCallType_AudioVideo,	///< 音视频
-	};
-
-	/**
-	@brief 测速目的。
-	*/
-	enum E_SPTPurpose
-	{
-		SPTPurpose_EntTest,		///< 结束通话上报测速数据或其它一项专项白名单测速;
-		SPTPurpose_UserTest,	///< 用户主动点击测速，目的是测试当前网络状况;
-	};
-
-	/**
 	@brief 音频数据输入和输出类型。
 	*/
 	enum E_AudioDataSourceType
@@ -478,6 +460,20 @@ namespace ilive
 	@param [in] data 自定义数据。
 	*/
 	typedef void (*iLiveCustomDataCallback)(struct sCustomData& data);
+
+	/**
+	@brief 测速结果回调。
+	@param [in] value 测速结果。
+	@param [in] data 用户自定数据类型，回调函数中原封不动传回给业务侧。
+	*/
+	typedef void (*iLiveSpeedTestCallback)(const struct iLiveSpeedTestReport& value, void* data);
+	/**
+	@brief 测速完成回调。
+	@param [in] result 测速完成错误码,NO_ERR表示成功。
+	@param [in] errInfo 测速错误描述信息。
+	@param [in] data 用户自定数据类型，回调函数中原封不动传回给业务侧。
+	*/
+	typedef void (*iLiveSpeedTestCompleteCallback)(int result, const char *errInfo, void* data);
 
 	/**
 	@brief 消息中的图片
@@ -1654,75 +1650,18 @@ namespace ilive
 		iLiveAudioQosParam				audioQosParam;		///< 音频流控下发参数
 		uint32							audioCategory;		///< 音频场景
 	};
-	
-	/**
-	@brief 每个IP对应的测速结果
-	*/
-	struct iLiveSpeedTestResult
-	{
-		uint32 			access_ip;		///< 接口机IP
-		uint32 			access_port;	///< 接口机端口
-		uint32 			clientip;		///< 客户端IP
-		uint32			test_cnt;		///< 此测速包个数
-		uint32			test_pkg_size;	///< 测速包大小
-		uint32			avg_rtt;		///< 平均往返时延
-		uint32			max_rtt;		///< 最大往返时延
-		uint32			min_rtt;		///< 最小往返时延
-		uint32			rtt0_50;		///< 0-50ms rtt区间个数
-		uint32			rtt50_100;		///< 50-100ms rtt区间个数
-		uint32			rtt100_200;		///< 100-200ms rtt区间个数
-		uint32			rtt200_300;		///< 200-300ms rtt区间个数
-		uint32			rtt300_700;		///< 300-700ms rtt区间个数
-		uint32			rtt700_1000;	///< 700-1000ms rtt区间个数
-		uint32			rtt1000;		///< 1000ms以上 rtt区间个数
-		uint32			jitter0_20;		///< 网络抖动0-20ms区间个数
-		uint32			jitter20_50;	///< 网络抖动20-50ms区间个数
-		uint32			jitter50_100;	///< 网络抖动50-100ms区间个数
-		uint32			jitter100_200;	///< 网络抖动100-200ms区间个数
-		uint32			jitter200_300;	///< 网络抖动200-300ms区间个数
-		uint32			jitter300_500;	///< 网络抖动300-500ms区间个数
-		uint32			jitter500_800;	///< 网络抖动500-800ms区间个数
-		uint32			jitter800;		///< 网络抖动大于800ms区间个数
-		uint32 			t1_uploss;		///< 上行丢包率×10000(例如：1111对应于11.11%)
-		uint32			t1_dwloss;		///< 下行丢包率×10000(例如：1111对应于11.11%)
-		uint32			up_cons_loss0;	///< 上行连续丢包为0的次数
-		uint32			up_cons_loss1;	///< 上行连续丢包为1的次数
-		uint32			up_cons_loss2;	///< 上行连续丢包为2的次数
-		uint32			up_cons_loss3;	///< 上行连续丢包为3的次数
-		uint32			up_cons_lossb3;	///< 上行连续丢包大于3的次数
-		uint32			dw_cons_loss0;	///< 下行连续丢包为0的次数
-		uint32			dw_cons_loss1;	///< 下行连续丢包为1的次数
-		uint32			dw_cons_loss2;	///< 下行连续丢包为2的次数
-		uint32			dw_cons_loss3;	///< 下行连续丢包为3的次数
-		uint32			dw_cons_lossb3;	///< 下行连续丢包大于3的次数
-		uint32			up_disorder;	///< 上行乱序次数
-		uint32			dw_disorder;	///< 下行乱序次数
-		Vector<uint32>	up_seq;			///< 上行包序列
-		Vector<uint32>	dw_seq;			///< 下行包序列
-	};
 
 	/**
-	@brief 测速接口回调参数类型
+	@brief 每台接口机的测速结果
 	*/
-	struct iLiveSpeedTestResultReport
+	struct iLiveSpeedTestReport
 	{
-		uint64			test_id;		///< 测速id
-		uint64			test_time;		///< 测试时间戳(s)
-		uint64			roomid;			///< 测试房间号
-		uint32			client_type;	///< 客户端类型 0:unknown  1:pc  2:android  3:iphone  4:ipad
-		uint32			net_type;		///< 网络类型(始终为1): 0:无网络  1:wifi  2:2G  3:3G  4:4G  10:WAP  255:unknow
-		String			net_name;		///< 运营商名字，能获取就上报,utf8(无效)
-		String			wifi_name;		///< wifi ssid，能获取就上报,utf8(无效)
-		double			longitude;		///< 经度(无效)
-		double			latitude;		///< 纬度(无效)
-		uint32			client_ip;		///< 客户端IP
-		uint32			call_type;		///< 通话类型，0:纯音频，1:音视频
-		uint32			sdkappid;		///< sdkappid
-		uint32			test_type;		///< 测试类型: 0x1:udp  0x2:tcp  0x4:http get  0x8:http post  0x10:trace route
-		Vector<iLiveSpeedTestResult>	results;	///< 测试结果列表
-		uint32			net_changecnt;	///< 测速过程中网络变化次数(无效)
-		uint32			access_ip;		///< 本次通话选择的accessip(无效)
-		uint32			access_port;	///< 本次通话选择的access port(无效)
+		int		index;			///< 此接口机对应的索引
+		int		total;			///< 总共测速的接口机数量
+		String	ip;				///< 此接口机的ip
+		int		upLostRate;		///< 上行丢包率×10000(例如：3456对应于34.56%)
+		int		downLostRate;	///< 下行丢包率×10000(例如：3456对应于34.56%)
+		int		rtt;			///< 平均往返时延(ms)
 	};
 
 	/**
@@ -1815,6 +1754,208 @@ namespace ilive
 	};
 
 	/**
+	@brief 统一事件回调处理类的抽象接口
+	*/
+	struct iLiveEventHandler
+	{
+		virtual ~iLiveEventHandler(){}
+
+		/**
+		@brief 登录成功事件
+		@param [in] userId 用户登录标识
+		@note 由登录接口iLiveLogin接口产生掉;
+		*/
+		virtual void onLoginSuccess(const String& userId) {};
+
+		/**
+		@brief 登录失败事件
+		@param [in] userId 用户登录标识
+		@param [in] module 错误模块
+		@param [in] errCode 错误id
+		@param [in] errMsg 错误描述
+		@note 由登录接口iLiveLogin接口产生;
+		*/
+		virtual void onLoginFailed(const String& userId, const String& module, int errCode, const String& errMsg) {};
+
+		/**
+		@brief 注销成功事件
+		@param [in] userId 用户登录标识
+		@note 由注销接口iLiveLogout接口产生;
+		*/
+		virtual void onLogoutSuccess(const String& userId) {};
+
+		/**
+		@brief 注销失败事件
+		@param [in] userId 用户登录标识
+		@param [in] module 错误模块
+		@param [in] errCode 错误id
+		@param [in] errMsg 错误描述
+		@note 由注销接口iLiveLogout接口产生;
+		*/
+		virtual void onLogoutFailed(const String& userId, const String& module, int errCode, const String& errMsg) {};
+
+		/**
+		@brief 帐号下线事件
+		@param [in] userId 用户登录标识
+		@param [in] module 错误模块
+		@param [in] errCode 错误id
+		@param [in] errMsg 错误描述
+		@note 登录签名过期或帐号在其它设备登录时产生;
+		*/
+		virtual void onForceOffline(const String& userId, const String& module, int errCode, const String& errMsg) {};
+
+		/**
+		@brief 创建房间成功事件
+		@param [in] roomId 音视频房间id
+		@param [in] groupId IM聊天群组id
+		@note 由创建房间createRoom接口产生;
+		*/
+		virtual void onCreateRoomSuccess(int roomId, const String& groupId) {};
+
+		/**
+		@brief 创建房间失败事件
+		@param [in] roomId 音视频房间id
+		@param [in] module 错误模块
+		@param [in] errCode 错误id
+		@param [in] errMsg 错误描述
+		@note 由创建房间createRoom接口产生;
+		*/
+		virtual void onCreateRoomFailed(int roomId, const String& module, int errCode, const String& errMsg) {};
+
+		/**
+		@brief 加入房间成功事件
+		@param [in] roomId 音视频房间id
+		@param [in] groupId IM聊天群组id
+		@note 由加入房间joinRoom接口产生;
+		*/
+		virtual void onJoinRoomSuccess(int roomId, const String& groupId) {};
+
+		/**
+		@brief 加入房间失败事件
+		@param [in] roomId 音视频房间id
+		@param [in] module 错误模块
+		@param [in] errCode 错误id
+		@param [in] errMsg 错误描述
+		@note 由加入房间joinRoom接口产生;
+		*/
+		virtual void onJoinRoomFailed(int roomId, const String& module, int errCode, const String& errMsg) {};
+
+		/**
+		@brief 成员进入房间回调
+		@param [in] roomId 音视频房间id
+		@param [in] groupId IM聊天群组id
+		@param [in] userId 加入的用户id
+		@note 有新成员加入聊天室时产生,依赖IM模块的群组成员事件通知;
+		*/
+		virtual void onRoomMemberIn(int roomId, const String& groupId, const String& userId) {};
+
+		/**
+		@brief 成员离开房间事件
+		@param [in] roomId 音视频房间id
+		@param [in] groupId IM聊天群组id
+		@param [in] userId 加入的用户id
+		@note 有成员离开聊天室时产生,依赖IM模块的群组成员事件通知;
+		*/
+		virtual void onRoomMemberOut(int roomId, const String& groupId, const String& userId) {};
+
+		/**
+		@brief 退出房间成功事件
+		@param [in] roomId 音视频房间id
+		@param [in] groupId IM聊天群组id
+		@note 由退出房间quitRoom接口产生;
+		*/
+		virtual void onQuitRoomSuccess(int roomId, const String& groupId) {};
+
+		/**
+		@brief 退出房间失败事件
+		@param [in] roomId 音视频房间id
+		@param [in] module 错误模块
+		@param [in] errCode 错误id
+		@param [in] errMsg 错误描述
+		@note 由退出房间quitRoom接口产生生;
+		*/
+		virtual void onQuitRoomFailed(int roomId, const String& module, int errCode, const String& errMsg) {};
+
+		/**
+		@brief 房间断开连接事件
+		@param [in] roomId 音视频房间id
+		@param [in] module 错误模块
+		@param [in] errCode 错误id
+		@param [in] errMsg 错误描述
+		@note 一般由网络中断，或后台长时间没有收到房间内的上行数据时产生;
+		*/
+		virtual void onRoomDisconnected(int roomId, const String& module, int errCode, const String& errMsg) {};
+
+		/**
+		@brief 聊天群组解散事件
+		@param [in] roomId 音视频房间id
+		@param [in] groupId IM聊天群组id
+		@note 由群组创建者解散聊天群组时产生;
+		*/
+		virtual void onGroupDisband(int roomId, const String& groupId) {};
+
+		/**
+		@brief 摄像头状态变更事件
+		@param [in] cameraId 摄像头id
+		@param [in] enable 是否开启
+		@note 由摄像头操作接口产生;
+		*/
+		virtual void onCameraUpdate(int cameraId, bool enable) {};
+
+		/**
+		@brief 摄像头操作失败
+		@param [in] module 错误模块
+		@param [in] errCode 错误id
+		@param [in] errMsg 错误描述
+		@note 由摄像头操作接口产生;
+		*/
+		virtual void onCameraFailed(const String& module, int errCode, const String& errMsg) {};
+
+		/**
+		@brief 视频上行开始事件
+		@param [in] roomId 音视频房间id
+		@param [in] videoType 视频数据类型(摄像头，屏幕，文件)
+		@param [in] userId 用户标识
+		@note 房间内有视频上行数据时产生;
+		*/
+		virtual void onRoomHasVideo(int roomId, E_VideoSrc videoType, const String& userId) {};
+
+		/**
+		@brief 视频上行结束事件
+		@param [in] roomId 音视频房间id
+		@param [in] videoType 视频数据类型(摄像头，屏幕，播片)
+		@param [in] userId 用户标识
+		@note 房间内有视频上行数据中断时产生;
+		*/
+		virtual void onRoomNoVideo(int roomId, E_VideoSrc videoType, const String& userId) {};
+
+		/**
+		@brief 音频上行开始事件
+		@param [in] roomId 音视频房间id
+		@param [in] userId 用户标识
+		@note 房间内有音频上行数据时产生;
+		*/
+		virtual void onRoomHasAudio(int roomId, const String& userId) {};
+
+		/**
+		@brief 音频上行结束事件
+		@param [in] roomId 音视频房间id
+		@param [in] userId 用户标识
+		@note 房间内有音频上行数据中断时产生;
+		*/
+		virtual void onRoomNoAudio(int roomId, const String& userId) {};
+
+		/**
+		@brief 视频数据到达事件
+		@param [in] videoType 视频数据类型(摄像头，屏幕，文件)
+		@param [in] userId 用户标识
+		@note 房间内有首次收到用户视频数据时产生;
+		*/
+		virtual void onRecvVideoEvent(E_VideoSrc videoType, const String& userId) {};
+	};
+
+
+	/**
 	@brief 接口封装抽象接口
 	*/
 	struct iLive
@@ -1827,13 +1968,23 @@ namespace ilive
 		/**
 		@brief 初始化
 		@details 使用ilive各项功能前必须先初始化
-		@param [in] appId 在腾讯云申请的sdkappid
+		@param [in] sdkAppId 在腾讯云申请的sdkappid
+		@param [in] imSupport 是否需要聊天等即时通讯功能
+		@param [in] testEnv 是否进入测试环境
+		@return 返回操作结果,成功则返回NO_ERR
+		*/
+		virtual int init(const int sdkAppId, bool imSupport = true, bool testEnv = false) = 0;
+		/**
+		@brief 初始化
+		@details 使用ilive各项功能前必须先初始化
+		@param [in] sdkAppId 在腾讯云申请的sdkappid
 		@param [in] accountType 在腾讯云申请的accountType
 		@param [in] imSupport 是否需要聊天等即时通讯功能
 		@param [in] testEnv 是否进入测试环境
 		@return 返回操作结果,成功则返回NO_ERR
 		*/
-		virtual int init(const int appId, const int accountType, bool imSupport = true, bool testEnv = false) = 0;
+		Deprecated
+		virtual int init(const int sdkAppId, const int accountType, bool imSupport = true, bool testEnv = false) = 0;
 		/**
 		@brief 释放
 		@details 使用完ilive后需要释放资源。
@@ -1848,6 +1999,23 @@ namespace ilive
 		@return 是否已初始化
 		*/
 		virtual bool isInited() = 0;
+
+		/**
+		@brief 设置统一事件回调处理
+		@param [in] handler 统一事件回调处理类
+		@note 统一回调供处理iLve所有事件,支持多个回调处理,可以添加多个iLiveEventHandler
+		*/
+		virtual void addEventHandler(iLiveEventHandler* handler) = 0;
+		/**
+		@brief 清空统一事件回调的处理类
+		*/
+		virtual void clearEventHandler() = 0;
+		/**
+		@brief 删除某个事件回调处理类
+		@param [in] handler 统一事件回调处理类
+		@note 当某个事件回调处理类析构时，一定要记得调用此函数移除
+		*/
+		virtual void removeEventHandler(iLiveEventHandler* handler) = 0;
 
 		/**
 		@brief 设置通道类型
@@ -2437,23 +2605,21 @@ namespace ilive
 
 		/**
 		@brief 开始测速
-		@details 开始测速后，sdk会对几个接口机进行测速，并将测速结果回调给业务侧
-		@param [in] calltype 通话类型
-		@param [in] purpose 测速目的
-		@param [in] suc 成功带值回调
-		@param [in] err 失败回调
+		@details 开始测速后，sdk会对多个接口机进行测速，并将测速结果回调给业务侧
+		@param [in] testCallback 每个接口机的测速结果回调(每个接口机对应一次回调);
+		@param [in] completeCallback 测速完成回调;
 		@param [in] data 用户自定义数据的指针，回调函数中原封不动地传回(通常为调用类的指针)
-		@remark 需要在登录后，才能调用测速接口;
+		@remark 
+		1、测速接口暂时只支持云上环境;<br/>
+		2、需要在登录后，才能调用测速接口;<br/>
+		3、测速接口后台有限频策略，所以,短时间内多次调用将会失败;
 		*/
-		virtual void startSpeedTest( E_SPTCallType calltype, E_SPTPurpose purpose, Type<iLiveSpeedTestResultReport&>::iLiveValueSuccCallback suc, iLiveErrCallback err, void* data ) = 0;
+		virtual void startSpeedTest(iLiveSpeedTestCallback testCallback, iLiveSpeedTestCompleteCallback completeCallback, void* data) = 0;
 		/**
-		@brief 取消测速;
-		@details 开始测速后，可能需要取消测速任务，此时可以调用此接口
-		@param [in] suc 成功回调
-		@param [in] err 失败回调
-		@param [in] data 用户自定义数据的指针，回调函数中原封不动地传回(通常为调用类的指针);
+		@brief 停止测速;
+		@details 停止测速;
 		*/
-		virtual void cancelSpeedTest(iLiveSucCallback suc, iLiveErrCallback err, void* data) = 0;
+		virtual void stopSpeedTest() = 0;
 
 		/**
 		@brief 开始本地视频录制;

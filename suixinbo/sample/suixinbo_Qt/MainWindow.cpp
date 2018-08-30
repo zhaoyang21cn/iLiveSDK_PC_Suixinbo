@@ -21,7 +21,6 @@ MainWindow::MainWindow( QWidget * parent /*= 0*/, Qt::WindowFlags flags /*= 0 */
 	}
 
 	m_nAppId = 0;
-	m_nAccountType = 0;
 
 	m_eLoginState = E_Logout;
 
@@ -29,7 +28,6 @@ MainWindow::MainWindow( QWidget * parent /*= 0*/, Qt::WindowFlags flags /*= 0 */
 	m_nTotalPage = 0;
 
 	m_nAppId = SuixinboAppid;
-	m_nAccountType = SuixinboAccountType;
 	m_szServerUrl = SuixinboServerUrl;
 
 	readConfig();
@@ -98,7 +96,7 @@ void MainWindow::initSDK()
 	GetILive()->setVideoColorFormat(fmt);//iLiveSDK目前的渲染模块，D3D只支持I420格式，GDI只支持RGB24格式;
 	pView->destroy();
 	
-	int nRet = GetILive()->init(m_nAppId, m_nAccountType);
+	int nRet = GetILive()->init(m_nAppId);
 	if (nRet != NO_ERR)
 	{
 		ShowErrorTips( "init sdk failed.",this );

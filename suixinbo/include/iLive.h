@@ -705,7 +705,7 @@ namespace ilive
 		iLiveRoomOption()
 			:audioCategory(AUDIO_CATEGORY_MEDIA_PLAY_AND_RECORD)//»¥¶¯Ö±²¥³¡¾°
 			,roomId(0)
-			,groupType(E_AVChatRoom_Group)
+			,groupType(E_ChatRoom_Group)
 			,joinImGroup(true)
 			,authBits(AUTH_BITS_DEFAULT)
 			,autoRequestCamera(true)

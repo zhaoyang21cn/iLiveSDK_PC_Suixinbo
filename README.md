@@ -5,13 +5,9 @@ iLiveSDK整合了音视频SDK(AVSDK)、即时通讯SDK(IMSDK)两大模块，致�
 [iLiveSDK导入参考](https://github.com/zhaoyang21cn/iLiveSDK_PC_Demos/blob/master/doc/iLiveSDK_README.md)
 
 ## SDK最近更新说明
-### V1.9.4.0(2018-08-30)
-* 初始化接口去掉accountType字段；
-* 默认使用群组类型改为ChatRoom;
-* 测速接口重构；
-* 增加统一事件回调；
-* 修正多次进房crash问题；
-* 修正云上环境无法收到房间内质量回调问题；
+### V1.9.4.1(2018-09-05)
+* 角色不存在时，进房直接报错；
+* 默认使用群组类型改为Public(修正收不到onRoomMemberIn\onRoomMemberOut回调问题)；
 
 [更多版本更新信息](https://github.com/zhaoyang21cn/iLiveSDK_PC_Demos/blob/master/doc/iLiveSDK_ChangeList.md)
 

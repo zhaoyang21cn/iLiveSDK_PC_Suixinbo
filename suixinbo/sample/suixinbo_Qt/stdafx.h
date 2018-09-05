@@ -26,7 +26,7 @@ using namespace ilive;
 	#pragma comment(lib, "Qt5Network.lib")
 #endif//_DEBUG
 
-#define SuixinboServerUrl	"http://123.206.118.43/sxb_dev/index.php"
+#define SuixinboServerUrl	"https://sxb.qcloud.com/sxb_dev/index.php"
 #define SuixinboAppid		1400027849
 
 

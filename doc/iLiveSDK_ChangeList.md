@@ -1,5 +1,9 @@
 ## PC_iLiveSDK_ChangeList
 
+###### V1.9.4.1(2018-09-05)
+* 角色不存在时，进房直接报错；
+* 默认使用群组类型改为Public(修正收不到onRoomMemberIn\onRoomMemberOut回调问题)；
+
 ###### V1.9.4.0(2018-08-30)
 * 初始化接口去掉accountType字段；
 * 默认使用群组类型改为ChatRoom;

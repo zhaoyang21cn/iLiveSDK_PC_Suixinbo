@@ -217,6 +217,8 @@ http://conf.voice.qcloud.com/index.php?sdk_appid=1400028285&interface=Voice_Conf
 <br/>即已经无法访问conf.voice.qcloud.com拉取Spear配置了,此时即可运行程序验证是否为指定配置;
 
 ## 注意事项
-程序使用配置的优先顺序为: <br/>
+1. 程序使用配置的优先顺序为: <br/>
 拉取的spear配置 > 本地缓存的默认配置 > 添加的默认配置 > AVSDK自带的默认配置（直播场景）
 <br/>所以，在测试前，如果程序运行目录下，有“av_control_config_1400027849.config”类似的缓存配置文件，需要将此文件删除;
+
+2. 如果登录时设置了默认配置，如上面默认配置的角色名Guest，在sdk使用此配置的情况下(拉不到spear配置，且本地无缓存配置)，如果用户进房传入的角色名不存在(如，创建房间使用LiveMaster角色)，sdk不会报角色不存在错误，而是使用设置的默认配置，如上面设置的Guest角色配置;

@@ -1,5 +1,11 @@
 ## PC_iLiveSDK_ChangeList
 
+###### V1.9.4.3(2018-10-12)
+* 云上环境支持手动推流录制；
+* 修正sdk不支持XP问题；
+* 修正默认Spear配置无效问题；
+* 测速模块从speed_test改名为xlive；
+
 ###### V1.9.4.1(2018-09-05)
 * 角色不存在时，进房直接报错；
 * 默认使用群组类型改为Public(修正收不到onRoomMemberIn\onRoomMemberOut回调问题)；

@@ -672,9 +672,9 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>480</y>
+     <y>410</y>
      <width>331</width>
-     <height>161</height>
+     <height>231</height>
     </rect>
    </property>
    <property name="title">
@@ -688,8 +688,8 @@
      <rect>
       <x>10</x>
       <y>20</y>
-      <width>81</width>
-      <height>31</height>
+      <width>171</width>
+      <height>41</height>
      </rect>
     </property>
     <property name="text">
@@ -702,10 +702,10 @@
     </property>
     <property name="geometry">
      <rect>
-      <x>100</x>
-      <y>20</y>
-      <width>81</width>
-      <height>31</height>
+      <x>10</x>
+      <y>70</y>
+      <width>171</width>
+      <height>41</height>
      </rect>
     </property>
     <property name="text">
@@ -719,9 +719,9 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>70</y>
+      <y>120</y>
       <width>171</width>
-      <height>31</height>
+      <height>41</height>
      </rect>
     </property>
    </widget>
@@ -732,9 +732,9 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>120</y>
+      <y>170</y>
       <width>171</width>
-      <height>31</height>
+      <height>41</height>
      </rect>
     </property>
    </widget>
@@ -744,75 +744,11 @@
       <x>190</x>
       <y>20</y>
       <width>131</width>
-      <height>131</height>
+      <height>201</height>
      </rect>
     </property>
     <property name="readOnly">
      <bool>true</bool>
-    </property>
-   </widget>
-  </widget>
-  <widget class="QGroupBox" name="recordGB">
-   <property name="enabled">
-    <bool>true</bool>
-   </property>
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>410</y>
-     <width>331</width>
-     <height>65</height>
-    </rect>
-   </property>
-   <property name="title">
-    <string>录制</string>
-   </property>
-   <widget class="QPushButton" name="btnStopRecord">
-    <property name="enabled">
-     <bool>false</bool>
-    </property>
-    <property name="geometry">
-     <rect>
-      <x>105</x>
-      <y>20</y>
-      <width>81</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>停止录制</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="btnStartRecord">
-    <property name="enabled">
-     <bool>true</bool>
-    </property>
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>20</y>
-      <width>81</width>
-      <height>33</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>开始录制</string>
-    </property>
-   </widget>
-   <widget class="QComboBox" name="cbRecordDataType">
-    <property name="enabled">
-     <bool>true</bool>
-    </property>
-    <property name="geometry">
-     <rect>
-      <x>200</x>
-      <y>20</y>
-      <width>120</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="currentText">
-     <string/>
     </property>
    </widget>
   </widget>

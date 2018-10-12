@@ -104,9 +104,9 @@ namespace ilive
 	{
 		HLS = 0x01,			///< 请求HLS编码的视频流URL
 		FLV = 0x02,			///< 请求FLV编码的视频流URL
-		RAW = 0X04,			///< RAW码流
-		RTMP = 0X05,		///< RTMP
-		HLS_AND_RTMP = 0X06,///< HLS AND RTMP
+		RAW = 0x04,			///< RAW码流
+		RTMP = 0x05,		///< RTMP
+		HLS_AND_RTMP = 0x06,///< HLS AND RTMP
 	};
 
 	/**
@@ -831,8 +831,12 @@ namespace ilive
 		*/
 		bool						bOnlyPushAudio;		///< 纯音频推流,纯音频推流时，如果要录制文件，需要将recordFileType指定为RecordFile_MP3
 		
+		Deprecated
 		E_PushSvrType				pushSvrType;		///< 推流机器环境类型(暂时无效，使用默认值即可);
+		
 		uint32						recordId;			///< 用户自定义RecordId(对应录制视频给业务侧服务器回调的字段stream_param的cliRecoId);
+	
+		String						StreamId;			///< 用户自定义流ID
 	};
 
 	/**
@@ -2111,14 +2115,14 @@ namespace ilive
 		@param [in] spearCfg 默认spear配置(拉不到网络配置时生效,一般适用于海外);使用详情见https://github.com/zhaoyang21cn/iLiveSDK_PC_Suixinbo/blob/master/doc/defaultSpearCfg.md
 		@remark 设置默认spear配置失败时，不会回调登录失败，只会在ilivesdk日志中打印出相应错误信息;
 		*/
-		virtual void login(const char *userId, const char *userSig, iLiveSucCallback suc, iLiveErrCallback err, void* data, const char* spearCfg = "") = 0;
+		virtual void login(const char *userId, const char *userSig, iLiveSucCallback suc = NULL, iLiveErrCallback err = NULL, void* data = NULL, const char* spearCfg = "") = 0;
 		/**
 		@brief 登出
 		@param [in] suc 成功回调
 		@param [in] err 失败回调
 		@param [in] data 用户自定义数据的指针，回调函数中原封不动地传回(通常为调用类的指针);
 		*/
-		virtual void logout(iLiveSucCallback suc, iLiveErrCallback err, void* data) = 0;
+		virtual void logout(iLiveSucCallback suc = NULL, iLiveErrCallback err = NULL, void* data = NULL) = 0;
 		/**
 		@brief 是否已登录
 		@return 是否已登录
@@ -2158,7 +2162,7 @@ namespace ilive
 		@param [in] err 失败回调
 		@param [in] data 用户自定义数据的指针，回调函数中原封不动地传回(通常为调用类的指针);
 		*/
-		virtual void createRoom(const iLiveRoomOption &roomOption, iLiveSucCallback suc, iLiveErrCallback err, void* data) = 0;
+		virtual void createRoom(const iLiveRoomOption &roomOption, iLiveSucCallback suc = NULL, iLiveErrCallback err = NULL, void* data = NULL) = 0;
 		/**
 		@brief 加入直播房间
 		@param [in] roomOption 房间配置
@@ -2166,7 +2170,7 @@ namespace ilive
 		@param [in] err 失败回调
 		@param [in] data 用户自定义数据的指针，回调函数中原封不动地传回(通常为调用类的指针);
 		*/
-		virtual void joinRoom(const iLiveRoomOption& roomOption, iLiveSucCallback suc, iLiveErrCallback err, void* data) = 0;
+		virtual void joinRoom(const iLiveRoomOption& roomOption, iLiveSucCallback suc = NULL, iLiveErrCallback err = NULL, void* data = NULL) = 0;
 		/**
 		@brief 切换房间
 		@param [in] roomId 要切换到的房间id
@@ -2183,7 +2187,7 @@ namespace ilive
 		@param [in] data 用户自定义数据的指针，回调函数中原封不动地传回(通常为调用类的指针);
 		@param [in] bQuitIM 退出房间时，是否解散群(房间拥有者)\退出群(房间加入者);
 		*/
-		virtual void quitRoom(iLiveSucCallback suc, iLiveErrCallback err, void* data, bool bQuitIM = true) = 0;
+		virtual void quitRoom(iLiveSucCallback suc = NULL, iLiveErrCallback err = NULL, void* data = NULL, bool bQuitIM = true) = 0;
 		/**
 		@brief 是否在房间中
 		@return 是否在房间中
@@ -2251,7 +2255,7 @@ namespace ilive
 		virtual void getLocalC2CMessage( int count, const char *user, bool fromStart, Type<Vector<Message>>::iLiveValueSuccCallback suc, iLiveErrCallback err, void* data ) = 0;
 
 		/**
-		@brief 开始推流
+		@brief 开始旁路推流
 		@param [in] pushOption 推流参数
 		@param [in] suc 成功回调
 		@param [in] err 失败回调
@@ -2259,8 +2263,8 @@ namespace ilive
 		*/
 		virtual void startPushStream( const PushStreamOption& pushOption, Type<PushStreamRsp&>::iLiveValueSuccCallback suc, iLiveErrCallback err, void* data ) = 0;
 		/**
-		@brief 结束推流
-		@param [in] channelId 频道id(在推流成功的的回调中返回的频道id)
+		@brief 结束旁路推流
+		@param [in] channelId 频道id(在推流成功的的回调中返回的频道id;此参数已废弃，填0即可)
 		@param [in] pushDataType 要停止推流的数据类型
 		@param [in] suc 成功回调
 		@param [in] err 失败回调
@@ -2269,22 +2273,26 @@ namespace ilive
 		virtual void stopPushStream( uint64 channelId, E_PushDataType pushDataType, iLiveSucCallback suc, iLiveErrCallback err, void* data ) = 0;
 
 		/**
-		@brief 开始录制。
+		@brief 开始录制
 		@param [in] recordOption 录制配置选项。
 		@param [in] suc 成功回调
 		@param [in] err 失败回调
 		@param [in] data 用户自定义数据的指针，回调函数中原封不动地传回(通常为调用类的指针)
+		@note 不推荐使用手动录制接口，请用startPushStream()接口手动开始旁路推流，旁路推流参数中指定旁路推流时自动录制;结束旁路推流时，会自动停止录制;
 		*/
+		Deprecated
 		virtual void startRecord(const RecordOption& recordOption, iLiveSucCallback suc, iLiveErrCallback err, void* data) = 0;
 
 		/**
-		@brief 停止录制。
+		@brief 停止录制
 		@param [in] recordDataType 要停止录制的数据类型
 		@param [in] suc 成功回调
 		@param [in] err 失败回调
 		@param [in] data 用户自定义数据的指针，回调函数中原封不动地传回(通常为调用类的指针)
-		@remark 停止录制成功回调，返回录制视频文件的ID列表; 业务侧开起自动录制时，将返回空列表，用户可直接到后台查询。
+		@remark 停止录制成功回调，返回录制视频文件的ID列表; 业务侧开启自动录制时，将返回空列表，用户可直接到后台查询。
+		@note 不推荐使用手动录制接口，请用startPushStream()接口手动开始旁路推流，旁路推流参数中指定旁路推流时自动录制;结束旁路推流时，会自动停止录制;
 		*/
+		Deprecated
 		virtual void stopRecord(E_RecordDataType recordDataType, Type<Vector<String>&>::iLiveValueSuccCallback suc, iLiveErrCallback err, void* data) = 0;
 
 		/**

@@ -530,9 +530,9 @@ namespace ilive
 		}
 		else
 		{
-			iliveMemCpy( m_pData+idx, arr.m_pData, sizeof(T) * arr.size() );
+			iliveMemCpy( m_pData+idx, vec.m_pData, sizeof(T) * vec.size() );
 		}
-		m_size += arr.size();
+		m_size += vec.size();
 	}
 
 	//------------------------------------------------------------------------

@@ -64,8 +64,6 @@ private slots:
 	void OnBtnOpenSystemVoiceInput();
 	void OnBtnCloseSystemVoiceInput();
 	void OnBtnSendGroupMsg();
-	void OnBtnStartRecord();
-	void OnBtnStopRecord();
 	void OnBtnStartPushStream();
 	void OnBtnStopPushStream();
 	void OnBtnPraise();
@@ -114,7 +112,6 @@ private:
 	void updateScreenShareGB();
 	void updateSystemVoiceInputGB();
 	void updateMediaFilePlayGB();
-	void updateRecordGB();
 	void updatePushStreamGB();
 	
 	void updatePlayMediaFileProgress();
@@ -123,7 +120,6 @@ private:
 	void doResumePlayMediaFile();
 	void doStopPlayMediaFile();
 
-	void doAutoStopRecord();
 	void doAutoStopPushStream();
 
 	//设备操作回调
@@ -169,12 +165,10 @@ private:
 	void sxbWatcherOrJoinerQuitRoom();
 	void sxbHeartBeat();
 	void sxbRoomIdList();
-	void sxbReportrecord();
 	static void OnSxbCreatorQuitRoom(int errorCode, QString errorInfo, QVariantMap datamap, void* pCusData);
 	static void OnSxbWatcherOrJoinerQuitRoom(int errorCode, QString errorInfo, QVariantMap datamap, void* pCusData);
 	static void OnSxbHeartBeat(int errorCode, QString errorInfo, QVariantMap datamap, void* pCusData);
 	static void OnSxbRoomIdList(int errorCode, QString errorInfo, QVariantMap datamap, void* pCusData);
-	static void OnSxbReportrecord(int errorCode, QString errorInfo, QVariantMap datamap, void* pCusData);
 
 	//iLiveSDK相关函数
 	void iLiveQuitRoom();
@@ -188,12 +182,6 @@ private:
 
 	static void OnSendGroupMsgSuc(void* data);
 	static void OnSendGroupMsgErr(int code, const char *desc, void* data);
-
-	static void OnStartRecordVideoSuc(void* data);
-	static void OnStartRecordVideoErr(int code, const char *desc, void* data);
-
-	static void OnStopRecordSuc(Vector<String>& value, void* data);
-	static void OnStopRecordVideoErr(int code, const char *desc, void* data);
 
 	static void OnStartPushStreamSuc(PushStreamRsp &value, void *data);
 	static void OnStartPushStreamErr(int code, const char * desc, void* data);
@@ -225,7 +213,6 @@ private:
 	QMenu*			m_pMenuCancelInteract;
 
 	QString				m_inputRecordName;
-	RecordOption		m_recordOpt;
 	PushStreamOption	m_pushOpt;
 	uint64				m_channelId;
 	std::list<LiveUrl>	m_pushUrls;

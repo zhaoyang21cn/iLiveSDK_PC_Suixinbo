@@ -95,8 +95,6 @@ Live::Live( QWidget * parent /*= 0*/, Qt::WindowFlags f /*= 0*/ )
 	connect( m_ui.btnOpenSystemVoiceInput, SIGNAL(clicked()), this, SLOT(OnBtnOpenSystemVoiceInput()) );
 	connect( m_ui.btnCloseSystemVoiceInput, SIGNAL(clicked()), this, SLOT(OnBtnCloseSystemVoiceInput()) );
 	connect( m_ui.btnSendGroupMsg, SIGNAL(clicked()), this, SLOT(OnBtnSendGroupMsg()) );
-	connect( m_ui.btnStartRecord, SIGNAL(clicked()), this, SLOT(OnBtnStartRecord()) );
-	connect( m_ui.btnStopRecord, SIGNAL(clicked()), this, SLOT(OnBtnStopRecord()) );
 	connect( m_ui.btnStartPushStream, SIGNAL(clicked()), this, SLOT(OnBtnStartPushStream()) );
 	connect( m_ui.btnStopPushStream, SIGNAL(clicked()), this, SLOT(OnBtnStopPushStream()) );
 	connect( m_ui.btnPraise, SIGNAL(clicked()), this, SLOT(OnBtnPraise()) );
@@ -139,7 +137,6 @@ void Live::setRoomUserType( E_RoomUserType userType )
 	updateScreenShareGB();
 	updateSystemVoiceInputGB();
 	updateMediaFilePlayGB();
-	updateRecordGB();
 	updatePushStreamGB();
 	switch(m_userType)
 	{
@@ -152,7 +149,6 @@ void Live::setRoomUserType( E_RoomUserType userType )
 			m_ui.screenShareGB->setVisible(true);
 			m_ui.SystemVoiceInputGB->setVisible(true);
 			m_ui.MediaFileGB->setVisible(true);
-			m_ui.recordGB->setVisible(true);
 			m_ui.pushStreamGB->setVisible(true);
 			m_ui.lbPraiseNum->setVisible(true);
 			m_ui.btnPraise->setVisible(false);
@@ -168,7 +164,6 @@ void Live::setRoomUserType( E_RoomUserType userType )
 			m_ui.screenShareGB->setVisible(true);
 			m_ui.SystemVoiceInputGB->setVisible(true);
 			m_ui.MediaFileGB->setVisible(true);
-			m_ui.recordGB->setVisible(false);
 			m_ui.pushStreamGB->setVisible(false);
 			m_ui.lbPraiseNum->setVisible(false);
 			m_ui.btnPraise->setVisible(true);
@@ -183,7 +178,6 @@ void Live::setRoomUserType( E_RoomUserType userType )
 			m_ui.screenShareGB->setVisible(false);
 			m_ui.SystemVoiceInputGB->setVisible(false);
 			m_ui.MediaFileGB->setVisible(false);
-			m_ui.recordGB->setVisible(false);
 			m_ui.pushStreamGB->setVisible(false);
 			m_ui.lbPraiseNum->setVisible(false);
 			m_ui.btnPraise->setVisible(true);
@@ -713,41 +707,11 @@ void Live::OnBtnSendGroupMsg()
 	GetILive()->sendGroupMessage(  msg, OnSendGroupMsgSuc, OnSendGroupMsgErr, this );
 }
 
-void Live::OnBtnStartRecord()
-{
-	bool bClickedOK;
-	m_inputRecordName = QInputDialog::getText( this, FromBits("录制文件名"),FromBits("请输入录制文件名"), QLineEdit::Normal, "", &bClickedOK );
-	if (!bClickedOK)//用户点击了取消按钮
-	{
-		return;
-	}
-	if ( m_inputRecordName.isEmpty() )
-	{
-		ShowErrorTips( FromBits("录制文件名不能为空"), this );
-		return;
-	}	
-	//随心播后台要求录制文件名统一格式"sxb_用户id_用户传入的文件名"
-	QString fileName = "sxb_";
-	fileName += g_pMainWindow->getUserId();
-	fileName += "_";
-	fileName += m_inputRecordName;
-	
-	m_recordOpt.fileName = fileName.toStdString().c_str();
-	m_recordOpt.recordDataType = (E_RecordDataType)m_ui.cbRecordDataType->itemData( m_ui.cbRecordDataType->currentIndex() ).value<int>();
-	GetILive()->startRecord(m_recordOpt, OnStartRecordVideoSuc, OnStartRecordVideoErr, this);
-}
-
-void Live::OnBtnStopRecord()
-{
-	E_RecordDataType recordDataType = (E_RecordDataType)m_ui.cbRecordDataType->itemData( m_ui.cbRecordDataType->currentIndex() ).value<int>();
-	GetILive()->stopRecord( recordDataType, OnStopRecordSuc, OnStopRecordVideoErr, this);
-}
-
 void Live::OnBtnStartPushStream()
 {
 	m_pushOpt.pushDataType = (E_PushDataType)m_ui.cbPushDataType->itemData( m_ui.cbPushDataType->currentIndex() ).value<int>();
 	m_pushOpt.encode = (E_iLiveStreamEncode)m_ui.cbPushEncodeType->itemData( m_ui.cbPushEncodeType->currentIndex() ).value<int>();
-	m_pushOpt.recordFileType = RecordFile_NONE;
+	m_pushOpt.recordFileType = RecordFile_HLS_FLV_MP4;
 	GetILive()->startPushStream( m_pushOpt, OnStartPushStreamSuc, OnStartPushStreamErr, this );
 }
 
@@ -1342,44 +1306,6 @@ void Live::updateMediaFilePlayGB()
 	}
 }
 
-void Live::updateRecordGB()
-{
-	int nRecordDataTypeIndex = m_ui.cbRecordDataType->currentIndex();
-	m_ui.cbRecordDataType->clear();
-
-	if ( (!GetILive()->getCurCameraState()) && (!GetILive()->getExternalCaptureState()) 
-		&& (!GetILive()->getScreenShareState()) && (!GetILive()->getPlayMediaFileState()) )
-	{
-		m_ui.recordGB->setEnabled(false);
-		return;
-	}
-
-	m_ui.recordGB->setEnabled(true);
-	if ( m_bRecording )
-	{
-		m_ui.btnStartRecord->setEnabled(false);
-		m_ui.btnStopRecord->setEnabled(true);
-		m_ui.cbRecordDataType->setEnabled(false);
-	}
-	else
-	{
-		m_ui.btnStartRecord->setEnabled(true);
-		m_ui.btnStopRecord->setEnabled(false);
-		m_ui.cbRecordDataType->setEnabled(true);
-	}
-
-	if ( GetILive()->getCurCameraState() || GetILive()->getExternalCaptureState() )
-	{
-		m_ui.cbRecordDataType->addItem( FromBits("主路(摄像头/自定义采集)"), QVariant(E_RecordCamera) );
-	}
-	if ( GetILive()->getScreenShareState() || GetILive()->getPlayMediaFileState() )
-	{
-		m_ui.cbRecordDataType->addItem( FromBits("辅路(屏幕分享/文件播放)"), QVariant(E_RecordScreen) );
-	}
-	nRecordDataTypeIndex = iliveMin( m_ui.cbRecordDataType->count()-1, iliveMax(0, nRecordDataTypeIndex) );
-	m_ui.cbRecordDataType->setCurrentIndex( nRecordDataTypeIndex );
-}
-
 void Live::updatePushStreamGB()
 {
 	int nPushDataTypeIndex = m_ui.cbPushDataType->currentIndex();
@@ -1507,38 +1433,6 @@ void Live::doStopPlayMediaFile()
 	GetILive()->closePlayMediaFile();
 }
 
-void Live::doAutoStopRecord()
-{
-	if ( m_bRecording )
-	{
-		int nRecordDataTypeIndex = m_ui.cbRecordDataType->currentIndex();
-		E_RecordDataType eSelectedType = (E_RecordDataType)m_ui.cbRecordDataType->itemData(nRecordDataTypeIndex).value<int>();
-		switch(eSelectedType)
-		{
-		case E_RecordCamera:
-			{
-				if ( (!GetILive()->getCurCameraState()) && (!GetILive()->getExternalCaptureState()) )
-				{
-					OnBtnStopRecord();
-				}
-				break;
-			}
-		case E_RecordScreen:
-			{
-				if ( (!GetILive()->getScreenShareState()) && (!GetILive()->getPlayMediaFileState()) )
-				{
-					OnBtnStopRecord();
-				}
-				break;
-			}
-		}
-	}
-	else
-	{
-		updateRecordGB();
-	}
-}
-
 void Live::doAutoStopPushStream()
 {
 	if ( m_bPushing )
@@ -1575,7 +1469,6 @@ void Live::OnOpenCameraCB( const int& retCode )
 {
 	updateCameraGB();
 	updateExternalCaptureGB();
-	updateRecordGB();
 	updatePushStreamGB();
 	if (retCode == NO_ERR)
 	{
@@ -1591,7 +1484,6 @@ void Live::OnCloseCameraCB( const int& retCode )
 {
 	updateCameraGB();
 	updateExternalCaptureGB();
-	doAutoStopRecord();
 	doAutoStopPushStream();
 	if (retCode == NO_ERR)
 	{
@@ -1608,7 +1500,6 @@ void Live::OnOpenExternalCaptureCB( const int& retCode )
 {
 	updateExternalCaptureGB();
 	updateCameraGB();
-	updateRecordGB();
 	updatePushStreamGB();
 	if (retCode == NO_ERR)
 	{
@@ -1624,7 +1515,6 @@ void Live::OnCloseExternalCaptureCB( const int& retCode )
 {
 	updateExternalCaptureGB();
 	updateCameraGB();
-	doAutoStopRecord();
 	doAutoStopPushStream();
 	if (retCode == NO_ERR)
 	{
@@ -1677,7 +1567,6 @@ void Live::OnOpenScreenShareCB( const int& retCode )
 {
 	updateScreenShareGB();
 	updateMediaFilePlayGB();
-	updateRecordGB();
 	updatePushStreamGB();
 	if (retCode != NO_ERR )
 	{
@@ -1700,7 +1589,6 @@ void Live::OnCloseScreenShareCB( const int& retCode )
 {
 	updateScreenShareGB();
 	updateMediaFilePlayGB();
-	doAutoStopRecord();
 	doAutoStopPushStream();
 	if (retCode == NO_ERR)
 	{
@@ -1734,7 +1622,6 @@ void Live::OnOpenPlayMediaFileCB( const int& retCode )
 {
 	updateMediaFilePlayGB();
 	updateScreenShareGB();
-	updateRecordGB();
 	updatePushStreamGB();
 	if (retCode == NO_ERR)
 	{
@@ -1758,7 +1645,6 @@ void Live::OnClosePlayMediaFileCB( const int& retCode )
 {
 	updateMediaFilePlayGB();
 	updateScreenShareGB();
-	doAutoStopRecord();
 	doAutoStopPushStream();
 	if (retCode == NO_ERR)
 	{
@@ -1901,18 +1787,6 @@ void Live::sxbRoomIdList()
 	SxbServerHelper::request(varmap, "live", "roomidlist", OnSxbRoomIdList, this);
 }
 
-void Live::sxbReportrecord()
-{
-	QVariantMap varmap;
-	varmap.insert( "token", g_pMainWindow->getToken() );
-	varmap.insert( "roomnum", g_pMainWindow->getCurRoomInfo().info.roomnum );
-	varmap.insert( "uid", g_pMainWindow->getCurRoomInfo().szId );//主播名
-	varmap.insert( "name", m_inputRecordName );//用户输入的录制名
-	varmap.insert( "type", 0 );//预留字段，暂填0
-	varmap.insert( "cover", "" );//PC随心播暂不支持直播封面上传,所以暂时上传为空，后续加上
-	SxbServerHelper::request(varmap, "live", "reportrecord", OnSxbReportrecord, this);
-}
-
 void Live::OnSxbCreatorQuitRoom( int errorCode, QString errorInfo, QVariantMap datamap, void* pCusData )
 {
 	Live* pLive = reinterpret_cast<Live*>(pCusData);
@@ -1986,17 +1860,6 @@ void Live::OnSxbRoomIdList( int errorCode, QString errorInfo, QVariantMap datama
 		}
 		pLive->updateMemberList();
 	}	
-}
-
-void Live::OnSxbReportrecord( int errorCode, QString errorInfo, QVariantMap datamap, void* pCusData )
-{
-	Live* pLive = reinterpret_cast<Live*>(pCusData);
-
-	if (errorCode!=E_SxbOK)
-	{
-		//iLiveLog_e( "suixinbo", "Suixinbo report record video failed: %d %s", errorCode, errorInfo.toStdString().c_str() );
-		return ;
-	}
 }
 
 void Live::iLiveQuitRoom()
@@ -2096,31 +1959,6 @@ void Live::OnActCancelInteract()
 	}
 }
 
-void Live::OnStartRecordVideoSuc( void* data )
-{
-	Live* pThis = reinterpret_cast<Live*>(data);
-	pThis->m_bRecording = true;
-	pThis->updateRecordGB();
-}
-
-void Live::OnStartRecordVideoErr( int code, const char *desc, void* data )
-{
-	ShowCodeErrorTips(code, desc, reinterpret_cast<Live*>(data), "Start Record Video Error.");
-}
-
-void Live::OnStopRecordSuc( Vector<String>& value, void* data )
-{
-	Live* pLive = reinterpret_cast<Live*>(data);
-	pLive->m_bRecording = false;
-	pLive->updateRecordGB();
-	pLive->sxbReportrecord();
-}
-
-void Live::OnStopRecordVideoErr( int code, const char *desc, void* data )
-{
-	ShowCodeErrorTips(code, desc, reinterpret_cast<Live*>(data), "Stop Record Video Error.");
-}
-
 void Live::OnStartPushStreamSuc( PushStreamRsp &value, void *data )
 {
 	Live* pLive = reinterpret_cast<Live*>(data);
@@ -2135,7 +1973,7 @@ void Live::OnStartPushStreamSuc( PushStreamRsp &value, void *data )
 
 void Live::OnStartPushStreamErr( int code, const char *desc, void* data )
 {
-	ShowCodeErrorTips(code, desc, reinterpret_cast<Live*>(data), "Start Push Stream Error.");
+	ShowCodeErrorTips(code, FromBits(desc), reinterpret_cast<Live*>(data), "Start Push Stream Error.");
 }
 
 void Live::OnStopPushStreamSuc( void* data )
@@ -2149,7 +1987,7 @@ void Live::OnStopPushStreamSuc( void* data )
 
 void Live::OnStopPushStreamErr( int code, const char *desc, void* data )
 {
-	ShowCodeErrorTips(code, desc, reinterpret_cast<Live*>(data), "Stop Push Stream Error.");
+	ShowCodeErrorTips(code, FromBits(desc), reinterpret_cast<Live*>(data), "Stop Push Stream Error.");
 }
 
 

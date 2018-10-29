@@ -5,11 +5,11 @@ iLiveSDK整合了音视频SDK(AVSDK)、即时通讯SDK(IMSDK)两大模块，致�
 [iLiveSDK导入参考](https://github.com/zhaoyang21cn/iLiveSDK_PC_Demos/blob/master/doc/iLiveSDK_README.md)
 
 ## SDK最近更新说明
-### V1.9.4.3(2018-10-12)
-* 云上环境支持手动推流录制；
-* 修正sdk不支持XP问题；
-* 修正默认Spear配置无效问题；
-* 测速模块从speed_test改名为xlive；
+### V1.9.4.6(2018-10-29)
+* 增加sig过期接口；
+* 修正String错误；
+* 修正crash问题；
+* sdk内部优化；
 
 [更多版本更新信息](https://github.com/zhaoyang21cn/iLiveSDK_PC_Demos/blob/master/doc/iLiveSDK_ChangeList.md)
 

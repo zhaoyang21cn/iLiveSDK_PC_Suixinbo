@@ -351,6 +351,11 @@ namespace ilive
 	typedef void (*ForceOfflineCallback)();
 
 	/**
+	@brief 用户sig过期回调函数指针类型;
+	*/
+	typedef void (*UserSigExpiredCallback)();
+
+	/**
 	@brief 连接网络成功函数指针类型;
 	*/
 	typedef void (*onNetworkCallback)();
@@ -2034,10 +2039,16 @@ namespace ilive
 		virtual void setChannelMode(E_ChannelMode mode, const String& host = "") = 0;
 		/**
 		@brief 设置被踢下线监听
-		@details 每个账号不能同时登录多台设备，当其他设备登录相同账号时会收到这个通知
+		@details 每个账号不能同时登录多台设备，当其他设备登录相同账号时会收到这个回调;收到回调时，SDK已自动退出房间并登出;
 		@param [in] cb 回调函数
 		*/
 		virtual void setForceOfflineCallback(ForceOfflineCallback cb) = 0;
+		/**
+		@brief 设置用户sig过期监听
+		@details 用户sig过期会收到此回调;收到回调时，SDK已自动退出房间并登出;
+		@param [in] cb 回调函数
+		*/
+		virtual void setUserSigExpiredCallback(UserSigExpiredCallback cb) = 0;
 		/**
 		@brief 设置消息监听
 		@param [in] cb 回调函数

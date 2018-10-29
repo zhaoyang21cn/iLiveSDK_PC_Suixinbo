@@ -88,6 +88,7 @@ void MainWindow::initSDK()
 {
 	GetILive()->setMessageCallBack(Live::OnMessage, m_pLive);
 	GetILive()->setForceOfflineCallback(onForceOffline);
+	GetILive()->setUserSigExpiredCallback(onUserSigExpired);
 	GetILive()->setRemoteVideoCallBack(Live::OnRemoteVideo, m_pLive);
 	GetILive()->setChannelMode(E_ChannelIMSDK);
 	
@@ -167,6 +168,13 @@ void MainWindow::switchLoginState( E_LoginState state )
 void MainWindow::onForceOffline()
 {
 	ShowTips( FromBits("被踢下线"), FromBits("你的账号在其他地方登陆,点击确认后关闭!"), g_pMainWindow );
+	g_pMainWindow->saveConfig();
+	TerminateProcess(GetCurrentProcess(), 0);
+}
+
+void MainWindow::onUserSigExpired()
+{
+	ShowTips( FromBits("被踢下线"), FromBits("你的账号sig过期,点击确认后关闭!"), g_pMainWindow );
 	g_pMainWindow->saveConfig();
 	TerminateProcess(GetCurrentProcess(), 0);
 }

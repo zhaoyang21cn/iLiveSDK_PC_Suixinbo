@@ -631,6 +631,10 @@ namespace ilive
 	template<typename T> inline int
 	TStringBase<T>::find(const T* sz, int nStart/* = 0*/, int len/* = ILIVE_INVALID_INDEX*/) const
 	{
+		if (len == ILIVE_INVALID_INDEX)
+		{
+			len = iliveStrLen(sz);
+		}
 		return find( TStringBase<T>(sz, len), nStart );
 	}
 
@@ -685,6 +689,10 @@ namespace ilive
 	template<typename T> inline int
 	TStringBase<T>::rfind(const T* sz, int nStart/* = ILIVE_INVALID_INDEX*/, int len/* = ILIVE_INVALID_INDEX*/) const
 	{
+		if (len == ILIVE_INVALID_INDEX)
+		{
+			len = iliveStrLen(sz);
+		}
 		return rfind( TStringBase<T>(sz, len), nStart );
 	}
 
@@ -818,16 +826,11 @@ namespace ilive
 		assert( str );
 		assert( idx>=0 && idx<length() );
 		assert( n >= 0 );
+		assert( sidx >= 0 );
+		assert( sn >= 0 );
 		if ( n > length() - idx )
 		{
 			n = length() - idx;
-		}
-		int len = iliveStrLen(str);
-		assert( sidx>=0 && sidx<len );
-		assert( sn >= 0 );
-		if ( sn > len - sidx )
-		{
-			sn = len - sidx;
 		}
 		TStringBase<T> tmp;
 		tmp.reserve( length() - n + sn );
@@ -961,7 +964,7 @@ namespace ilive
 	template<typename T> inline bool
 	TStringBase<T>::beginwith(const TStringBase<T>& s) const
 	{
-		return beginWith( s.c_str() );
+		return beginwith( s.c_str() );
 	}
 
 	//------------------------------------------------------------------------

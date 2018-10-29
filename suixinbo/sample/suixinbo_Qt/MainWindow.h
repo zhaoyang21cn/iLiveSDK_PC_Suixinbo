@@ -42,6 +42,7 @@ private:
 	void connectSignals();
 	void switchLoginState(E_LoginState state);
 	static void onForceOffline();
+	static void onUserSigExpired();
 
 	void clearShowRoomList();
 	void updatePageNum();

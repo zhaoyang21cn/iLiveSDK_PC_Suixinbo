@@ -33,9 +33,10 @@ while( GetMessage(&msg, NULL, 0, 0) )
 
 可能原因2: 拉取腾讯云spear配置失败,导致进房时找不到此角色名对应的配置;<br/>
 解决办法： 在登录接口中传入默认的spear配置,请详读[默认Spear配置使用说明](https://github.com/zhaoyang21cn/iLiveSDK_PC_Suixinbo/blob/master/doc/defaultSpearCfg.md)
-<br/>
+<br/><br/>
+
 Q: 如何确认是否拉取spear配置失败？<br/>
-A: 查看avsdk日志，在日志中搜索拉取spear配置的url(http://conf.voice.qcloud.com/index.php),如下图所示，则表示拉取spear配置失败;
+A: 查看avsdk日志，在日志中搜索拉取spear配置的url(```http://conf.voice.qcloud.com/index.php```),如下图所示，则表示拉取spear配置失败;
 ![](https://main.qcloudimg.com/raw/ef964eb3fa7a57e4c5f86663d8d45f86.png)
 
 ## VS2010下编译随心播报错

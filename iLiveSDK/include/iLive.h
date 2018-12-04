@@ -1979,7 +1979,7 @@ namespace ilive
 		@details 使用ilive各项功能前必须先初始化
 		@param [in] sdkAppId 在腾讯云申请的sdkappid
 		@param [in] imSupport 是否需要聊天等即时通讯功能
-		@param [in] testEnv 是否进入测试环境
+		@param [in] testEnv 是否进入测试环境(只有和腾讯云后台进行测试联调才需要进入测试环境)
 		@return 返回操作结果,成功则返回NO_ERR
 		*/
 		virtual int init(const int sdkAppId, bool imSupport = true, bool testEnv = false) = 0;
@@ -1989,7 +1989,7 @@ namespace ilive
 		@param [in] sdkAppId 在腾讯云申请的sdkappid
 		@param [in] accountType 在腾讯云申请的accountType
 		@param [in] imSupport 是否需要聊天等即时通讯功能
-		@param [in] testEnv 是否进入测试环境
+		@param [in] testEnv 是否进入测试环境(只有和腾讯云后台进行测试联调才需要进入测试环境)
 		@return 返回操作结果,成功则返回NO_ERR
 		*/
 		Deprecated

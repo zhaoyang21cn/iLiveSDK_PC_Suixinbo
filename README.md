@@ -5,11 +5,12 @@ iLiveSDK整合了音视频SDK(AVSDK)、即时通讯SDK(IMSDK)两大模块，致�
 [iLiveSDK导入参考](https://github.com/zhaoyang21cn/iLiveSDK_PC_Demos/blob/master/doc/iLiveSDK_README.md)
 
 ## SDK最近更新说明
-### V1.9.4.6(2018-10-29)
-* 增加sig过期接口；
-* 修正String错误；
-* 修正crash问题；
-* sdk内部优化；
+### V1.9.6.0(2018-12-04)
+* 弱网络下优先保证音频传输；
+* SDK部分dll签名失败问题修正；
+* SDK内部状态优化；
+* 进房速度优化；
+* 用户反馈的crash修正；
 
 [更多版本更新信息](https://github.com/zhaoyang21cn/iLiveSDK_PC_Demos/blob/master/doc/iLiveSDK_ChangeList.md)
 

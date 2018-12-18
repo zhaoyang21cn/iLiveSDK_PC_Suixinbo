@@ -1961,6 +1961,14 @@ namespace ilive
 		@note 房间内有首次收到用户视频数据时产生;
 		*/
 		virtual void onRecvVideoEvent(E_VideoSrc videoType, const String& userId) {};
+
+		/**
+		@brief 设置自定义Spear配置事件
+		@param [in] result 错误id
+		@param [in] errMsg 错误描述
+		@note 使用loginWithSpear()接口登录，无论成功与否，都会通过此事件通知业务侧;
+		*/
+		virtual void onSetSpearConfigEvent(int result, const String& errMsg) {};
 	};
 
 
@@ -2127,6 +2135,17 @@ namespace ilive
 		@remark 设置默认spear配置失败时，不会回调登录失败，只会在ilivesdk日志中打印出相应错误信息;
 		*/
 		virtual void login(const char *userId, const char *userSig, iLiveSucCallback suc = NULL, iLiveErrCallback err = NULL, void* data = NULL, const char* spearCfg = "") = 0;
+		/**
+		@brief 登录
+		@param [in] userId 用户id
+		@param [in] userSig 用户签名
+		@param [in] spearCfg spear配置;
+		@param [in] suc 成功回调
+		@param [in] err 失败回调
+		@param [in] data 用户自定义数据的指针，回调函数中原封不动地传回(通常为调用类的指针);
+		@note 使用必读https://github.com/zhaoyang21cn/iLiveSDK_PC_Suixinbo/blob/master/doc/customSpearCfg.md
+		*/
+		virtual void loginWithSpear(const char *userId, const char *userSig, const char* spearCfg, iLiveSucCallback suc = NULL, iLiveErrCallback err = NULL, void* data = NULL) = 0;
 		/**
 		@brief 登出
 		@param [in] suc 成功回调

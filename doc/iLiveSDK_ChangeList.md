@@ -1,5 +1,9 @@
 ## PC_iLiveSDK_ChangeList
 
+###### V1.9.6.2(2018-12-18)
+* 支持[自定义Spear配置功能](https://github.com/zhaoyang21cn/iLiveSDK_PC_Suixinbo/blob/master/doc/customSpearCfg.md)；
+* SDK内部注册IM消息回调方式优化；
+
 ###### V1.9.6.0(2018-12-04)
 * 弱网络下优先保证音频传输；
 * SDK部分dll签名失败问题修正；

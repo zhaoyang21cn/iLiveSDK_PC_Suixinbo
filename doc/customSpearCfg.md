@@ -164,8 +164,9 @@ http://conf.voice.qcloud.com/index.php?sdk_appid=1400027849&interface=Voice_Conf
 3. 调用sdk的登录接口loginWithSpear(),将上一步所得字符串传入spearCfg参数即可;
 
 4. 判断自定义Spear配置是否设置成功:
+
 iLiveSDK有addEventHandler()接口，可以增加事件监听；可以在登录之前使用此接口设置事件监听，调用loginWithSpear()接口登录后，将会受到onSetSpearConfigEvent()事件通知，事件通知中的result参数为NO_ERR，即表示成功;
 
 ## 注意事项
-1. 请勿手动修改上面从腾讯拉取的Spear配置字符串；如果要修改角色配置，建议从腾讯云Spear控制台修改，然后从拉取;
-2. 传入SDK的Spear配置中，第一个角色将会作为默认角色；即，如果进房时填写的角色(iLiveRoomOption::controlRole)不存在，将会使用默认角色;
+1. 请勿手动修改上面从腾讯拉取的Spear配置字符串；如果要修改角色配置，建议从腾讯云Spear控制台修改，然后重新拉取;
+2. 传入SDK的Spear配置中，第一个角色将会作为默认角色；如果进房时填写的角色(iLiveRoomOption::controlRole)不存在，将会使用默认角色;

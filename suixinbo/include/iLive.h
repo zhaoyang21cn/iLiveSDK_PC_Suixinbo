@@ -431,6 +431,13 @@ namespace ilive
 	*/
 	typedef void (*iLiveRoomDisconnectListener)(int reason, const char *errorInfo, void* data);
 	/**
+	@brief 后台下发主动退出房间监听函数指针
+	@details 对于接入PSTN的用户，后台可能主动下发退房命令;
+	@param [in] reason 退出原因错误码
+	@param [in] data 用户自定数据指针，回调函数中原封不动传回给业务侧
+	*/
+	typedef void (*iLivePstnDisconnectListener)(int reason, void* data);
+	/**
 	@brief 房间内成员变化监听函数指针
 	@details 当房间成员发生状态变化(如是否发音频、是否发视频等)时，会通过该函数指针通知业务侧
 	@param [in] event_id 状态变化id，详见EndpointEventId的定义
@@ -721,7 +728,9 @@ namespace ilive
 			,enableHwDec(false)
 			,enableHwScreenEnc(false)
 			,enableHwScreenDec(false)
+			,enableMuteBag(false)
 			,roomDisconnectListener(NULL)
+			,pstnDisconnectListener(NULL)
 			,memberStatusListener(NULL)
 			,deviceDetectListener(NULL)
 			,qualityParamCallback(NULL)
@@ -752,11 +761,18 @@ namespace ilive
 		bool					enableHwScreenDec;		///< 屏幕分享是否使用硬件解码(极速模式下，请勿使用硬编解)。
 		String					bussInfo;				///< 业务侧自定义数据
 
+		bool					enableMuteBag;			///< 是否填充静音包;SDK内部通过registAudioDataCallback()注册AUDIO_DATA_SOURCE_MIXTOSEND类型音频回调，在回调中填充静音音频数据;除非特殊需求,否则保持默认值即可;
+
 		/**
 		@brief SDK主动退出房间回调;
-		@details 在网络断开30秒后,会收到此回调,此时已被sdk强制退出房间,所以,不要调用退出房间接口;网络重连后,需要重新创建\进入房间,参见iLiveRoomDisconnectListener定义。
+		@details 在网络断开30秒后,会收到此回调,此时已被sdk强制退出房间,所以,不需要调用退出房间接口;网络重连后,需要重新创建\进入房间,参见iLiveRoomDisconnectListener定义。
 		*/
 		iLiveRoomDisconnectListener	roomDisconnectListener;
+		/**
+		@brief 后台主动下发退房回调;
+		@details 对于接入PSTN的用户，后台可能主动下发退房命令;收到此回调时，sdk已退出房间,所以,不需要调用退出房间接口;参见iLivePstnDisconnectListener定义。
+		*/
+		iLivePstnDisconnectListener	pstnDisconnectListener;
 		/**
 		@brief 房间成员事件通知，参见iLiveMemStatusListener定义。
 		*/

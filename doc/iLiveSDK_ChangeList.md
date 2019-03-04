@@ -1,5 +1,10 @@
 ## PC_iLiveSDK_ChangeList
 
+###### V1.9.6.12(2019-03-04)
+* 进房参数增加发送静音包配置；
+* 修正错误收到sig过期回调问题；
+* 修正IMSDK crash问题；
+
 ###### V1.9.6.2(2018-12-18)
 * 支持[自定义Spear配置功能](https://github.com/zhaoyang21cn/iLiveSDK_PC_Suixinbo/blob/master/doc/customSpearCfg.md)；
 * SDK内部注册IM消息回调方式优化；

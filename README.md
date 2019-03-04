@@ -5,9 +5,10 @@ iLiveSDK整合了音视频SDK(AVSDK)、即时通讯SDK(IMSDK)两大模块，致�
 [iLiveSDK导入参考](https://github.com/zhaoyang21cn/iLiveSDK_PC_Demos/blob/master/doc/iLiveSDK_README.md)
 
 ## SDK最近更新说明
-### V1.9.6.2(2018-12-18)
-* 支持[自定义Spear配置功能](https://github.com/zhaoyang21cn/iLiveSDK_PC_Suixinbo/blob/master/doc/customSpearCfg.md)；
-* SDK内部注册IM消息回调方式优化；
+### V1.9.6.12(2019-03-04)
+* 进房参数增加发送静音包配置；
+* 修正错误收到sig过期回调问题；
+* 修正IMSDK crash问题；
 
 [更多版本更新信息](https://github.com/zhaoyang21cn/iLiveSDK_PC_Demos/blob/master/doc/iLiveSDK_ChangeList.md)
 

@@ -5,8 +5,8 @@ iLiveSDK整合了音视频SDK(AVSDK)、即时通讯SDK(IMSDK)两大模块，致�
 [iLiveSDK导入参考](https://github.com/zhaoyang21cn/iLiveSDK_PC_Demos/blob/master/doc/iLiveSDK_README.md)
 
 ## SDK最近更新说明
-### V1.9.6.13(2019-03-07)
-* 更新avsdk；
+### V1.9.6.27(2019-09-25)
+* 进房默认为观众权限；
 
 [更多版本更新信息](https://github.com/zhaoyang21cn/iLiveSDK_PC_Demos/blob/master/doc/iLiveSDK_ChangeList.md)
 

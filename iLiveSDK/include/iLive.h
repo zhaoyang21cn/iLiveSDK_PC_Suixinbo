@@ -719,7 +719,7 @@ namespace ilive
 			,roomId(0)
 			,groupType(E_Public_Group)
 			,joinImGroup(true)
-			,authBits(AUTH_BITS_DEFAULT)
+			,authBits(AUTH_BITS_JOIN_ROOM|AUTH_BITS_RECV_AUDIO|AUTH_BITS_RECV_CAMERA_VIDEO|AUTH_BITS_RECV_SCREEN_VIDEO)
 			,autoRequestCamera(true)
 			,autoRequestScreen(true)
 			,autoRequestMediaFile(true)
@@ -2032,6 +2032,38 @@ namespace ilive
 		@return 是否已初始化
 		*/
 		virtual bool isInited() = 0;
+
+		/**
+		@brief 设置音视频引擎的参数
+		@details 设置音视频引擎参数的接口调用时机取决于key对应的调用时机;<br/>
+		音视频引擎的参数(key)取值如下:<br/>
+		| 参数                      描述                                                 |<br/>
+		|------------------------|-------------------------------------------------------|<br/>
+		| RecvMixStreamCount     | 设置客户端的最大同时语音流混音的路数,假如客户端需要支持多于6个人同时讲话的或者限制同时讲话的人数,则需要设置这个值。 默认值为6路。 设置场景: 进入房间之前或者打开音频设备预览之前（若在进房之后设置只会在下次进房之后才生效）|<br/>
+		| MixAudioFadeInTime     | 设置伴奏的淡入时间，支持设置发送混音输入,扬声器混音输入,同步发送混音输入的淡入时间 单位：ms；默认值为0。  设置场景: 注册音频数据类型的回调之前 |<br/>
+		| MixAudioFadeOutTime    | 设置伴奏的淡出时间，支持设置发送混音输入,扬声器混音输入,同步发送混音输入的淡出时间 单位：ms；默认值为0。  设置场景: 注册音频数据类型的回调之前 |<br/>
+		| ANSLevel               | 设置背景噪音抑制，ANS可探测出背景固定频率的杂音并消除背景噪音的等级，0为最低，1为低，2为中等，3为高 默认值为3 设置场景:在房间中设置或者在音频设备启动的时候设置 |<br/>
+		| AECLevel               | 设置回声消除的等级，AEC可以消除各种延迟的回声,0为最低，1为低，2为中等，3为高  默认值为:3  设置场景:在房间中设置或者在音频设备启动的时候设置 |<br/>
+		| ANSFlag                | 强制打开或者关闭背景噪音抑制，AEC可以消除各种延迟的回声,-1为取消客户端设置并听从流控，0为强制关闭，1为强制打开 默认值为:-1  设置场景:在房间中音频设备启动的时候设置 |<br/>
+		| AGCFlag                | 强制打开或者关闭音频的自动增益补偿功能，打开后不会有声音忽大忽小的问题。-1为取消客户端设置并听从流控，0为强制关闭，1为强制打开 默认值为:-1  设置场景:在房间中音频设备启动的时候设置 |<br/>
+		| AECFlag                | 强制打开或者关闭回声消除，AEC可以消除各种延迟的回声。-1为取消客户端设置并听从流控，0为强制关闭，1为强制打开 默认值为:-1  设置场景:在房间中音频设备启动的时候设置 |<br/>
+		调用示例: setParameter("ANSFlag", "0");
+		@param [in] key		音视频引擎的参数
+		@param [in] object	参数对应的取值
+		@return 返回操作结果,成功则返回NO_ERR;必须初始化后调用，否则返回ERR_AV_NOT_READY;
+		*/
+		virtual int setParameter(const char* key, const char* object) = 0;
+		/**
+		@brief 获取音视频引擎的参数
+		@details 获取音视频引擎的参数,获取时机与setParameter的时机对应;<br/>
+		| RoomSeverInfo  | 获取房间连接的IP列表，IP数为8个，第一个为当前连接的接口机IP 获取场景:进房后后获取|<br/>
+		| AECFlag        | 当前AEC开关状态，0为关闭，1为打开  获取场景:在房间中音频设备启动后获取 |<br/>
+		| AGCFlag        | 当前AGC开关状态，0为关闭，1为打开  获取场景:在房间中音频设备启动后获取 |<br/>
+		| ANSFlag        | 当前ANS开关状态，0为关闭，1为打开  获取场景:在房间中音频设备启动后获取 |<br/>
+		@param [in] key		音视频引擎的参数
+		@return 返回音视频引擎的参数对应的值，失败则返回"";必须初始化后调用，否则返回NULL;
+		*/
+		virtual const char* getParameter(const char* key) = 0;
 
 		/**
 		@brief 设置统一事件回调处理
